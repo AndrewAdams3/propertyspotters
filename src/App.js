@@ -1,25 +1,41 @@
 import React from 'react';
-import logo from './logo.svg';
+import { BrowserRouter as Router, Route } from "react-router-dom";
+
+import Home from './views/home';
+import Login from './views/login/login';
+import TableView from './views/Table/Table';
 import './App.css';
+
+//Global Color Scheme:
+const colors= {
+  primaryBackground: "#397367",
+  primaryForeground: "#63ccca",
+  secondaryBackground: "#5da399",
+  secondaryForeground: "#42858c",
+  dark: "#35393c"
+}
+
+const loginPageStyle = { 
+  backgroundColor: colors.dark, 
+  height: "100vh" 
+};
+const pageStyle = {
+  backgroundColor: colors.primaryBackground,
+  height: "100%"
+};
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Route exact path="/Login" 
+        render={(props) => <div class="py-3" style={loginPageStyle} ><Login {...props} /> </div>}/>
+      <Route exact path="/"
+        render={(props) => <div class="py-3" style={loginPageStyle} ><Login {...props} /> </div>} />
+      <Route exact path="/home" 
+        render={(props) => <div style={loginPageStyle} ><Home {...props} colors={colors} /> </div>}/>
+      <Route exact path="/table"
+        render={(props) => <div style={pageStyle} ><TableView {...props} colors={colors} /> </div>} />
+    </Router >
   );
 }
 
