@@ -1,0 +1,22 @@
+.window {
+  max-height: 200px;
+  max-width: 300px;
+  font-size: 14px;
+  margin: 5px;
+}
+
+.bg {
+  max-width: 300px;
+  max-height: 200px;
+}
+
+.img{
+  image-orientation: from-image;
+  height: 300px;
+  max-width: -moz-available !important;
+  resize: block;
+}
+
+.info {
+  color: black;
+}

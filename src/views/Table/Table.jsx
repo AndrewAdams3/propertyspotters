@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import Axios from 'axios';
 import Table from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button';
 
+import HeaderNav from '../../components/header';
 import {ServerAdd} from '../../config/constants';
 
 const ListItem = ({db, n}) => {
-  console.log(n);
   return(
     <tr>
       <td>{n + 1}</td>
@@ -20,28 +21,8 @@ const ListItem = ({db, n}) => {
   )
 }
 
-const TableView = (props) => {
-
-  const [drivebys, setDrivebys] = useState([]); 
-
-  useEffect( () => {
-    Axios.get(ServerAdd + "/data/drivebys/all")
-      .then( ({data}) => {
-        if(data.response === 0){
-          console.log("ok");
-          let dbs = data.docs.map( (db, n) => {
-            return <ListItem db={db} n={n} />;
-          })
-          setDrivebys(dbs);
-          console.log(data.docs[0]);
-        }
-        else{
-          console.log("err");
-        }
-      })
-  }, [])
-
-  return  drivebys ? (
+const TableT = ({drivebys, bIndex, eIndex}) => {
+  return(
     <Table striped bordered hover>
       <thead>
         <tr>
@@ -56,11 +37,69 @@ const TableView = (props) => {
         </tr>
       </thead>
       <tbody>
-        {drivebys.reverse().map( (db, index) => {
-          return(db);
+        {drivebys.map((db, index) => {
+            return db
         })}
       </tbody>
     </Table>
+  )
+}
+
+const TableView = () => {
+
+  const handleClick = (change) => {
+    console.log(bIndex, "-", eIndex);
+    if(eIndex + change < 0 ){
+      setEIndex(0);
+      setBIndex(Math.abs(change));
+      return;
+    } 
+    if(bIndex + change > drivebys.length) {
+      setBIndex(drivebys.length);
+      setEIndex(drivebys.length-change);
+      return;
+    }
+      setBIndex(bIndex + change)
+      setEIndex(eIndex + change)
+  }
+
+  const [drivebys, setDrivebys] = useState([]); 
+  const [bIndex, setBIndex] = useState(0);
+  const [eIndex, setEIndex] = useState(0);
+
+  useEffect( () => {
+    Axios.get(ServerAdd + "/data/drivebys/all")
+      .then( ({data}) => {
+        if(data.response === 0){
+          let dbs = data.docs.map( (db, n) => {
+            db.index = n;
+            return <ListItem db={db} n={n} />;
+          })
+          dbs = dbs.reverse();
+          console.log("total length: ", dbs.length);
+          setDrivebys(dbs);
+          setBIndex(dbs.length);
+          setEIndex(dbs.length-20);
+        }
+        else{
+          console.log("err");
+        }
+      })
+  }, [])
+  console.log("starting indeces: ", bIndex, eIndex)
+  return  drivebys ? (
+    <div>
+      <HeaderNav fixed="top"/>
+      <TableT drivebys={drivebys.map( (db, index) => {
+        console.log(db.index);
+        if(db.props.n <= bIndex && db.props.n >= eIndex) return db;
+        else return null;
+      })} bIndex={bIndex} eIndex={eIndex} />
+      <div class="text-center pb-3">
+        <Button style={{ marginRight: "20vh" }} variant="primary" onClick={() => handleClick(20)}>{"<"}</Button>
+        <Button style={{ marginLeft: "20vh" }} variant="primary" onClick={() => handleClick(-20)}>{">"}</Button>
+      </div>
+    </div>
   ) : (
     <div>loading...</div>
   )

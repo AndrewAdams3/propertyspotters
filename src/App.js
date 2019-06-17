@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import Home from './views/home';
 import Login from './views/login/login';
 import TableView from './views/Table/Table';
+import MapView from './views/map/Map';
 import './App.css';
 
 //Global Color Scheme:
@@ -35,6 +36,8 @@ function App() {
         render={(props) => <div style={loginPageStyle} ><Home {...props} colors={colors} /> </div>}/>
       <Route exact path="/table"
         render={(props) => <div style={pageStyle} ><TableView {...props} colors={colors} /> </div>} />
+      <Route exact path="/map"
+        render={(props) => <div style={pageStyle} ><MapView {...props}/> </div>} />
     </Router >
   );
 }
