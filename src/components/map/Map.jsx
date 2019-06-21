@@ -1,35 +1,50 @@
 /* eslint-disable no-undef */
 
 import React, { useState } from 'react'
-import { compose, withProps } from 'recompose'
+import { compose, withProps, withHandlers } from 'recompose'
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from 'react-google-maps'
+import { default as MarkerClusterer } from "react-google-maps/lib/components/addons/MarkerClusterer";
+
 import './Map.css';
 const MapWithMarkers = compose(
   withProps({
-    googleMapURL: "https://maps.googleapis.com/maps/api/js?key=" + process.env.GOOGLE_API_KEY + "&libraries=geometry,drawing,places",
+    googleMapURL: "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_GOOGLE_API_KEY + "&libraries=geometry,drawing,places",
     loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `87vh`, width: `90vw` }} />,
-    mapElement: <div style={{ height: `100%` }} />,
+    containerElement: <div style={{ height: `100%`, width: `100%` }} />,
+    mapElement: <div style={{ height: `100%`, width: '100&' }} />,
+  }),
+  withHandlers({
+    onMarkerClustererClick: () => (markerClusterer) => {
+      const clickedMarkers = markerClusterer.getMarkers()
+      console.log(`Current clicked markers length: ${clickedMarkers.length}`)
+      console.log(clickedMarkers)
+    },
   }),
   withScriptjs,
   withGoogleMap,
-)(props =>
+)(({data, onMarkerClustererClick}) =>
   <GoogleMap
     defaultZoom={13}
-    defaultCenter={new google.maps.LatLng(36.3079945, -119.3231157)}>
-    {
-      props.data.reduce(function (markers, home) {
-        if (home["latitude"] !== 0) {
-          var marker = <MarkerWithInfoWindow position={new google.maps.LatLng(home["latitude"], home["longitude"])} home={home} />
-          markers.push(marker);
-        }
-        return markers;
-      }, [])
-    }
+    defaultCenter={{lat: 36.3079945, lng: -119.3231157}}>
+    <MarkerClusterer
+      onClick={onMarkerClustererClick}
+      averageCenter
+      enableRetinaIcons
+      gridSize={60}
+    >
+      {
+        data.map((home, index) => {
+          if (home["latitude"] !== 0) {
+           return <MarkerWithInfoWindow position={new google.maps.LatLng(home["latitude"], home["longitude"])} home={home} key={home["_id"]}/>
+          }
+          return null;
+        })
+      }
+    </MarkerClusterer>
   </GoogleMap>
 );
 
-const MarkerWithInfoWindow = ({home, position}) => {
+const MarkerWithInfoWindow = ({position, home, id}) => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isHover, setIsHover] = useState(false);
@@ -41,6 +56,7 @@ const MarkerWithInfoWindow = ({home, position}) => {
 
   return (
     <Marker
+      key={id}
       position={position}
       onClick={onToggleOpen}
       onMouseOver={onMouseover}
