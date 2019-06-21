@@ -3,8 +3,12 @@ export const Reducer = (state, action) => {
     case 'login':
       return {
         ...state,
-        loggedIn: action.value.loggedIn,
-        userId: action.value.userId
+        loggedIn: action.value
+      };
+    case 'userId':
+      return {
+        ...state,
+        userId: action.value
       };
     case 'dbs':
       return {

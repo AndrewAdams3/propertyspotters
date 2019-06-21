@@ -4,12 +4,13 @@ import HeaderNav from '../../components/header';
 import { useStateValue } from '../../context/State';
 import UsersCard from './UsersCard';
 
-const Users = () => {
+const Users = ({match}) => {
+  console.log("user match: ", match);
 
   const [{ Users }, userDispatch] = useStateValue();
 
   const [users, setUsers] = useState([]);
-
+  console.log("in users");
   useEffect( () => {
     setUsers(Users);
   }, [])

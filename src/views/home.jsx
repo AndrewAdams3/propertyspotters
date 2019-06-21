@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
+import React from 'react';
 import HeaderNav from '../components/header';
-import { BrowserRouter as Redirect } from "react-router-dom";
 
-export default function Home ({title}) {
+import {useStateValue} from '../context/State';
 
-  const [path, setPath] = useState("");
-
-  return path ? <Redirect to={path}/> : ( 
+export default function Home ({title, match}) {
+  console.log(match);
+  const [{Drivebys}, dbDispatch] = useStateValue("");
+  return ( 
     <div>
       <HeaderNav/>
       <div className="container h-100">

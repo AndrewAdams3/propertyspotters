@@ -1,4 +1,4 @@
-import React, { useEffect }from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Redirect, Switch } from "react-router-dom";
 
 import Axios from 'axios';
@@ -11,42 +11,9 @@ import MapView from '../views/map/Map';
 import { Logout } from '../components/Logout';
 
 import { useStateValue } from '../context/State';
+import { populateData } from '../helpers/data';
 
 const MyRoute = ({ component: Component, ...rest }) => {
-
-  const [{ loggedIn }, lDDispatch] = useStateValue();
-  const [{ userId }, uIdDispatch] = useStateValue();
-  const [{ User }, userDispatch] = useStateValue();
-
-
-  let webSesh = JSON.parse(localStorage.getItem('webSesh'));
-  let cDate = new Date().getTime();
-  let pDate = new Date(Number(webSesh.timeStamp)).getTime();
-  console.log("sesh: ", webSesh);
-  if (webSesh.lastPage && webSesh.userId && (cDate - pDate) < 5000) {
-    console.log("restoring sesh");
-    Axios.get(process.env.REACT_APP_SERVER + "/data/users/byId/" + webSesh.userId)
-      .then( ({data}) => {
-        if(data){
-          console.log(data);
-          userDispatch({
-            type: 'user',
-            value: data
-          })
-          lDDispatch({
-            type: 'login',
-            value: true
-          })
-          uIdDispatch({
-            type: 'userId',
-            value: data._id
-          })
-          return <Redirect to={webSesh.lastPage} />
-        }
-      })
-      .catch( (err) => console.log(err))
-  }
-
   return (
     <Route
       {...rest}
@@ -56,29 +23,81 @@ const MyRoute = ({ component: Component, ...rest }) => {
 }
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
-  
-  const [{ loggedIn }, dispatch] = useStateValue();
+  console.log("props for p route", rest);
+  const [{ loggedIn }, lDDispatch] = useStateValue();
   const [{ userId }, uIdDispatch] = useStateValue();
-  
-  console.log("userid rest", userId);
-  localStorage.setItem('webSesh', JSON.stringify({
-    lastPage: rest.path,
-    userId: userId,
-    timeStamp: new Date().getTime()
-  }));
+  const [{ User }, userDispatch] = useStateValue();
+  const [{ Users }, usersDispatch] = useStateValue();
+  const [{ Drivebys }, dbDispatch] = useStateValue();
+  console.log("route id", userId);
 
-
-  return (
-    <Route
-      {...rest}
-      render={props => (
-        loggedIn ?
-            <Component {...props}/>
-           :
-            <Redirect to='/login' />
-      )}
-    />
-  )
+  if(userId){
+    console.log("new sesh", userId);
+    localStorage.setItem('webSesh', JSON.stringify({
+      lastPage: rest.path,
+      userId: userId,
+      timeStamp: new Date().getTime()
+    }));
+    return (
+      <Route
+        {...rest}
+        render={props => (<Component {...props} />)}
+      />
+    )
+  } else {
+    console.log('attempt to restore sesh');
+    try {
+      let webSesh = JSON.parse(localStorage.getItem('webSesh'));
+      let cDate = new Date().getTime();
+      let pDate = new Date(Number(webSesh.timeStamp)).getTime();
+      
+      if (webSesh.lastPage && webSesh.userId && (cDate - pDate) < 5000) {
+        console.log("restoring");
+        Axios.get(process.env.REACT_APP_SERVER + "/data/users/byId/" + webSesh.userId)
+          .then( async ({ data }) => {
+              await userDispatch({
+                type: 'user',
+                value: data
+              })
+            await lDDispatch({
+                type: 'login',
+                value: true
+              })
+            await uIdDispatch({
+                type: 'userId',
+                value: data._id
+              })
+              const dts = await populateData();
+            await usersDispatch({
+                type: 'users',
+                value: dts.u
+              })
+              console.log(dts.u);
+            dbDispatch({
+                type: 'dbs',
+                value: dts.d
+              })
+            })
+          .then((val) => {
+            console.log("to last page", Component.name);
+            return (
+              <Route
+                {...rest}
+                render={props => (<Component {...props} />)}
+              />
+            )
+          })
+          .catch((err) => console.log(err))
+      } else {
+        console.log("to login")
+        return (
+          <Redirect to='/login' />
+        )
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
 }
 
 export const MainRouter = (props) => {

@@ -27,7 +27,7 @@ export default function UserCard({Users}){
             </thead>
             <tbody>
               {Users.map((user, index) => {
-                return <ListItem user={user} />
+                return <ListItem user={user} key={index} />
               })}
             </tbody>
           </Table>

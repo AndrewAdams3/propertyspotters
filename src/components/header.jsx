@@ -13,14 +13,14 @@ const Header = ({fixed}) => {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto w-100">
-          <Nav.Link><Link className="link" to="/home">Home</Link></Nav.Link>
-          <NavDropdown title="DriveBys" className="mt-2">
-            <NavDropdown.Item><Link className="link" to="/table">Table View</Link></NavDropdown.Item>
-            <NavDropdown.Item><Link className="link" to="/map">Map View</Link></NavDropdown.Item>
+          <div className="my-auto mx-auto"><Link className="link" to="/home">Home</Link></div>
+          <NavDropdown title="DriveBys" className="my-auto mx-auto">
+            <Link className="link" to="/table">Table View</Link>
+            <Link className="link" to="/map">Map View</Link>
           </NavDropdown>
-          <Nav.Link><Link className="link" to="/users">Users</Link></Nav.Link>
+          <div className="my-auto mx-auto"><Link className="link" to="/users">Users</Link></div>
           <div className="w-100"/>
-          <Nav.Link style={{ textAlign: "end" }}><Link className="link" to="/logout">Logout</Link></Nav.Link>
+          <div style={{ textAlign: "end" }}><Link className="link" to="/logout">Logout</Link></div>
         </Nav>
       </Navbar.Collapse>
     </Navbar>

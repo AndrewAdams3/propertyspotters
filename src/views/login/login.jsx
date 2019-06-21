@@ -7,56 +7,47 @@ import './login.css';
 import logo from '../../config/images/psLogo.png';
 
 import { useStateValue } from '../../context/State';
+import { populateData } from '../../helpers/data';
 
-
-const Login = () => {
+const Login = (props) => {
 
   const [{ loggedIn }, logDispatch] = useStateValue();
-  const [{ dbs }, dbDispatch] = useStateValue();
-  const [{ users }, usersDispatch] = useStateValue();
-  
+  const [{ Drivebys }, dbDispatch] = useStateValue();
+  const [{ Users }, usersDispatch] = useStateValue();
+  const [{ userId }, idDispatch] = useStateValue();
+  console.log("login id", userId);
+
   var [email, setEmail] = useState("");
   var [password, setPassword] = useState("");
   var [invalid, setInvalid] = useState(false);
   var [notAdmin, setNotAdmin] = useState(false);
-
-  const populateData = () => {
-    Axios.get(process.env.REACT_APP_SERVER + "/data/users")
-      .then(({data}) => {
-        usersDispatch({
-          type: 'users',
-          value: data
-        })
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-    Axios.get(process.env.REACT_APP_SERVER + "/data/drivebys/all")
-      .then( ({data}) => {
-        dbDispatch({
-          type: 'dbs',
-          value: data.docs
-        })
-      })
-      .catch( (err) => {
-        console.log(err);
-      })
-  }
+  const [toHome, setToHome] = useState(false);
 
   const checkCredentials = (email, pass) => {
     Axios.post(process.env.REACT_APP_SERVER + "/data/users/login", {
       email: email,
       password: pass
-    }).then( ({data}) => {
+    }).then( async ({data}) => {
       if(data.loggedIn && data.admin){
         logDispatch({
           type: 'login',
-          value: {
-            loggedIn: true,
-            userId: data.userId
-          }
+          value: true
         })
-        populateData();
+        console.log("logged in");
+        idDispatch({
+          type: 'userId',
+          value: data.userId
+        })
+        const dts = await populateData();
+        usersDispatch({
+          type: 'users',
+          value: dts.u
+        })
+        dbDispatch({
+          type: 'dbs',
+          value: dts.d
+        })
+        setToHome(true)
       }
       if(!data.loggedIn){
         setInvalid(true);
@@ -91,8 +82,7 @@ const Login = () => {
     }
   }
 
-  return loggedIn ? <Redirect to='/home' /> :
-    (
+  return toHome ? <Redirect to="/home"/> : (
       <div className="container rounded" style={{ backgroundColor: "white", height: "100%"}}>
         <div className="row logoRow">
           <div className="col">
