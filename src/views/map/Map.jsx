@@ -13,7 +13,7 @@ const MapView = () => {
 
   useEffect(() => {
     setDbs(Drivebys);
-  }, [])
+  }, [Drivebys])
 
   return dbs ? (
     <div style={{overflowY:"hidden"}}>

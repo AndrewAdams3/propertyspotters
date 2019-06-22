@@ -23,7 +23,7 @@ const ListItem = ({db, n}) => {
 
 const TableT = ({drivebys, bIndex, eIndex}) => {
   return(
-    <div className="border border-dark border-bottom-0 h-100 mx-1" style={{ marginTop: "3.65rem"}}>
+    <div className="h-100 mx-1" style={{ marginTop: "3.65rem"}}>
     <Table striped bordered hover>
       <thead>
         <tr>
@@ -69,10 +69,17 @@ const TableView = () => {
   const [{ Drivebys }, dbDispatch] = useStateValue();
 
   const [dbs, setDrivebys] = useState([]); 
+  const [hasDbs, sethasDbs] = useState(true);
   const [bIndex, setBIndex] = useState(0);
   const [eIndex, setEIndex] = useState(0);
 
   useEffect( () => {
+    if(Drivebys){
+      sethasDbs(true);
+    } else{
+      sethasDbs(false);
+      return;
+    }
     let dbs = Drivebys.map((db, n) => {
       db.index = n;
       return <ListItem db={db} n={n} />;
@@ -81,7 +88,7 @@ const TableView = () => {
     setDrivebys(dbs);
     setBIndex(dbs.length);
     setEIndex(dbs.length - 20);
-  }, [])
+  }, [Drivebys])
 
   return  dbs ? (
     <div>
@@ -91,8 +98,8 @@ const TableView = () => {
         else return null;
       })} bIndex={bIndex} eIndex={eIndex} />
       <div className="text-center pb-3">
-        <Button style={{ marginRight: "20vh" }} variant="primary" onClick={() => handleClick(20)}>{"<"}</Button>
-        <Button style={{ marginLeft: "20vh" }} variant="primary" onClick={() => handleClick(-20)}>{">"}</Button>
+        <Button className="col-6" style={{ marginRight: "20vh" }} variant="primary" onClick={() => handleClick(20)}>{"<"}</Button>
+        <Button className="col-6" style={{ marginLeft: "20vh" }} variant="primary" onClick={() => handleClick(-20)}>{">"}</Button>
       </div>
     </div>
   ) : (

@@ -8,14 +8,20 @@ const Users = ({match}) => {
   console.log("user match: ", match);
 
   const [{ Users }, userDispatch] = useStateValue();
+  const [hasData, setHasData] = useState(true);
 
   const [users, setUsers] = useState([]);
   console.log("in users");
   useEffect( () => {
-    setUsers(Users);
-  }, [])
+    if((Users)){
+      setUsers(Users);
+      setHasData(true);
+    } else{
+      setHasData(false);
+    }
+  }, [Users])
 
-  return(
+  return hasData ? (
     <div>
       <HeaderNav />
       <div className="container">
@@ -28,7 +34,9 @@ const Users = ({match}) => {
         </div>
       </div>
     </div>
-  )
+  ) 
+  :
+  (null)
 }
 
 export default Users;

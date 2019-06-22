@@ -55,20 +55,20 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
         console.log("restoring");
         Axios.get(process.env.REACT_APP_SERVER + "/data/users/byId/" + webSesh.userId)
           .then( async ({ data }) => {
-              await userDispatch({
+            userDispatch({
                 type: 'user',
                 value: data
               })
-            await lDDispatch({
+            lDDispatch({
                 type: 'login',
                 value: true
               })
-            await uIdDispatch({
+            uIdDispatch({
                 type: 'userId',
                 value: data._id
               })
               const dts = await populateData();
-            await usersDispatch({
+            usersDispatch({
                 type: 'users',
                 value: dts.u
               })
@@ -77,16 +77,13 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
                 type: 'dbs',
                 value: dts.d
               })
-            })
-          .then((val) => {
-            console.log("to last page", Component.name);
             return (
               <Route
                 {...rest}
                 render={props => (<Component {...props} />)}
               />
             )
-          })
+            })
           .catch((err) => console.log(err))
       } else {
         console.log("to login")
@@ -98,6 +95,7 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
       console.log(err);
     }
   }
+  return null
 }
 
 export const MainRouter = (props) => {

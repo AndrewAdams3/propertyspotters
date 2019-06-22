@@ -39,7 +39,7 @@ export default function UserCard({Users}){
     return (
       <Card>
         <Card.Body>
-          <Card.Title>All Users</Card.Title>
+          <Card.Title>Users On Clock</Card.Title>
           <Table striped bordered hover>
             <thead>
               <tr>
@@ -48,12 +48,18 @@ export default function UserCard({Users}){
               </tr>
             </thead>
             <tbody>
-              {Users.map((user, index) => {
-                return user.isOnClock ? 
-                  <ListItem user={user} />
-                :
-                  null
-              })}
+              {
+                Users.map((user, index) => {
+                  return user.isOnClock ? 
+                    <ListItem user={user} />
+                  :
+                    null
+                }) || 
+                <tr>
+                  <td>{"None"}</td>
+                  <td>{"Yet!"}</td>
+                </tr>
+              }
             </tbody>
           </Table>
         </Card.Body>

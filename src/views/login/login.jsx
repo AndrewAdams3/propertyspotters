@@ -91,8 +91,7 @@ const Login = (props) => {
           </div>
         </div>
         <div className="row h-100">
-          <div className="col">
-            <form className="w-50 mx-auto border rounded pb-4">
+            <form className="col col-lg-8 mx-auto border rounded pb-4">
               <h2 className="display-4 text-center">Login</h2>
               <div className="form-group w-75 mx-auto">
                 {errMessage()}
@@ -106,7 +105,6 @@ const Login = (props) => {
                 <Button className="btn-primary w-50" onClick={() => checkCredentials(email, password)}>Login</Button>
               </div>
             </form>
-          </div>
         </div>
       </div>
     )
