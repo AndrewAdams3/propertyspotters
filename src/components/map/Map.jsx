@@ -31,6 +31,7 @@ const MapWithMarkers = compose(
       averageCenter
       enableRetinaIcons
       gridSize={60}
+      minimumClusterSize={3}
     >
       {
         data.map((home, index) => {

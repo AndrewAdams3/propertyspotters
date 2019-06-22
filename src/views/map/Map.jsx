@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react';
-import Axios from 'axios';
 
 import Map from '../../components/map/Map';
 import HeaderNav from '../../components/header';

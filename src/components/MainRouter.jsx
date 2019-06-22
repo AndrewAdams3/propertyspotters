@@ -23,16 +23,14 @@ const MyRoute = ({ component: Component, ...rest }) => {
 }
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
-  console.log("props for p route", rest);
+
   const [{ loggedIn }, lDDispatch] = useStateValue();
   const [{ userId }, uIdDispatch] = useStateValue();
   const [{ User }, userDispatch] = useStateValue();
   const [{ Users }, usersDispatch] = useStateValue();
   const [{ Drivebys }, dbDispatch] = useStateValue();
-  console.log("route id", userId);
 
   if(userId){
-    console.log("new sesh", userId);
     localStorage.setItem('webSesh', JSON.stringify({
       lastPage: rest.path,
       userId: userId,
@@ -45,14 +43,12 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
       />
     )
   } else {
-    console.log('attempt to restore sesh');
     try {
       let webSesh = JSON.parse(localStorage.getItem('webSesh'));
       let cDate = new Date().getTime();
       let pDate = new Date(Number(webSesh.timeStamp)).getTime();
       
-      if (webSesh.lastPage && webSesh.userId && (cDate - pDate) < 5000) {
-        console.log("restoring");
+      if (webSesh.lastPage && webSesh.userId && (cDate - pDate) < (60 * 60 * 1000)) {
         Axios.get(process.env.REACT_APP_SERVER + "/data/users/byId/" + webSesh.userId)
           .then( async ({ data }) => {
             userDispatch({
@@ -72,7 +68,6 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
                 type: 'users',
                 value: dts.u
               })
-              console.log(dts.u);
             dbDispatch({
                 type: 'dbs',
                 value: dts.d
@@ -86,7 +81,6 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
             })
           .catch((err) => console.log(err))
       } else {
-        console.log("to login")
         return (
           <Redirect to='/login' />
         )

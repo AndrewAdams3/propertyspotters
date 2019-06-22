@@ -5,13 +5,11 @@ import { useStateValue } from '../../context/State';
 import UsersCard from './UsersCard';
 
 const Users = ({match}) => {
-  console.log("user match: ", match);
 
   const [{ Users }, userDispatch] = useStateValue();
   const [hasData, setHasData] = useState(true);
 
   const [users, setUsers] = useState([]);
-  console.log("in users");
   useEffect( () => {
     if((Users)){
       setUsers(Users);

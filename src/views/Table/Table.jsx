@@ -3,6 +3,7 @@ import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 
 import HeaderNav from '../../components/header';
+import './table.css';
 
 import { useStateValue } from '../../context/State';
 
@@ -92,14 +93,14 @@ const TableView = () => {
 
   return  dbs ? (
     <div>
-      <HeaderNav fixed="top"/>
+      <HeaderNav fixed="top"/> <br/>
       <TableT drivebys={dbs.map( (db, index) => {
         if(db.props.n <= bIndex && db.props.n >= eIndex) return db;
         else return null;
       })} bIndex={bIndex} eIndex={eIndex} />
       <div className="text-center pb-3">
-        <Button className="col-6" style={{ marginRight: "20vh" }} variant="primary" onClick={() => handleClick(20)}>{"<"}</Button>
-        <Button className="col-6" style={{ marginLeft: "20vh" }} variant="primary" onClick={() => handleClick(-20)}>{">"}</Button>
+        <Button className="col-3 col-lg-4 tableRButton"  style={{maxWidth: "25vh"}} variant="primary" onClick={() => handleClick(20)}>{"<"}</Button>
+        <Button className="col-3 col-lg-4 tableLButton" style={{ maxWidth: "25vh" }} variant="primary" onClick={() => handleClick(-20)}>{">"}</Button>
       </div>
     </div>
   ) : (
