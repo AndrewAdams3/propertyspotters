@@ -24,11 +24,11 @@ const MyRoute = ({ component: Component, ...rest }) => {
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
 
-  const [{ loggedIn }, lDDispatch] = useStateValue();
+  const [, lDDispatch] = useStateValue();
   const [{ userId }, uIdDispatch] = useStateValue();
-  const [{ User }, userDispatch] = useStateValue();
-  const [{ Users }, usersDispatch] = useStateValue();
-  const [{ Drivebys }, dbDispatch] = useStateValue();
+  const [, userDispatch] = useStateValue();
+  const [, usersDispatch] = useStateValue();
+  const [, dbDispatch] = useStateValue();
 
   if(userId){
     localStorage.setItem('webSesh', JSON.stringify({
@@ -96,9 +96,9 @@ export const MainRouter = (props) => {
   return (
     <Router>
       <Switch>
-        <MyRoute exact path="/" component={Login} />
+        <MyRoute exact path="/" component={Home} />
+        <MyRoute exact path="/home" component={Home}/>
         <MyRoute exact path="/login" component={Login} />
-        <ProtectedRoute exact path="/home" component={Home}/>
         <ProtectedRoute exact path="/users" component={Users}/>
         <ProtectedRoute exact path="/table" component={TableView}/>
         <ProtectedRoute exact path="/map" component={MapView}/>

@@ -49,7 +49,7 @@ const MarkerWithInfoWindow = ({position, home, id}) => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isHover, setIsHover] = useState(false);
-  const [date, setDate] = useState(new Date(home["date"]));
+  const [date,] = useState(new Date(home["date"]));
 
   const onToggleOpen = () => { setIsOpen(!isOpen);}
   const onMouseover = () => { if (!isOpen) setIsHover(false);}

@@ -7,7 +7,7 @@ import { useStateValue } from '../../context/State';
 
 const MapView = () => {
 
-  const [{Drivebys}, dbDispatch] = useStateValue();
+  const [{Drivebys},] = useStateValue();
   const [dbs, setDbs] = useState([]);
 
   useEffect(() => {

@@ -67,10 +67,10 @@ const TableView = () => {
       setEIndex(eIndex + change)
     window.scrollTo(0, 0)
   }
-  const [{ Drivebys }, dbDispatch] = useStateValue();
+  const [{ Drivebys },] = useStateValue();
 
   const [dbs, setDrivebys] = useState([]); 
-  const [hasDbs, sethasDbs] = useState(true);
+  const [, sethasDbs] = useState(true);
   const [bIndex, setBIndex] = useState(0);
   const [eIndex, setEIndex] = useState(0);
 

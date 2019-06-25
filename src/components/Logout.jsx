@@ -1,24 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Redirect } from 'react-router-dom';
 
-import { useStateValue } from '../context/State';
-
-
 export const Logout = () => {
-  const [{ loggedIn }, dispatch] = useStateValue();
+
+  const [success, setSuccess] = useState(false);
 
   useEffect( () => {
-/*     dispatch({
-      type:'login',
-      value: false
-    }) */
-  })
+    console.log("test");
+    localStorage.clear();
+    setSuccess(true);
+  }, [])
 
-  return loggedIn ? (
+  return success ? (
+    <Redirect to="/home"/>
+  )
+  :
+  (
     <div>
-      <h1>loggin out</h1>
+        <h1>loading...</h1>
     </div>
-  ) : (
-    <Redirect to="/login" />
   )
 }

@@ -1,11 +1,8 @@
 import React from 'react';
 import HeaderNav from '../components/header';
 
-import {useStateValue} from '../context/State';
-
 export default function Home ({title, match}) {
-  console.log(match);
-  const [{Drivebys}, dbDispatch] = useStateValue("");
+
   return ( 
     <div>
       <HeaderNav/>

@@ -19,6 +19,7 @@ const Header = ({fixed}) => {
           </NavDropdown>
           <div className="my-auto ml-auto" style={{marginRight:"1.5rem"}}><Link className="link" to="/users">Users</Link></div>
           <div className="w-100"/>
+          <div style={{ textAlign: "end", marginRight: "1.5rem" }}><Link className="link" to="/login">Login</Link></div>
           <div style={{ textAlign: "end", marginRight: "1.5rem" }}><Link className="link" to="/logout">Logout</Link></div>
         </Nav>
       </Navbar.Collapse>

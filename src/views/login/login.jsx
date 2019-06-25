@@ -11,9 +11,9 @@ import { populateData } from '../../helpers/data';
 
 const Login = (props) => {
 
-  const [{ loggedIn }, logDispatch] = useStateValue();
-  const [{ Drivebys }, dbDispatch] = useStateValue();
-  const [{ Users }, usersDispatch] = useStateValue();
+  const [, logDispatch] = useStateValue();
+  const [, dbDispatch] = useStateValue();
+  const [, usersDispatch] = useStateValue();
   const [{ userId }, idDispatch] = useStateValue();
   console.log("login id", userId);
 

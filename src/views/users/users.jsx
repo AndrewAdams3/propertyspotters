@@ -6,7 +6,7 @@ import UsersCard from './UsersCard';
 
 const Users = ({match}) => {
 
-  const [{ Users }, userDispatch] = useStateValue();
+  const [{ Users },] = useStateValue();
   const [hasData, setHasData] = useState(true);
 
   const [users, setUsers] = useState([]);
