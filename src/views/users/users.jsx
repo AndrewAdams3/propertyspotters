@@ -21,8 +21,8 @@ const Users = ({match}) => {
 
   return hasData ? (
     <div>
-      <HeaderNav />
-      <div className="container">
+      <HeaderNav fixed="top" color="black"/>
+      <div className="container mt-5">
         <div className="row">
           <div className="col">
             <UsersCard Users={users}/>

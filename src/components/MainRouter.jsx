@@ -3,12 +3,14 @@ import { BrowserRouter as Router, Route, Redirect, Switch } from "react-router-d
 
 import Axios from 'axios';
 
-import Home from '../views/home';
+import Home from '../views/home/home';
 import Users from '../views/users/users';
 import Login from '../views/login/login';
 import TableView from '../views/Table/Table';
 import MapView from '../views/map/Map'; 
 import { Logout } from '../components/Logout';
+
+import colors from '../config/colors';
 
 import { useStateValue } from '../context/State';
 import { populateData } from '../helpers/data';
@@ -17,7 +19,7 @@ const MyRoute = ({ component: Component, ...rest }) => {
   return (
     <Route
       {...rest}
-      render={props => (<Component {...props} />)}
+      render={props => (<Component {...props} colors={colors}/>)}
     />
   )
 }
@@ -39,12 +41,13 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
     return (
       <Route
         {...rest}
-        render={props => (<Component {...props} />)}
+        render={props => (<Component {...props} colors={colors}/>)}
       />
     )
   } else {
     try {
       let webSesh = JSON.parse(localStorage.getItem('webSesh'));
+      if(!webSesh) return <Redirect to="/home"/>
       let cDate = new Date().getTime();
       let pDate = new Date(Number(webSesh.timeStamp)).getTime();
       
@@ -75,7 +78,7 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
             return (
               <Route
                 {...rest}
-                render={props => (<Component {...props} />)}
+                render={props => (<Component {...props} colors={colors}/>)}
               />
             )
             })
@@ -96,9 +99,9 @@ export const MainRouter = (props) => {
   return (
     <Router>
       <Switch>
-        <MyRoute exact path="/" component={Home} />
+        <MyRoute exact path="/" component={Home}/>
         <MyRoute exact path="/home" component={Home}/>
-        <MyRoute exact path="/login" component={Login} />
+        <MyRoute exact path="/login" component={Login}/>
         <ProtectedRoute exact path="/users" component={Users}/>
         <ProtectedRoute exact path="/table" component={TableView}/>
         <ProtectedRoute exact path="/map" component={MapView}/>

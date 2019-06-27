@@ -1,18 +1,11 @@
-.container{
-  height: 100vh;
-}
-
 .link, .link:hover {
   text-decoration: none;
-  color: black !important;
+  color: black;
   width: 100%;
   display: block;
   padding-left: 1rem;
   padding-bottom: .5rem;
   padding-top: .5rem;
-}
-.nav-link {
-  color: black !important;
 }
 
 .dropdown-item {

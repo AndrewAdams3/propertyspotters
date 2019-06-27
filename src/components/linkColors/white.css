@@ -1,0 +1,8 @@
+.nav-link {
+  color: white !important;
+}
+#nav {
+  position: absolute;
+  width: 100vw;
+  z-index: 1;
+}
