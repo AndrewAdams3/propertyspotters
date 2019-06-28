@@ -6,19 +6,21 @@ import AssignmentModal from './AssignmentModal';
 
 export default function UserCard({Users}){
 
-  const aClick = (id) => {
-    console.log("click", id);
+  const aClick = (user) => {
     setModalShow(true);
-    setActiveId(id);
+    setActiveUser(user);
   }
   const ListItem = ({user}) => {
     return(
       <tr>
-        <td>{user.fName}</td>
         <td>{user.lName}</td>
+        <td>{user.fName}</td>
         <td>{user.state}</td>
         <td>{user.city}</td>
-        <td style={{maxWidth:"5rem"}}><Button style={{width:"100%"}} onClick={() => aClick(user._id)}>Assignment</Button></td>
+        <td style={{maxWidth:"5rem"}}>
+          <Button style={{ width: "40%", marginRight: ".2rem" }} onClick={() => aClick(user)}>Add</Button>
+          <Button style={{ width: "40%", marginLeft: ".2rem" }} onClick={() => aClick(user)}>View</Button>
+        </td>
       </tr>
     )
   }
@@ -27,8 +29,8 @@ export default function UserCard({Users}){
     return(
       <thead>
         <tr>
-          <th>First Name</th>
           <th>Last Name</th>
+          <th>First Name</th>
           <th>State</th>
           <th>City</th>
           <th>Assignment</th>
@@ -81,19 +83,19 @@ export default function UserCard({Users}){
   }
 
   const [modalShow, setModalShow] = useState(false);
-  const [activeId, setActiveId] = useState("");
+  const [activeUser, setActiveUser] = useState();
 
   return(
     <div className="container">
-      <AssignmentModal show={modalShow} onHide={() => {setModalShow(false); setActiveId("")}} userId={activeId}/>
+      <AssignmentModal show={modalShow} onHide={() => {setModalShow(false); setActiveUser()}} user={activeUser}/>
       <div className="row">
         <div className="col-12 col-md-8">
-          <AllUserCard users={Users} />
+          <OnCLockCard users={Users} />
         </div>
       </div>
       <div className="row">
         <div className="col-12 col-md-8">
-            <OnCLockCard users={Users} />
+            <AllUserCard users={Users} />
         </div>        
       </div>
     </div>
