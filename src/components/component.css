@@ -1,5 +1,7 @@
 #nav {
-  position: absolute;
   width: 100vw;
-  z-index: 1;
+  max-width: 100%;
+}
+.nav-link {
+  color: white !important;
 }

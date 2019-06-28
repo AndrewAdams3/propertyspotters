@@ -102,6 +102,7 @@ export const MainRouter = (props) => {
         <MyRoute exact path="/" component={Home}/>
         <MyRoute exact path="/home" component={Home}/>
         <MyRoute exact path="/login" component={Login}/>
+        <ProtectedRoute exact path="/admin-home" component={Home} />
         <ProtectedRoute exact path="/users" component={Users}/>
         <ProtectedRoute exact path="/table" component={TableView}/>
         <ProtectedRoute exact path="/map" component={MapView}/>

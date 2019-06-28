@@ -93,7 +93,7 @@ const TableView = () => {
 
   return  dbs ? (
     <div>
-      <HeaderNav fixed="top"/> <br/>
+      <HeaderNav fixed="top" color={"black"}/> <br/>
       <TableT drivebys={dbs.map( (db, index) => {
         if(db.props.n <= bIndex && db.props.n >= eIndex) return db;
         else return null;

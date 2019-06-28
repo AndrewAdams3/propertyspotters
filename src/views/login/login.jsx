@@ -82,7 +82,7 @@ const Login = (props) => {
     }
   }
 
-  return toHome ? <Redirect to="/home"/> : (
+  return toHome ? <Redirect to="/admin-home"/> : (
       <div className="container rounded" style={{ backgroundColor: "white", height: "100%"}}>
         <div className="row logoRow">
           <div className="col">
