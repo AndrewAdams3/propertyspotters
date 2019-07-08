@@ -1,5 +1,24 @@
-.main {
-  position: absolute;
-  top: 5vh;
-  height: 100%;
+.mainView {
+  margin-top:13vh;
 }
+.buttonContainer {
+  width: 100%;
+  display: block;
+  margin:auto;
+}
+
+ .aModal {
+   width: 80vw !important;
+   max-width: 80vw !important;
+   max-height: 90vh !important;
+ }
+
+ .modal-content {
+   max-height: 90vh !important;
+ }
+ #contained-modal-title-vcenter{
+   text-transform: capitalize;
+ }
+ #tRow {
+   text-transform: capitalize;
+ }

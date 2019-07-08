@@ -3,6 +3,9 @@ import Table from 'react-bootstrap/Table';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import AssignmentModal from './AssignmentModal';
+import ViewAssignments from './ViewAssignments';
+
+import Axios from 'axios';
 
 export default function UserCard({Users}){
 
@@ -10,16 +13,20 @@ export default function UserCard({Users}){
     setModalShow(true);
     setActiveUser(user);
   }
+  const vClick = (user) => {
+    setViewShow(true);
+    setActiveUser(user);
+  }
   const ListItem = ({user}) => {
     return(
-      <tr>
+      <tr id="tRow">
         <td>{user.lName}</td>
         <td>{user.fName}</td>
         <td>{user.state}</td>
         <td>{user.city}</td>
-        <td style={{maxWidth:"5rem"}}>
+        <td style={{maxWidth:"5rem", textAlign: "center"}}>
           <Button style={{ width: "40%", marginRight: ".2rem" }} onClick={() => aClick(user)}>Add</Button>
-          <Button style={{ width: "40%", marginLeft: ".2rem" }} onClick={() => aClick(user)}>View</Button>
+          <Button style={{ width: "40%", marginLeft: ".2rem" }} onClick={() => vClick(user)}>View</Button>
         </td>
       </tr>
     )
@@ -66,7 +73,7 @@ export default function UserCard({Users}){
               {
                 Users.map((user, index) => {
                   return user.isOnClock ? 
-                    <ListItem user={user} />
+                    <ListItem user={user} key={user._id}/>
                   :
                     null
                 }) || 
@@ -82,19 +89,38 @@ export default function UserCard({Users}){
     )
   }
 
+  const addAssignment =(addList, date) => {
+    let ass = []
+    for(var i in addList){
+      ass[i] = {address: addList[i], completed: false};
+    }
+    Axios.post(process.env.REACT_APP_SERVER + "/data/assignments/addAssignment", {
+      assignment: ass,
+      date: date,
+      userId: activeUser._id
+    }).then(({data}) => {
+      console.log(data);
+    })
+    setModalShow(false); 
+    setActiveUser();
+  }
+  
   const [modalShow, setModalShow] = useState(false);
+  const [viewShow, setViewShow] = useState(false);
   const [activeUser, setActiveUser] = useState();
 
   return(
-    <div className="container">
-      <AssignmentModal show={modalShow} onHide={() => {setModalShow(false); setActiveUser()}} user={activeUser}/>
+    <div className="container" style={{overflow: (viewShow || modalShow) ? "hidden" : ""}}>
+      <AssignmentModal show={modalShow} onHide={() => {setModalShow(false); setActiveUser()}} addAssignment={addAssignment} user={activeUser}/>
+      <ViewAssignments show={viewShow} onHide={() => { setViewShow(false); setActiveUser() }} user={activeUser} />
+
       <div className="row">
-        <div className="col-12 col-md-8">
+        <div className="col-12 col-lg-8">
           <OnCLockCard users={Users} />
         </div>
       </div>
       <div className="row">
-        <div className="col-12 col-md-8">
+        <div className="col-12 col-lg-8">
             <AllUserCard users={Users} />
         </div>        
       </div>

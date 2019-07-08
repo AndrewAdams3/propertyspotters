@@ -1,9 +1,11 @@
 import React, {useState, useEffect} from 'react';
 
-import Map from '../../components/map/Map';
+import MyMap from '../../components/map/Map';
 import HeaderNav from '../../components/header';
 
 import { useStateValue } from '../../context/State';
+
+import './Map.css';
 
 const MapView = () => {
 
@@ -16,9 +18,9 @@ const MapView = () => {
 
   return dbs ? (
     <div style={{overflowY:"hidden"}}>
-      <HeaderNav fixed="top" />
-      <div className="container py-2" style={{marginTop: "3.65rem", maxHeight: "90vh"}}>
-        <Map data={dbs}/>
+      <HeaderNav fixed="top" color="black" />
+      <div className="container main py-2">
+        <MyMap data={dbs}/>
       </div>
     </div>
   ) :
