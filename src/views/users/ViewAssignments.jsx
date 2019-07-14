@@ -16,7 +16,6 @@ export default function AssignmentModal(props) {
     if(user)
       Axios.get(`${process.env.REACT_APP_SERVER}/data/assignments/byId/${user._id}`)
         .then(({data}) => {
-          console.log("testing", data);
           setAssignments(data);
         })
   }, [user])
@@ -24,9 +23,9 @@ export default function AssignmentModal(props) {
   const ListItem = (ass) => {
     return(
       <div style={{width: "100%"}}>
-        <h3>{ass.Date}</h3>
+        <h3>{new Date(ass.Date).toLocaleDateString()}</h3>
         {ass.Addresses.map((add) => {
-          return(<h4 className="pl-5">{add}</h4>)
+          return(<h4 className="pl-5">{add.address}</h4>)
         })}
       </div>
     )

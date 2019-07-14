@@ -4,11 +4,11 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import AssignmentModal from './AssignmentModal';
 import ViewAssignments from './ViewAssignments';
+import UserProfile from './userProfile';
 
 import Axios from 'axios';
 
-export default function UserCard({Users}){
-
+export default function UserCard({ Users, UsersOnClock}){
   const aClick = (user) => {
     setModalShow(true);
     setActiveUser(user);
@@ -17,6 +17,11 @@ export default function UserCard({Users}){
     setViewShow(true);
     setActiveUser(user);
   }
+  const pClick = (user) => {
+    setProfileShow(true);
+    setActiveUser(user);
+  }
+
   const ListItem = ({user}) => {
     return(
       <tr id="tRow">
@@ -24,9 +29,12 @@ export default function UserCard({Users}){
         <td>{user.fName}</td>
         <td>{user.state}</td>
         <td>{user.city}</td>
-        <td style={{maxWidth:"5rem", textAlign: "center"}}>
-          <Button style={{ width: "40%", marginRight: ".2rem" }} onClick={() => aClick(user)}>Add</Button>
-          <Button style={{ width: "40%", marginLeft: ".2rem" }} onClick={() => vClick(user)}>View</Button>
+        <td className="row m-auto" style={{maxWidth:"100%", textAlign: "center", border: "none"}}>
+          <Button style={{ width: "40%", margin: ".1rem" }} className="col-12 col-md-5" onClick={() => aClick(user)}>Add</Button>
+          <Button style={{ width: "40%", margin: ".1rem" }} className="col-12 col-md-5" onClick={() => vClick(user)}>View</Button>
+        </td>
+        <td style={{ maxWidth: "6rem", textAlign: "center" }}>
+          <Button style={{ maxWidth: "100%" }} onClick={() => pClick(user)}>View</Button>
         </td>
       </tr>
     )
@@ -40,20 +48,21 @@ export default function UserCard({Users}){
           <th>First Name</th>
           <th>State</th>
           <th>City</th>
-          <th>Assignment</th>
+          <th>Assignments</th>
+          <th>View Stats</th>
         </tr>
       </thead>
     )
   }
-  const AllUserCard = ({user}) => {
+  const UserCard = ({users, title}) => {
     return (
       <Card>
         <Card.Body>
-          <Card.Title>All Users</Card.Title>
-          <Table striped bordered hover>
+          <Card.Title className="text-center">{title}</Card.Title>
+          <Table striped hover responsive>
             {listHead()}
             <tbody>
-              {Users.map((user, index) => {
+              {users.map((user, index) => {
                 return <ListItem user={user} key={index} />
               })}
             </tbody>
@@ -62,33 +71,7 @@ export default function UserCard({Users}){
       </Card>
     )
   }
-  const OnCLockCard = ({ user }) => {
-    return (
-      <Card>
-        <Card.Body>
-          <Card.Title>Users On Clock</Card.Title>
-          <Table striped bordered hover>
-            {listHead()}
-            <tbody>
-              {
-                Users.map((user, index) => {
-                  return user.isOnClock ? 
-                    <ListItem user={user} key={user._id}/>
-                  :
-                    null
-                }) || 
-                <tr>
-                  <td>{"None"}</td>
-                  <td>{"Yet!"}</td>
-                </tr>
-              }
-            </tbody>
-          </Table>
-        </Card.Body>
-      </Card>
-    )
-  }
-
+  
   const addAssignment =(addList, date) => {
     let ass = []
     for(var i in addList){
@@ -107,21 +90,23 @@ export default function UserCard({Users}){
   
   const [modalShow, setModalShow] = useState(false);
   const [viewShow, setViewShow] = useState(false);
+  const [profileShow, setProfileShow] = useState(false);
   const [activeUser, setActiveUser] = useState();
 
   return(
     <div className="container" style={{overflow: (viewShow || modalShow) ? "hidden" : ""}}>
-      <AssignmentModal show={modalShow} onHide={() => {setModalShow(false); setActiveUser()}} addAssignment={addAssignment} user={activeUser}/>
-      <ViewAssignments show={viewShow} onHide={() => { setViewShow(false); setActiveUser() }} user={activeUser} />
+      <AssignmentModal show={modalShow} user={activeUser} onHide={() => {setModalShow(false); setActiveUser()}} addAssignment={addAssignment} />
+      <ViewAssignments show={viewShow} user={activeUser} onHide={() => { setViewShow(false); setActiveUser() }} />
+      <UserProfile show={profileShow} user={activeUser} onHide={() => { setProfileShow(false); setActiveUser() }} />
 
-      <div className="row">
+      <div className="row" style={{justifyContent: "center"}}>
         <div className="col-12 col-lg-8">
-          <OnCLockCard users={Users} />
+          <UserCard users={UsersOnClock} title={"On Clock"} />
         </div>
       </div>
-      <div className="row">
+      <div className="row" style={{ justifyContent: "center" }}>
         <div className="col-12 col-lg-8">
-            <AllUserCard users={Users} />
+            <UserCard users={Users} title="All Users" />
         </div>        
       </div>
     </div>

@@ -51,7 +51,7 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
       let cDate = new Date().getTime();
       let pDate = new Date(Number(webSesh.timeStamp)).getTime();
       
-      if (webSesh.lastPage && webSesh.userId && (cDate - pDate) < (60 * 60 * 1000)) {
+      if (webSesh.lastPage && webSesh.userId && (cDate - pDate) < (24 * 60 * 60 * 1000)) {
         Axios.get(process.env.REACT_APP_SERVER + "/data/users/byId/" + webSesh.userId)
           .then( async ({ data }) => {
             userDispatch({

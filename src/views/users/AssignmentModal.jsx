@@ -14,10 +14,9 @@ export default function AssignmentModal(props){
   const [enter, setEnter] = useState(false);
   const [currentAdd, setCurrentAdd] = useState("");
   const [date, setDate] = useState();
-
+  const [noDate, setNoDate] = useState(false);
 
   useEffect(() => {
-    console.log("effect",AddressList)
     return () =>{
       setAddressList([]);
       setCurrentAdd();
@@ -33,6 +32,19 @@ export default function AssignmentModal(props){
       ]);
       setCurrentAdd("");
       setEnter(false);
+    }
+  }
+
+  const validate = () => {
+    if(date){
+      setNoDate(false);
+      if (currentAdd.length > 0){
+        setEnter(true)
+      } else{
+        props.addAssignment(AddressList, date)
+      }
+    } else{
+      setNoDate(true);
     }
   }
 
@@ -53,6 +65,7 @@ export default function AssignmentModal(props){
                     <Form.Group as={Col} controlId="Date">
                       <Form.Label>Due Date</Form.Label>
                       <Form.Control type="date" placeholder="date" onChange={(e)=>setDate(e.target.value)}/>
+                      <small style={{ color: "red" }}>{noDate ? "Please Enter a Date" : ""}</small>
                     </Form.Group>
                     <Form.Group as={Col}>
                       <Form.Label>Addresses</Form.Label>
@@ -67,13 +80,13 @@ export default function AssignmentModal(props){
                         })}
                       </Form.Group>
                   </Form.Row>
-                  <Button className="mb-2" variant="success" type="button" onClick={() => currentAdd.length > 0 ? setEnter(true) : props.addAssignment(AddressList, date)}>Add Assignment</Button>
                 </Form>
               </Col>
             </Row>
           </Container>
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer style={{justifyContent: "space-around"}}>
+          <Button variant="success" type="button" onClick={validate}>Add Assignment</Button>
           <Button onClick={props.onHide}>Close</Button>
         </Modal.Footer>
       </Modal>

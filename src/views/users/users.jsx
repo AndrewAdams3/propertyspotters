@@ -9,12 +9,15 @@ import './users.css';
 const Users = ({match}) => {
 
   const [{ Users },] = useStateValue();
-  const [hasData, setHasData] = useState(true);
+  const [hasData, setHasData] = useState(false);
 
   const [users, setUsers] = useState([]);
+  const [usersOnClock, setUsersOnClock] = useState([]);
+
   useEffect( () => {
     if((Users)){
       setUsers(Users);
+      setUsersOnClock(Users.filter((user, i)=>{return user.isOnClock}))
       setHasData(true);
     } else{
       setHasData(false);
@@ -25,7 +28,7 @@ const Users = ({match}) => {
     <div>
       <HeaderNav fixed="top" color="black"/>
       <div className="container mainView">
-        <UsersCard Users={users}/>
+        <UsersCard Users={users} UsersOnClock={usersOnClock}/>
       </div>
     </div>
   ) 
