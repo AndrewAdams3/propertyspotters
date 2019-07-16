@@ -5,7 +5,6 @@ import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Axios from 'axios';
-import useWidth from '../../components/hooks/useInnerWidth';
 
 import './users.css';
 import useInnerWidth from '../../components/hooks/useInnerWidth';
