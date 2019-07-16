@@ -36,7 +36,11 @@
 }
 .profilePic { 
   image-orientation: from-image;
+  position: absolute;
+  top: 0;
+  left: 0;
   object-fit: cover;
-  height: 9rem;
-  width: 9rem;
+  height: 10rem;
+  width: 10rem;
+  transform: rotate(90deg);
 }
