@@ -22,3 +22,21 @@
  #tRow {
    text-transform: capitalize;
  }
+
+ .vl {
+  border-left: 2px solid grey;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.profilePicContainer {
+  width: 30%;
+  height: 50%;
+}
+.profilePic { 
+  image-orientation: from-image;
+  object-fit: cover;
+  height: 9rem;
+  width: 9rem;
+}
