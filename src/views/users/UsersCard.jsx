@@ -8,7 +8,13 @@ import UserProfile from './userProfile';
 
 import Axios from 'axios';
 
-export default function UserCard({ Users, UsersOnClock}){
+export default function UserCard({Users, UsersOnClock, refresh}){
+
+  const [modalShow, setModalShow] = useState(false);
+  const [viewShow, setViewShow] = useState(false);
+  const [profileShow, setProfileShow] = useState(false);
+  const [activeUser, setActiveUser] = useState();
+
   const aClick = (user) => {
     setModalShow(true);
     setActiveUser(user);
@@ -87,17 +93,18 @@ export default function UserCard({ Users, UsersOnClock}){
     setModalShow(false); 
     setActiveUser();
   }
-  
-  const [modalShow, setModalShow] = useState(false);
-  const [viewShow, setViewShow] = useState(false);
-  const [profileShow, setProfileShow] = useState(false);
-  const [activeUser, setActiveUser] = useState();
+
+  const Remove = async (user) => {
+    setActiveUser();
+    setProfileShow(false); 
+    await Axios.delete(`${process.env.REACT_APP_SERVER}/data/users/byId/${user._id}`);
+  }
 
   return(
     <div className="container" style={{overflow: (viewShow || modalShow) ? "hidden" : ""}}>
       <AssignmentModal show={modalShow} user={activeUser} onHide={() => {setModalShow(false); setActiveUser()}} addAssignment={addAssignment} />
       <ViewAssignments show={viewShow} user={activeUser} onHide={() => { setViewShow(false); setActiveUser() }} />
-      <UserProfile show={profileShow} user={activeUser} onHide={() => { setProfileShow(false); setActiveUser() }} />
+      <UserProfile show={profileShow} user={activeUser} onHide={() => { setProfileShow(false); setActiveUser() }} remove={Remove} refresh={refresh} />
 
       <div className="row" style={{justifyContent: "center"}}>
         <div className="col-12 col-lg-8">

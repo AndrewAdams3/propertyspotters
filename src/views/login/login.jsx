@@ -14,8 +14,7 @@ const Login = (props) => {
   const [, logDispatch] = useStateValue();
   const [, dbDispatch] = useStateValue();
   const [, usersDispatch] = useStateValue();
-  const [{ userId }, idDispatch] = useStateValue();
-  console.log("login id", userId);
+  const [, idDispatch] = useStateValue();
 
   var [email, setEmail] = useState("");
   var [password, setPassword] = useState("");

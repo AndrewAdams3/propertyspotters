@@ -10,7 +10,7 @@ import './users.css';
 import useInnerWidth from '../../components/hooks/useInnerWidth';
 
 export default function UserProfile(props) {
-  const { user } = props;
+  const { user, refresh, remove } = props;
   const [Assignments, setAssignments] = useState([]);
   const [DBs, setDBs] = useState([]);
   const [Times, setTimes] = useState([]);
@@ -18,7 +18,6 @@ export default function UserProfile(props) {
 
   useEffect(() => {
     if (user){
-      console.log("pic", user.profilePic);
       Axios.get(`${process.env.REACT_APP_SERVER}/data/assignments/byId/${user._id}`)
         .then(({ data }) => {
           setAssignments(data);
@@ -44,6 +43,15 @@ export default function UserProfile(props) {
     }
   }, [user])
 
+  const Remove = () => {
+    remove(user)
+      .then(refresh);
+  }
+
+  const makeAdmin = () => {
+    Axios.put(`${process.env.REACT_APP_SERVER}/data/users/makeAdmin/${user._id}`);
+  }
+
   return (user) ? (
       <Modal {...props} aria-labelledby="contained-modal-title-vcenter" dialogClassName="aModal">
         <Modal.Header closeButton>
@@ -55,41 +63,47 @@ export default function UserProfile(props) {
           <Container className="h-100 w-100">
             <Row className="h-100">
               <Col lg={9} md={9} sm={12} xs={12}>
-                <Container className="h-50">
-                  <Row className="h-100" style={{justifyContent: "space-around"}}>
-                    <div className="profilePicContainer" style={{display: width > 750 ? "block" : "none"}}>
-                      <img className="profilePic" src={`${process.env.REACT_APP_SERVER}/${user.profilePic}`} alt=""/>
-                    </div>
+                <Container className="h-100">
+                  <Row className="h-50" style={{justifyContent: "space-around"}}>
                     <div>
                       <p className="mb-0">Drivebys this month</p>
-                      <p className="m-0 text-center">5</p>
-                    </div>                    <div>
+                      <p className="m-0 text-center">{DBs.length}</p>
+                    </div>                    
+                    <div>
                       <p className="mb-0">Time clocked this period</p>
                       <p className="m-0 text-center">25 hrs</p> 
                     </div>
                   </Row>
                   <Row className="h-50 text-center" style={{alignItems: "center"}}>
-                    <Col lg={6} md={6}>
-                      <Button className="w-75">View Driveby Data</Button>
+                    <Col lg={4} md={4}>
+                      <Button className="w-75">Personal Data</Button>
                     </Col>
-                    <Col lg={6} md={6}>
-                      <Button className="w-75">View Timesheet Data</Button>
+                    <Col lg={4} md={4}>
+                      <Button className="w-75">Driveby Data</Button>
+                    </Col>
+                    <Col lg={4} md={4}>
+                      <Button className="w-75">Timesheet Data</Button>
                     </Col>
                   </Row>
                 </Container>
               </Col>
+              <Col style={{display: width > 766 ? "none" : "block"}}>
+                <Row>
+                  <hr width="100%"/>
+                </Row>
+              </Col>
               <Col lg={3} md={3} sm={12} xs={12} className="p-0" style={{height: width > 766 ? "100%" : "50%" }}>
                 <Container className="h-100 w-100 p-0">
-                  <Row className="h-100 w-100 mx-auto" style={{flexDirection: "column", justifyContent: "space-around"}}>
+                  <Row className="h-100 w-100 mx-auto" style={{flexDirection: "row"}}>
                     <div className="vl" style={width > 760 ? {display: "block", width: "100%" } : {display: "none"}} />
-                    <Col xs={2} className="mx-auto" style={{ display: "flex", justifyContent: "center", alignItems: "center", maxWidth: "100%" }}>
+                    <Col xs={2} md={12} className="mx-auto sideButtons">
                       <Button className="w-100" style={{maxWidth: "40vw"}}>Block</Button>
                     </Col>
-                    <Col xs={2} className="mx-auto" style={{ display: "flex", justifyContent: "center", alignItems: "center", maxWidth: "100%" }}>
-                      <Button className="w-100" variant="danger" style={{ maxWidth: "40vw" }}>Remove</Button>
+                    <Col xs={2} md={12} className="mx-auto sideButtons">
+                      <Button className="w-100" variant="danger" style={{ maxWidth: "40vw" }} onClick={Remove}>Remove</Button>
                     </Col>
-                    <Col xs={2} className="mx-auto" style={{ display: "flex", justifyContent: "center", alignItems: "center", maxWidth: "100%" }}>
-                      <Button className="w-100" variant="warning" style={{ maxWidth: "40vw" }}>Admin</Button>
+                    <Col xs={2} md={12} className="mx-auto sideButtons">
+                      <Button className="w-100" variant="warning" style={{ maxWidth: "40vw" }} onClick={makeAdmin}>Admin</Button>
                     </Col>
                   </Row>
                 </Container>

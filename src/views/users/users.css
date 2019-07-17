@@ -43,3 +43,10 @@
   width: 10rem;
   transform: rotate(90deg);
 }
+
+.sideButtons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+}
