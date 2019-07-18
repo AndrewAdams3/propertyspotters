@@ -22,10 +22,10 @@ export default function AssignmentModal(props) {
 
   const ListItem = (ass) => {
     return(
-      <div style={{width: "100%"}}>
+      <div style={{width: "100%"}} key={ass._id}>
         <h3>{new Date(ass.Date).toLocaleDateString()}</h3>
         {ass.Addresses.map((add) => {
-          return(<h4 className="pl-5">{add.address}</h4>)
+          return(<h4 className="pl-5" key={add._id}>{add.address}</h4>)
         })}
       </div>
     )
