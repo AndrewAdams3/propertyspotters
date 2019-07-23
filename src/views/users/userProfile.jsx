@@ -9,6 +9,9 @@ import Axios from 'axios';
 import './users.css';
 import useInnerWidth from '../../components/hooks/useInnerWidth';
 import ConfirmModal from '../../components/ConfirmModal';
+import DataPage from '../../components/DataPage';
+import TimeSheetView from './TimeSheetView';
+import DBView from './DBView';
 
 export default function UserProfile(props) {
   const { user, refresh, remove, show } = props;
@@ -17,9 +20,13 @@ export default function UserProfile(props) {
   const [Times, setTimes] = useState([]);
   const [TotalTime, setTotalTime] = useState([]);
   const [confirm, setConfirm] = useState(false);
-  const [yes, setYes] = useState(false);
   const [todo, setTodo] = useState("");
   const width = useInnerWidth();
+  const [DataShow, setDataShow] = useState(false);
+  const [DataTitle, setDataTitle] = useState("")
+  const [DataBody, setDataBody] = useState();
+
+  const MSperH = (60 * 60 * 1000);
 
   useEffect(() => {
     if (user){
@@ -37,7 +44,7 @@ export default function UserProfile(props) {
       })
       Axios.get(`${process.env.REACT_APP_SERVER}/data/times/byId/${user._id}/${100}`)
         .then(({ data }) => {
-          setTotalTime((data.reduce((total, curr) => { return total + curr.totalTime }, 0) / (60 * 60 * 1000)).toFixed(3));
+          setTotalTime((data.reduce((total, curr) => { return total + curr.totalTime }, 0) / MSperH).toFixed(3));
           setTimes(data);
         })
     }
@@ -78,39 +85,51 @@ export default function UserProfile(props) {
     }
   }
 
+  const moreData = (title, DataView, data) => {
+    setDataTitle(title);
+    setDataBody(<DataView data={data} user={user}/>);
+    setDataShow(true);
+  }
+
   return (user) ? (
     <div>
       <ConfirmModal show={confirm} close={() => setConfirm(false)} yes={doAction} no={() => setConfirm(false)}/>
+      <DataPage 
+        title={DataTitle}
+        body={DataBody}
+        onHide={()=>setDataShow(false)}
+        show={DataShow}
+      />
       <Modal show={show} aria-labelledby="contained-modal-title-vcenter" dialogClassName="aModal" onHide={props.onHide}>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             {`${user.fName}'s Profile`}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body style={{ overflowY: "auto", height: "80vh" }}>
+        <Modal.Body style={{ overflowY: "auto", maxHeight: "65vh" }}>
           <Container className="h-100 w-100">
             <Row className="h-100">
               <Col lg={9} md={9} sm={12} xs={12}>
                 <Container className="h-100">
                   <Row className="h-50" style={{justifyContent: "space-around"}}>
                     <div>
-                      <p className="mb-0">Drivebys</p>
+                      <p className="mb-0">Total Drivebys</p>
                       <p className="m-0 text-center">{DBs.length}</p>
                     </div>                    
                     <div>
-                      <p className="mb-0">Time clocked</p>
+                      <p className="mb-0">Total Time clocked</p>
                       <p className="m-0 text-center">{TotalTime} hrs</p> 
                     </div>
                   </Row>
                   <Row className="h-50 text-center" style={{alignItems: "center"}}>
                     <Col lg={4} md={4}>
-                      <Button className="w-75">Personal Data</Button>
+                      <Button className="w-75" onClick={()=>moreData("Personal Data", TimeSheetView, Times)}>Personal Data</Button>
                     </Col>
                     <Col lg={4} md={4}>
-                      <Button className="w-75">Driveby Data</Button>
+                      <Button className="w-75" onClick={()=>moreData("DriveBys", DBView, DBs)}>Driveby Data</Button>
                     </Col>
                     <Col lg={4} md={4}>
-                      <Button className="w-75">Timesheet Data</Button>
+                      <Button className="w-75" onClick={()=>moreData("TimeSheet", TimeSheetView, Times)}>Timesheet Data</Button>
                     </Col>
                   </Row>
                 </Container>

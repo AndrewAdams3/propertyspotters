@@ -50,3 +50,8 @@
   align-items: center;
   max-width: 100%;
 }
+
+.timeHeadText {
+  display: inline-block;
+  text-align: center;
+}
