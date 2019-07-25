@@ -12,6 +12,7 @@ import ConfirmModal from '../../components/ConfirmModal';
 import DataPage from '../../components/DataPage';
 import TimeSheetView from './TimeSheetView';
 import DBView from './DBView';
+import PersonalView from './PersonalView';
 
 export default function UserProfile(props) {
   const { user, refresh, remove, show } = props;
@@ -123,7 +124,7 @@ export default function UserProfile(props) {
                   </Row>
                   <Row className="h-50 text-center" style={{alignItems: "center"}}>
                     <Col lg={4} md={4}>
-                      <Button className="w-75" onClick={()=>moreData("Personal Data", TimeSheetView, Times)}>Personal Data</Button>
+                      <Button className="w-75" onClick={()=>moreData("Personal Data", PersonalView)}>Personal Data</Button>
                     </Col>
                     <Col lg={4} md={4}>
                       <Button className="w-75" onClick={()=>moreData("DriveBys", DBView, DBs)}>Driveby Data</Button>

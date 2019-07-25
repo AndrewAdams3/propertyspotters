@@ -39,8 +39,8 @@ const TimeSheetView = ({data, user}) => {
                 <th>Clock in</th>
                 <th>Clock out</th>
                 <th>Total Time</th>
-                <th>In Location</th>
-                <th>Out Location</th>
+                <th>Start Location</th>
+                <th>End Location</th>
             </tr>
             </thead>
             <tbody>
@@ -51,8 +51,8 @@ const TimeSheetView = ({data, user}) => {
                         <td>{new Date(time.startTime).toLocaleString()}</td>
                         <td>{new Date(time.endTime).toLocaleString()}</td>
                         <td>{(time.totalTime / MSperH).toFixed(3)}</td>
-                        <td>{time.startLocation}</td>
-                        <td>{time.endLocation}</td>
+                        <td style={{maxWidth: "15vw"}}>{time.startLocation}</td>
+                        <td style={{maxWidth: "15vw"}}>{time.endLocation}</td>
                     </tr>
                 )
             })}
