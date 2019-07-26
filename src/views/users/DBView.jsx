@@ -35,9 +35,9 @@ export default function DBView({data}){
     }]
     console.log("dp", dataPoints)
      return(
-        <Container>
+        <Container className="h-100 w-100">
             <LineChart 
-                width={600}
+                width={window.innerWidth / 1.5}
                 height={400}
                 data={dataPoints}
                 isDate={true}
