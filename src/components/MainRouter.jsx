@@ -6,9 +6,10 @@ import Axios from 'axios';
 import Home from '../views/home/home';
 import Users from '../views/users/users';
 import Login from '../views/login/login';
+import Signup from '../views/signup/signup';
 import TableView from '../views/Table/Table';
 import MapView from '../views/map/Map'; 
-import { Logout } from '../components/Logout';
+import Logout from '../components/Logout';
 
 import colors from '../config/colors';
 
@@ -102,6 +103,7 @@ export const MainRouter = (props) => {
         <MyRoute exact path="/" component={Home}/>
         <MyRoute exact path="/home" component={Home}/>
         <MyRoute exact path="/login" component={Login}/>
+        <MyRoute exact path="/signup" component={Signup} />
         <ProtectedRoute exact path="/admin-home" component={Home} />
         <ProtectedRoute exact path="/users" component={Users}/>
         <ProtectedRoute exact path="/table" component={TableView}/>

@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
+import ReactDOM from 'react-dom'
 import Table from 'react-bootstrap/Table';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
@@ -8,12 +9,33 @@ import UserProfile from './userProfile';
 
 import Axios from 'axios';
 
+import {useStateValue} from '../../context/State';
+import useInnerWidth from '../../components/hooks/useInnerWidth';
+
 export default function UserCard({Users, UsersOnClock, refresh}){
 
   const [modalShow, setModalShow] = useState(false);
   const [viewShow, setViewShow] = useState(false);
   const [profileShow, setProfileShow] = useState(false);
   const [activeUser, setActiveUser] = useState();
+  const meRef = useRef(null);
+  const [me, setMe] = useState(null);
+  const [{User},] = useStateValue();
+  const width = useInnerWidth();
+
+
+  useEffect(()=>{
+    console.log(ReactDOM
+      .findDOMNode(meRef.current)
+      .getBoundingClientRect()
+      )
+    setMe( meRef.current ? 
+      ReactDOM
+      .findDOMNode(meRef.current)
+      .getBoundingClientRect() : null
+    )
+  }, [width])
+
 
   const aClick = (user) => {
     setModalShow(true);
@@ -29,8 +51,9 @@ export default function UserCard({Users, UsersOnClock, refresh}){
   }
 
   const ListItem = ({user}) => {
+    
     return(
-      <tr id="tRow">
+      <tr id="tRow" ref={user._id === User._id ? meRef : null}>
         <td>{user.lName}</td>
         <td>{user.fName}</td>
         <td>{user.state}</td>
@@ -101,11 +124,12 @@ export default function UserCard({Users, UsersOnClock, refresh}){
   }
 
   return(
+    
     <div className="container" style={{overflow: (viewShow || modalShow) ? "hidden" : ""}}>
+      {me && width > 760 && <div id="me_id" style={{ top: me.top + (me.height/4), left: me.left / 2, height: me.height/2, width: me.height }}><p className="me">You -></p></div>}
       <AssignmentModal show={modalShow} user={activeUser} onHide={() => {setModalShow(false); setActiveUser()}} addAssignment={addAssignment} />
       <ViewAssignments show={viewShow} user={activeUser} onHide={() => { setViewShow(false); setActiveUser() }} />
       <UserProfile show={profileShow} user={activeUser} onHide={() => { setProfileShow(false); setActiveUser() }} remove={Remove} refresh={refresh} />
-
       <div className="row" style={{justifyContent: "center"}}>
         <div className="col-12 col-lg-8">
           <UserCard users={UsersOnClock} title={"On Clock"} />

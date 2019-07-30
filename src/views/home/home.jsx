@@ -1,11 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import HeaderNav from '../../components/header';
 import useScrollPosition from '../../components/hooks/useScrollPosition';
-//import useMousePosition from '../../components/hooks/mousePos';
 
 import './home.css';
-
-
 
 export default function Home ({colors}, ...rest) {
 

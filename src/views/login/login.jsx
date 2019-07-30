@@ -15,6 +15,7 @@ const Login = (props) => {
   const [, dbDispatch] = useStateValue();
   const [, usersDispatch] = useStateValue();
   const [, idDispatch] = useStateValue();
+  const [, UserDispatch] = useStateValue();
 
   var [email, setEmail] = useState("");
   var [password, setPassword] = useState("");
@@ -45,6 +46,10 @@ const Login = (props) => {
         dbDispatch({
           type: 'dbs',
           value: dts.d
+        })
+        UserDispatch({
+          type: 'user',
+          value: data.user
         })
         setToHome(true)
       }

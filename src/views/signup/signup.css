@@ -1,0 +1,20 @@
+#loginCard{
+  margin-left: 10vw;
+  margin-right: 10vw;
+}
+.container{
+  overflow: hidden;
+}
+.jumbotron {
+  background-color: cadetblue;
+  justify-content: center
+}
+
+.btn {
+  width: 50vh;
+}
+
+.logoRow {
+  max-height: 25vh;
+  align-content: center;
+}

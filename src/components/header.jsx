@@ -31,7 +31,7 @@ const Header = ({fixed, color, opacity}) => {
           }
           <div className="w-100"/>
           <div style={{ textAlign: "end", marginRight: "1.5rem" }}><Link className="link" to="/login" >Login</Link></div>
-          <div style={{ textAlign: "end", marginRight: "1.5rem" }}><Link className="link" to="/logout">Logout</Link></div>
+          <div style={{ textAlign: "end", marginRight: "1.5rem" }}><Link className="link" to={userId ? "/logout" : "/signup"}>{userId ? "Logout" : "Signup"}</Link></div>
         </Nav>
       </Navbar.Collapse>
     </Navbar>

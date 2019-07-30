@@ -1,23 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Redirect } from 'react-router-dom';
+import Button from 'react-bootstrap/Button';
 
-export const Logout = () => {
-
-  const [success, setSuccess] = useState(false);
+export default function Logout (props){
 
   useEffect( () => {
-    console.log("test");
-    localStorage.clear();
-    setSuccess(true);
+    localStorage.clear()
+    props.history.push('/login');
   }, [])
 
-  return success ? (
-    <Redirect to="/home"/>
-  )
-  :
-  (
-    <div>
-        <h1>loading...</h1>
-    </div>
-  )
+  return null;
 }
