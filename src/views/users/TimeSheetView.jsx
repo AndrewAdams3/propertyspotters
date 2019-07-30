@@ -7,8 +7,8 @@ const TimeSheetView = ({data, user}) => {
     const MSperH = (60 * 60 * 1000);
     const [Times, setTimes] = useState(data);
     const [Total, setTotal] = useState((data.reduce((total, curr) => { return total + curr.totalTime }, 0) / MSperH).toFixed(3))
-    const [SDate, setSDate] = useState(new Date(data[data.length-1].startTime));
-    const [EDate, setEDate] = useState(new Date(data[0].startTime));
+    const [SDate, setSDate] = useState(new Date());
+    const [EDate, setEDate] = useState(new Date());
     const didMount = useRef(false);
 
 
@@ -18,6 +18,10 @@ const TimeSheetView = ({data, user}) => {
                 .then(({data})=> {
                     if(data){ 
                         setTimes(data);
+                        if(data.length){
+                            setSDate(new Date(data[data.length-1].startTime));
+                            setEDate(new Date(data[0]))
+                        }
                         setTotal((data.reduce((total, curr) => { return total + curr.totalTime }, 0) / MSperH).toFixed(3))
                     }
                 })
