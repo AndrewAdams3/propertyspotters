@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Redirect } from 'react-router-dom';
-import Button from 'react-bootstrap/Button';
 
 export default function Logout (props){
-
   useEffect( () => {
-    localStorage.clear()
+    console.log("clear loc");
     props.history.push('/login');
+    localStorage.clear()
+    window.location.reload();
+    return(()=>{localStorage.clear()})
   }, [])
 
   return null;

@@ -31,7 +31,7 @@ const Signup = (props) => {
       email: email,
       password: pass
     }).then(async ({ data }) => {
-      if (data.loggedIn && data.admin) {
+      if (data.loggedIn && data.admin && data.verified) {
         logDispatch({
           type: 'login',
           value: true
@@ -51,6 +51,8 @@ const Signup = (props) => {
           value: dts.d
         })
         setToHome(true)
+      } else{
+
       }
     }).catch((err) => {
       console.log(err);
@@ -89,10 +91,9 @@ const Signup = (props) => {
   return toHome ? <Redirect to="/admin-home" /> : (
     <div className="container rounded" style={{ backgroundColor: "white", height: "100%" }}>
       <div className="row logoRow">
-        <div className="col">
-          {/*             <h2 class="display-5 text-center mt-4">PropertySpotters</h2> */}
-          <img className="img-fluid mx-auto d-block" src={logo} alt="logo" />
-        </div>
+        <a className="col" onClick={()=>setToHome(true)}>
+          <img className="img-fluid mx-auto d-block" src={logo} alt="logo" style={{ cursor: "pointer" }} />
+        </a>
       </div>
       <div className="row h-100">
         <form className="col col-lg-8 mx-auto border rounded pb-4">

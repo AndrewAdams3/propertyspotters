@@ -51,7 +51,7 @@ export default function UserCard({Users, UsersOnClock, refresh}){
   }
 
   const ListItem = ({user}) => {
-    
+
     return(
       <tr id="tRow" ref={user._id === User._id ? meRef : null}>
         <td>{user.lName}</td>
@@ -126,7 +126,7 @@ export default function UserCard({Users, UsersOnClock, refresh}){
   return(
     
     <div className="container" style={{overflow: (viewShow || modalShow) ? "hidden" : ""}}>
-      {me && width > 760 && <div id="me_id" style={{ top: me.top + (me.height/4), left: me.left / 2, height: me.height/2, width: me.height }}><p className="me">You -></p></div>}
+      {me && width > 768 && <div id="me_id" style={{ top: me.top + (me.height/4), left: me.left / 2, height: me.height/2, width: me.height }}><p className="me">You -></p></div>}
       <AssignmentModal show={modalShow} user={activeUser} onHide={() => {setModalShow(false); setActiveUser()}} addAssignment={addAssignment} />
       <ViewAssignments show={viewShow} user={activeUser} onHide={() => { setViewShow(false); setActiveUser() }} />
       <UserProfile show={profileShow} user={activeUser} onHide={() => { setProfileShow(false); setActiveUser() }} remove={Remove} refresh={refresh} />
