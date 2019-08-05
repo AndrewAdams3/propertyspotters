@@ -52,6 +52,8 @@ const Login = (props) => {
           value: data.user
         })
         setToHome(true)
+      } else {
+        console.log("not logged in", data);
       }
       if(!data.loggedIn){
         setInvalid(true);
