@@ -9,7 +9,7 @@ import './App.css';
 
 const App = () => {
   const initialState ={}
-  console.log("IS: ", initialState);
+  console.log("env", process.env.REACT_APP_SERVER);
   return(
     <State reducer={Reducer} initialState={initialState}>
       <MainRouter />
