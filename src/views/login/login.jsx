@@ -33,7 +33,6 @@ const Login = (props) => {
           type: 'login',
           value: true
         })
-        console.log("logged in");
         idDispatch({
           type: 'userId',
           value: data.userId
@@ -53,7 +52,6 @@ const Login = (props) => {
         })
         setToHome(true)
       } else {
-        console.log("not logged in", data);
       }
       if(!data.loggedIn){
         setInvalid(true);
