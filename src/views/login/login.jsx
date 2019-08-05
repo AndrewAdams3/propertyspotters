@@ -51,7 +51,6 @@ const Login = (props) => {
           value: data.user
         })
         setToHome(true)
-      } else {
       }
       if(!data.loggedIn){
         setInvalid(true);
