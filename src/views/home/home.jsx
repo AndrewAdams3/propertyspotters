@@ -16,7 +16,7 @@ export default function Home ({colors}, ...rest) {
             <div className="backgroundImageContainer">
               <div className="background-image"></div>
               <div className="content darken">
-                <h2 className="display-4 title">PropertySpotters</h2>
+                <h2 className="display-4 title">VaroAdmin</h2>
               </div>
             </div>        
           </div>

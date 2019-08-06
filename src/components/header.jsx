@@ -14,7 +14,7 @@ const Header = ({fixed, color, opacity}) => {
 
   return (
     <Navbar expand="lg" bg={color==="black" ? "dark" : "transparent"} fixed={fixed} id="nav" style={{zIndex:10}}>
-      <Navbar.Brand><Link className="link" to="/home">PropertySpotters</Link></Navbar.Brand>
+      <Navbar.Brand><Link className="link" to="/home">VaroAdmin</Link></Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav"/>
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto w-100">
