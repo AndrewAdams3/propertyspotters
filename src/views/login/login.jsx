@@ -24,10 +24,12 @@ const Login = (props) => {
   const [toHome, setToHome] = useState(false);
 
   const checkCredentials = (email, pass) => {
+    console.log("test", process.env.REACT_APP_SERVER + "/data/users/login")
     Axios.post(process.env.REACT_APP_SERVER + "/data/users/login", {
       email: email,
       password: pass
     }).then( async ({data}) => {
+      console.log("d", data);
       if(data.loggedIn && data.admin){
         logDispatch({
           type: 'login',
