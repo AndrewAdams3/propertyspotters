@@ -51,8 +51,6 @@ const Signup = (props) => {
           value: dts.d
         })
         setToHome(true)
-      } else{
-        setNotVerified(true);
       }
     }).catch((err) => {
       console.log(err);
@@ -66,11 +64,10 @@ const Signup = (props) => {
       admin: true
     })
     .then(({data})=>{
-      console.log("data", data);
       if(data.created === false){
         setAlready(true);
       } else{
-        console.log("logging in");
+        setNotVerified(true);
         checkCredentials(e, p)
       }
     })
@@ -78,15 +75,16 @@ const Signup = (props) => {
   }
 
   const errMessage = () => {
+    if (notVerified) {
+      return (
+        <label htmlFor="exampleInputEmail1" class="text-info">Please log in once your account has been verified</label>
+      )
+    }
     if (already) {
       return (
         <label htmlFor="exampleInputEmail1" class="text-warning">User Already Exists</label>
       )
-    } else if(notVerified){
-      return(
-        <label htmlFor="exampleInputEmail1" class="text-info">Please log in once your account has been verified</label>
-      )
-    }
+    } 
     else {
       return (
         <label htmlFor="exampleInputEmail1">{"Email address"}</label>
