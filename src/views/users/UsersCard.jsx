@@ -19,7 +19,9 @@ export default function UserCard({Users, UsersOnClock, refresh}){
   const [profileShow, setProfileShow] = useState(false);
   const [activeUser, setActiveUser] = useState();
   const meRef = useRef(null);
+  const meClock = useRef(null);
   const [me, setMe] = useState(null);
+  const [me2, setMe2] = useState(null);
   const [{User},] = useStateValue();
   const width = useInnerWidth();
 
@@ -30,6 +32,11 @@ export default function UserCard({Users, UsersOnClock, refresh}){
       ReactDOM
       .findDOMNode(meRef.current)
       .getBoundingClientRect() : null
+    )
+    setMe2(meClock.current ?
+      ReactDOM
+        .findDOMNode(meClock.current)
+        .getBoundingClientRect() : null
     )
   }, [])
 
@@ -47,10 +54,10 @@ export default function UserCard({Users, UsersOnClock, refresh}){
     setActiveUser(user);
   }
 
-  const ListItem = ({user}) => {
+  const ListItem = ({user, refVal}) => {
 
     return(
-      <tr id="tRow" ref={user._id === User._id ? meRef : null}>
+      <tr id="tRow" ref={user._id === User._id ? refVal : null}>
         <td>{user.lName}</td>
         <td>{user.fName}</td>
         <td>{user.state}</td>
@@ -80,7 +87,7 @@ export default function UserCard({Users, UsersOnClock, refresh}){
       </thead>
     )
   }
-  const UserCard = ({users, title}) => {
+  const UserCard = ({users, title, refVal}) => {
     return (
       <Card>
         <Card.Body>
@@ -89,7 +96,7 @@ export default function UserCard({Users, UsersOnClock, refresh}){
             {listHead()}
             <tbody>
               {users.map((user, index) => {
-                return <ListItem user={user} key={index} />
+                return <ListItem user={user} key={index} refVal={refVal} />
               })}
             </tbody>
           </Table>
@@ -124,17 +131,19 @@ export default function UserCard({Users, UsersOnClock, refresh}){
     
     <div className="container" style={{overflow: (viewShow || modalShow) ? "hidden" : ""}}>
       {me && width > 768 && <div id="me_id" style={{ top: me.top + (me.height/4), left: me.left / 2, height: me.height/2, width: me.height }}><p className="me">You -></p></div>}
+      {me2 && width > 768 && <div id="me_id" style={{ top: me2.top + (me2.height / 4), left: me2.left / 2, height: me2.height / 2, width: me2.height }}><p className="me">You -></p></div>}
+
       <AssignmentModal show={modalShow} user={activeUser} onHide={() => {setModalShow(false); setActiveUser()}} addAssignment={addAssignment} />
       <ViewAssignments show={viewShow} user={activeUser} onHide={() => { setViewShow(false); setActiveUser() }} />
       <UserProfile show={profileShow} user={activeUser} onHide={() => { setProfileShow(false); setActiveUser() }} remove={Remove} refresh={refresh} />
       <div className="row" style={{justifyContent: "center"}}>
         <div className="col-12 col-lg-8">
-          <UserCard users={UsersOnClock} title={"On Clock"} />
+          <UserCard users={UsersOnClock} title={"On Clock"} refVal={meClock} />
         </div>
       </div>
       <div className="row" style={{ justifyContent: "center" }}>
         <div className="col-12 col-lg-8">
-            <UserCard users={Users} title="All Users" />
+          <UserCard users={Users} title="All Users" refVal={meRef} />
         </div>        
       </div>
     </div>
