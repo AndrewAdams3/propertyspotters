@@ -95,7 +95,7 @@ const Signup = (props) => {
   }
 
   return toHome ? <Redirect to="/admin-home" /> : (
-    <div className="container rounded" style={{ backgroundColor: "white", height: "100%" }}>
+    <div className="container rounded" style={{ backgroundColor: "white", height: "100%" }} onKeyPress={(event) => {if (event.key === "Enter" && email.length && password.length) try_signup(email, password)}}>
       <div className="row logoRow">
         <a className="col" href="#" onClick={()=>setToHome(true)}>
           <img className="img-fluid mx-auto d-block" src={logo} alt="logo" style={{ cursor: "pointer" }} />
