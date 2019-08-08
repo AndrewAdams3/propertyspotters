@@ -18,8 +18,9 @@
   left: 0;
   top: 0;
   margin-top: 20%;
+  margin-bottom: auto;
   margin-left: auto;
-  height: 20vh;
+  height: auto !important;
 }
 
 .modal.show .modal-dialog{

@@ -8,6 +8,7 @@ export default function({show, close, no, yes}){
       <Modal.Header>
         <Modal.Title id="contained-modal-title-vcenter">Are you sure?</Modal.Title>
       </Modal.Header>
+{/*       <Modal.Body style={{height:0}}></Modal.Body> */}
       <Modal.Footer>
         <Button onClick={yes}>Yes</Button>
         <Button onClick={no}>No</Button>
