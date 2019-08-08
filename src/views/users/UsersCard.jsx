@@ -25,16 +25,13 @@ export default function UserCard({Users, UsersOnClock, refresh}){
 
 
   useEffect(()=>{
-    console.log(ReactDOM
-      .findDOMNode(meRef.current)
-      .getBoundingClientRect()
-      )
+    window.scrollTo(0,0);
     setMe( meRef.current ? 
       ReactDOM
       .findDOMNode(meRef.current)
       .getBoundingClientRect() : null
     )
-  }, [width])
+  }, [])
 
 
   const aClick = (user) => {
