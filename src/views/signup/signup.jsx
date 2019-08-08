@@ -20,6 +20,7 @@ const Signup = (props) => {
   var [password, setPassword] = useState("");
   var [already, setAlready] = useState(false);
   const [toHome, setToHome] = useState(false);
+  const [notVerified, setNotVerified] = useState(false);
 
 
   const handleChange = (event, callback) => {
@@ -31,12 +32,11 @@ const Signup = (props) => {
       email: email,
       password: pass
     }).then(async ({ data }) => {
-      if (data.loggedIn && data.admin && data.verified) {
+      if (data.admin && data.verified) {
         logDispatch({
           type: 'login',
           value: true
         })
-        console.log("logged in");
         idDispatch({
           type: 'userId',
           value: data.userId
@@ -52,7 +52,7 @@ const Signup = (props) => {
         })
         setToHome(true)
       } else{
-
+        setNotVerified(true);
       }
     }).catch((err) => {
       console.log(err);
@@ -66,10 +66,12 @@ const Signup = (props) => {
       admin: true
     })
     .then(({data})=>{
+      console.log("data", data);
       if(data.created === false){
         setAlready(true);
       } else{
-      checkCredentials(e, p)
+        console.log("logging in");
+        checkCredentials(e, p)
       }
     })
     .catch((err)=>console.error(err))
@@ -79,6 +81,10 @@ const Signup = (props) => {
     if (already) {
       return (
         <label htmlFor="exampleInputEmail1" class="text-warning">User Already Exists</label>
+      )
+    } else if(notVerified){
+      return(
+        <label htmlFor="exampleInputEmail1" class="text-info">Please log in once your account has been verified</label>
       )
     }
     else {
@@ -91,7 +97,7 @@ const Signup = (props) => {
   return toHome ? <Redirect to="/admin-home" /> : (
     <div className="container rounded" style={{ backgroundColor: "white", height: "100%" }}>
       <div className="row logoRow">
-        <a className="col" onClick={()=>setToHome(true)}>
+        <a className="col" href="#" onClick={()=>setToHome(true)}>
           <img className="img-fluid mx-auto d-block" src={logo} alt="logo" style={{ cursor: "pointer" }} />
         </a>
       </div>

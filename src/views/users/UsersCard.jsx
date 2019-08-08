@@ -78,7 +78,7 @@ export default function UserCard({Users, UsersOnClock, refresh}){
           <th>State</th>
           <th>City</th>
           <th>Assignments</th>
-          <th>View Stats</th>
+          <th>View Profile</th>
         </tr>
       </thead>
     )
