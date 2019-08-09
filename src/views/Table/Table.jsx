@@ -11,7 +11,7 @@ const ListItem = ({db, n}) => {
   return(
     <tr>
       <td>{n + 1}</td>
-      <td>{db.date}</td>
+      <td>{new Date(db.date).toLocaleDateString()}</td>
       <td style={{maxWidth: "15vw"}}>{db.address}</td>
       <td>{<a href={db.picturePath} target="_blank" rel="noopener noreferrer">Link</a>}</td>
       <td>{db.type}</td>

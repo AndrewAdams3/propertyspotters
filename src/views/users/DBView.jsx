@@ -24,8 +24,9 @@ export default function DBView({data}){
     const points = dates.map((dt, i)=>{
         const d = new Date(dt.date);
         return{
-            x: `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`,
-            y: dt.num
+            x: `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`,
+            y: dt.num,
+            date: d
         }
     })
 
@@ -47,7 +48,7 @@ export default function DBView({data}){
                 yMin="0"
                 interpolate="linear"
                 margins={{top: 0, right: 0, bottom: 0, left: 0}}
-                onPointHover={(obj) => `Date: ${new Date(obj.x).toLocaleDateString()}<br />Number: ${obj.y}`}
+                onPointHover={(obj) => `Date: ${new Date(obj.date).toLocaleDateString()}<br />Number: ${obj.y}`}
             />
         </Container>
     )
