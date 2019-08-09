@@ -25,6 +25,8 @@ const Signup = (props) => {
 
 
   const handleChange = (event, callback) => {
+    setAlready(false);
+    setNotVerified(false);
     callback(event.target.value);
   }
 
@@ -60,37 +62,38 @@ const Signup = (props) => {
   }
 
   const try_signup = (e, p) => {
-    console.log("signing");
-    Axios.post(`${process.env.REACT_APP_SERVER}/data/users/signup`, {
-      email: e,
-      password: p,
-      admin: true
-    })
-    .then(({data})=>{
-      console.log("dts", data)
-      if(data.created === false){
-        setAlready(true);
-      } else{
-        console.log("check not ver");
-        setNotVerified(true);
-        checkCredentials(e, p)
-      }
-    })
-    .catch((err)=>console.log("error: ", err))
+    if(e.length && p.length)
+      Axios.post(`${process.env.REACT_APP_SERVER}/data/users/signup`,
+        {
+          email: e,
+          password: p,
+          admin: true
+        }
+      ).then(({data})=>{
+        console.log("dts", data);
+        if(data.created === false){
+          setAlready(true);
+          return;
+        } else{
+          checkCredentials(e, p);
+          setNotVerified(true);
+        }
+      })
+      .catch((err)=>console.log("error: ", err))
+      setNotVerified(true);
   }
 
   const errMessage = () => {
-    console.log("err");
-    if (notVerified) {
-      return (
-        <label htmlFor="exampleInputEmail1" class="text-info">Please log in once your account has been verified</label>
-      )
-    }
-    else if (already) {
+    if (already) {
       return (
         <label htmlFor="exampleInputEmail1" class="text-warning">User Already Exists</label>
       )
     } 
+    else if (notVerified) {
+      return (
+        <label htmlFor="exampleInputEmail1" class="text-info">Please log in once your account has been verified</label>
+      )
+    }
     else return (
       <label htmlFor="exampleInputEmail1">{"Email address"}</label>
     )
