@@ -22,6 +22,7 @@ const Login = (props) => {
   var [invalid, setInvalid] = useState(false);
   var [notAdmin, setNotAdmin] = useState(false);
   const [toHome, setToHome] = useState(false);
+  const [toAdminHome, setToAdminHome] = useState(false);
 
   const checkCredentials = (email, pass) => {
     console.log("test", process.env.REACT_APP_SERVER + "/data/users/login")
@@ -53,7 +54,7 @@ const Login = (props) => {
           type: 'user',
           value: data.user
         })
-        setToHome(true)
+        setToAdminHome(true)
       }
       if(!data.loggedIn){
         setInvalid(true);
@@ -88,7 +89,7 @@ const Login = (props) => {
     }
   }
 
-  return toHome ? <Redirect to="/admin-home"/> : (
+  return toAdminHome ? <Redirect to="/admin-home"/> : toHome ? <Redirect to="/home" /> : (
     <div className="container rounded" style={{ backgroundColor: "white", height: "100%" }} onKeyPress={(event) => { if (event.key === "Enter") checkCredentials(email, password) }}>
         <div className="row logoRow">
           <a className="col" onClick={()=> setToHome(true)}>

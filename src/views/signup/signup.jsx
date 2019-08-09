@@ -20,6 +20,7 @@ const Signup = (props) => {
   var [password, setPassword] = useState("");
   var [already, setAlready] = useState(false);
   const [toHome, setToHome] = useState(false);
+  const [toAdminHome, setToAdminHome] = useState(false);
   const [notVerified, setNotVerified] = useState(false);
 
 
@@ -28,6 +29,7 @@ const Signup = (props) => {
   }
 
   const checkCredentials = (email, pass) => {
+    console.log('cred');
     Axios.post(process.env.REACT_APP_SERVER + "/data/users/login", {
       email: email,
       password: pass
@@ -50,7 +52,7 @@ const Signup = (props) => {
           type: 'dbs',
           value: dts.d
         })
-        setToHome(true)
+        setToAdminHome(true)
       }
     }).catch((err) => {
       console.log(err);
@@ -58,44 +60,46 @@ const Signup = (props) => {
   }
 
   const try_signup = (e, p) => {
+    console.log("signing");
     Axios.post(`${process.env.REACT_APP_SERVER}/data/users/signup`, {
       email: e,
       password: p,
       admin: true
     })
     .then(({data})=>{
+      console.log("dts", data)
       if(data.created === false){
         setAlready(true);
       } else{
+        console.log("check not ver");
         setNotVerified(true);
         checkCredentials(e, p)
       }
     })
-    .catch((err)=>console.error(err))
+    .catch((err)=>console.log("error: ", err))
   }
 
   const errMessage = () => {
+    console.log("err");
     if (notVerified) {
       return (
         <label htmlFor="exampleInputEmail1" class="text-info">Please log in once your account has been verified</label>
       )
     }
-    if (already) {
+    else if (already) {
       return (
         <label htmlFor="exampleInputEmail1" class="text-warning">User Already Exists</label>
       )
     } 
-    else {
-      return (
-        <label htmlFor="exampleInputEmail1">{"Email address"}</label>
-      )
-    }
+    else return (
+      <label htmlFor="exampleInputEmail1">{"Email address"}</label>
+    )
   }
 
-  return toHome ? <Redirect to="/admin-home" /> : (
+  return toHome ? <Redirect to="/admin-home" /> : toAdminHome ? <Redirect to="/home"/> : (
     <div className="container rounded" style={{ backgroundColor: "white", height: "100%" }} onKeyPress={(event) => {if (event.key === "Enter" && email.length && password.length) try_signup(email, password)}}>
       <div className="row logoRow">
-        <a className="col" href="#" onClick={()=>setToHome(true)}>
+        <a className="col" onClick={()=>setToHome(true)}>
           <img className="img-fluid mx-auto d-block" src={logo} alt="logo" style={{ cursor: "pointer" }} />
         </a>
       </div>
