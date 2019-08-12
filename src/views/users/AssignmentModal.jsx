@@ -11,15 +11,17 @@ import './users.css';
 export default function AssignmentModal(props){
   const { user } = props;
   const [AddressList, setAddressList] = useState([]);
-  const [enter, setEnter] = useState(false);
+  const [enterAdd, setEnterAdd] = useState(false);
+  const [enterBatch, setEnterBatch] = useState(false);
   const [currentAdd, setCurrentAdd] = useState("");
   const [date, setDate] = useState();
   const [noDate, setNoDate] = useState(false);
+  const [currentBatch, setCurrentBatch] = useState("");
 
   useEffect(() => {
     return () =>{
       setAddressList([]);
-      setCurrentAdd();
+      setCurrentAdd("");
       setDate();
     }
   },[user])
@@ -31,16 +33,33 @@ export default function AssignmentModal(props){
         currentAdd
       ]);
       setCurrentAdd("");
-      setEnter(false);
+      setEnterAdd(false);
+    }
+  }
+
+  const newBatchAdd = (e) => {
+    if (e.key === "Enter") {
+      let addList = currentBatch.split(/(\d{3,6}\D{3,})/);
+      let filtered = addList.filter((add)=>{
+        return add != "";
+      })
+      setAddressList([
+        ...AddressList,
+        ...filtered
+      ]);
+      setCurrentBatch("");
+      setEnterBatch(false);
     }
   }
 
   const validate = () => {
     if(date){
       setNoDate(false);
-      if (currentAdd.length > 0){
-        setEnter(true)
-      } else{
+      if (currentAdd.length){
+        setEnterAdd(true);
+      } else if(currentBatch.length){
+        setEnterBatch(true);
+      }else{
         props.addAssignment(AddressList, date)
       }
     } else{
@@ -68,9 +87,14 @@ export default function AssignmentModal(props){
                       <small style={{ color: "red" }}>{noDate ? "Please Enter a Date" : ""}</small>
                     </Form.Group>
                     <Form.Group as={Col}>
-                      <Form.Label>Addresses</Form.Label>
-                      <Form.Control placeholder="address" value={currentAdd} onChange={(e) => setCurrentAdd(e.target.value)} onKeyPress={(e)=>{newAdd(e)}}/>
-                      <small style={{color: "red"}}>{enter ? "Please Press Enter" : ""}</small>
+                      <Form.Label>Single Address</Form.Label>
+                      <Form.Control placeholder="123 n fake st" value={currentAdd} onChange={(e) => setCurrentAdd(e.target.value)} onKeyPress={(e)=>{newAdd(e)}}/>
+                      <small style={{color: "red"}}>{enterAdd ? "Please Press Enter" : ""}</small>
+                    </Form.Group>
+                    <Form.Group as={Col}>
+                      <Form.Label>Batch Addresses</Form.Label>
+                      <Form.Control placeholder="123 n fake st 321 w real ave ..." value={currentBatch} onChange={(e) => setCurrentBatch(e.target.value)} onKeyPress={(e) => { newBatchAdd(e) }} />
+                      <small style={{ color: "red" }}>{enterBatch ? "Please Press Enter" : ""}</small>
                     </Form.Group>
                     </Form.Row>
                     <Form.Row>
