@@ -6,11 +6,15 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Axios from 'axios';
 
+import Dropdown from '../../components/Dropdown';
+
 import './users.css';
 
 export default function AssignmentModal(props) {
   const { user } = props;
   const [Assignments, setAssignments] = useState([]);
+  const [openAll, setOpenAll] = useState(false);
+  const [refresh ,setRefresh] = useState(false);
 
   useEffect(() => {
     if(user)
@@ -19,17 +23,6 @@ export default function AssignmentModal(props) {
           setAssignments(data);
         })
   }, [user])
-
-  const ListItem = (ass) => {
-    return(
-      <div style={{width: "100%"}} key={ass._id}>
-        <h3>{new Date(ass.Date).toLocaleDateString()}</h3>
-        {ass.Addresses.map((add) => {
-          return(<h4 className="pl-5" key={add._id}>{add.address}</h4>)
-        })}
-      </div>
-    )
-  }
 
   return (user) ? (
     <div>
@@ -41,10 +34,20 @@ export default function AssignmentModal(props) {
         </Modal.Header>
         <Modal.Body style={{ overflowY: 'auto', maxHeight: "80vh" }}>
           <Container>
-            <Row className="show-grid">
-              <Col>
+            <Row>
+              <Col className="pt-2">
+                <Button style={{ width: "40%" }} onClick={() => { setOpenAll(true); setRefresh(!refresh) }}>Open All</Button>
+                <Button style={{ width: "40%", position: "absolute", left: "60%" }} onClick={() => { setOpenAll(false); setRefresh(!refresh) }}>Close All</Button>
+              </Col>
+            </Row>
+            <Row className="show-grid mt-3 mx-auto">
+              <Col className="mx-auto">
                 {Assignments.map((ass) => {
-                  return ListItem(ass)
+                  let addList = []
+                  ass.Addresses.map((add, i)=>{
+                    addList.push(add);
+                  });
+                  return <Dropdown title={new Date(ass.Date).toLocaleDateString()} list={addList} openState={openAll} complete={ass.completed} refresh={refresh} containerStyle={{width:"50%", marginRight: "auto", marginLeft: "auto"}}/>
                 })}
               </Col>
             </Row>
