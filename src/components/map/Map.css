@@ -5,14 +5,10 @@
   margin: 5px;
 }
 
-.bg {
-  max-width: 300px;
-  max-height: 200px;
-}
-
 .img{
   image-orientation: from-image;
-  height: 300px;
+  max-width: 80%;
+  height: auto;
   max-width: -moz-available !important;
   resize: block;
 }

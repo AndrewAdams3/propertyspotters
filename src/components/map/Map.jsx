@@ -15,7 +15,8 @@ const MyMap = compose(
   }),
   withHandlers({
     onMarkerClustererClick: () => (markerClusterer) => {
-      const clickedMarkers = markerClusterer.getMarkers()
+      const clickedMarkers = markerClusterer.getMarkers();
+      console.log(clickedMarkers);
     },
   }),
   withScriptjs,
@@ -29,7 +30,7 @@ const MyMap = compose(
         averageCenter
         enableRetinaIcons
         gridSize={60}
-        minimumClusterSize={3}
+        minimumClusterSize={5}
       >
         {
           data.map((home, index) => {
@@ -61,14 +62,15 @@ const MarkerWithInfoWindow = ({position, home, id}) => {
       onMouseOut={onMouseOut}>
 
       {(isOpen || isHover) &&
-        <InfoWindow onCloseClick={onToggleOpen}>
+        <InfoWindow onCloseClick={onToggleOpen} style={{width: 500, height: 500}}>
           <div className="window">
+            <div className="info">
+              <p style={{ textAlign: "center" }}>{home["address"]}</p>
+              <p style={{ textAlign: "center" }}>{"Found " + (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear()}</p>
+            </div>
+            <hr style={{ backgroundColor: "black" }} />
             <div className="bg">
               <img className="img" src={home["picturePath"]} alt="pic" />
-            </div>
-            <div className="info">
-              <p>{home["address"]}</p>
-              <p>{"Found " + (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear()}</p>
             </div>
           </div>
         </InfoWindow>}
