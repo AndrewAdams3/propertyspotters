@@ -37,19 +37,17 @@ export default function AssignmentModal(props){
     }
   }
 
-  const newBatchAdd = (e) => {
-    if (e.key === "Enter") {
-      let addList = currentBatch.split(/(\d{3,6}\D{3,})/);
-      let filtered = addList.filter((add)=>{
-        return add != "";
-      })
-      setAddressList([
-        ...AddressList,
-        ...filtered
-      ]);
-      setCurrentBatch("");
-      setEnterBatch(false);
-    }
+  const newBatchAdd = () => {
+    let addList = currentBatch.split(/(\d{3,6}\D{3,})/);
+    let filtered = addList.filter((add)=>{
+      return add != "";
+    })
+    setAddressList([
+      ...AddressList,
+      ...filtered
+    ]);
+    setCurrentBatch("");
+    setEnterBatch(false);
   }
 
   const validate = () => {
@@ -93,8 +91,9 @@ export default function AssignmentModal(props){
                     </Form.Group>
                     <Form.Group as={Col}>
                       <Form.Label>Batch Addresses</Form.Label>
-                      <Form.Control placeholder="123 n fake st 321 w real ave ..." value={currentBatch} onChange={(e) => setCurrentBatch(e.target.value)} onKeyPress={(e) => { newBatchAdd(e) }} />
-                      <small style={{ color: "red" }}>{enterBatch ? "Please Press Enter" : ""}</small>
+                      <Form.Control as="textarea" placeholder="123 n fake st 321 w real ave ..." value={currentBatch} onChange={(e) => setCurrentBatch(e.target.value)} />
+                      <small style={{ color: "red", height: ".5rem" }}>{enterBatch ? "Please Add Addresses" : ""}</small>
+                      <Button onClick={newBatchAdd} style={{marginTop: ".5rem", width: "10rem"}}>Add Addresses</Button>
                     </Form.Group>
                     </Form.Row>
                     <Form.Row>

@@ -63,14 +63,14 @@ const MarkerWithInfoWindow = ({position, home, id}) => {
 
       {(isOpen || isHover) &&
         <InfoWindow onCloseClick={onToggleOpen} style={{width: 500, height: 500}}>
-          <div className="window">
+          <div className="window" style={{height: "250px", width: "250px", maxHeight: "300px", maxWidth: "300px"}}>
             <div className="info">
               <p style={{ textAlign: "center" }}>{home["address"]}</p>
               <p style={{ textAlign: "center" }}>{"Found " + (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear()}</p>
             </div>
             <hr style={{ backgroundColor: "black" }} />
             <div className="bg">
-              <img className="img" src={home["picturePath"]} alt="pic" />
+            <img style={{ transform: "rotate(90deg)", height: "200px", width: "250px"}} src={home["picturePath"]} alt="pic" />
             </div>
           </div>
         </InfoWindow>}

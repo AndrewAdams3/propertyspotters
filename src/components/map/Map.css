@@ -1,18 +1,11 @@
 .window {
-  max-height: 200px;
-  max-width: 300px;
   font-size: 14px;
   margin: 5px;
 }
 
-.img{
-  image-orientation: from-image;
-  max-width: 80%;
-  height: auto;
-  max-width: -moz-available !important;
-  resize: block;
-}
-
 .info {
   color: black;
+}
+.gm-style .gm-style-iw-d {
+  overflow-x: hidden;
 }
