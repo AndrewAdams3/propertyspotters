@@ -9,3 +9,39 @@
 .gm-style .gm-style-iw-d {
   overflow-x: hidden;
 }
+
+.windowContainer {
+  font-size: 14px;
+  margin: 5px;
+  max-width: 400px;
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+}
+.windowContainer::-webkit-scrollbar { /* WebKit */
+    width: 0;
+    height: 0;
+}
+
+.rotate {
+  position: absolute;
+  height: 1.5rem;
+  width: 1.5rem;
+  right: 17%;
+  top: 16%;
+  border-style: solid;
+  border-width: .1rem;
+  border: black;
+  z-index: 2;
+}
+
+.imageContainer {
+  justify-content: center;
+  display: flex;
+  margin-top: -50px;
+  height: 10rem;
+}
+
+.rotateContainer {
+  
+}

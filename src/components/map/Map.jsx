@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import ReactDOM from 'react-dom'
 import { compose, withProps, withHandlers } from 'recompose'
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from 'react-google-maps'
 import { default as MarkerClusterer } from "react-google-maps/lib/components/addons/MarkerClusterer";
@@ -47,7 +48,22 @@ const MyMap = compose(
 const MarkerWithInfoWindow = ({position, home, id}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isHover, setIsHover] = useState(false);
+  const [rotation, setRotation] = useState(90);
+  const [horizontal, setHorizontal] = useState(false)
+  const imgRef = useRef(null);
   const [date,] = useState(new Date(home["date"]));
+
+  useEffect(()=>{
+    let bounds = imgRef.current ? ReactDOM
+      .findDOMNode(imgRef.current)
+      .getBoundingClientRect() : null
+    if(bounds){
+      if(bounds.bottom - bounds.top > bounds.right - bounds.left){
+        setHorizontal(false)
+      } else setHorizontal(true);
+    }
+    console.log("size", bounds);
+  }, [rotation])
 
   const onToggleOpen = () => { setIsOpen(!isOpen);}
   const onMouseover = () => { if (!isOpen) setIsHover(false);}
@@ -63,14 +79,17 @@ const MarkerWithInfoWindow = ({position, home, id}) => {
 
       {(isOpen || isHover) &&
         <InfoWindow onCloseClick={onToggleOpen} style={{width: 500, height: 500}}>
-          <div className="window" style={{height: "250px", width: "250px", maxHeight: "300px", maxWidth: "300px"}}>
+          <div className="windowContainer" style={{height: horizontal ? 300 : 500}}>
+            <div className="rotateContainer">
+              <img className="rotate border border-dark rounded" src="../../rotate.png" onClick={()=>{setRotation(rotation + 90)}}/>
+            </div>
             <div className="info">
               <p style={{ textAlign: "center" }}>{home["address"]}</p>
               <p style={{ textAlign: "center" }}>{"Found " + (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear()}</p>
             </div>
             <hr style={{ backgroundColor: "black" }} />
-            <div className="bg">
-            <img style={{ transform: "rotate(90deg)", height: "200px", width: "250px"}} src={home["picturePath"]} alt="pic" />
+            <div className="imageContainer" style={{justifyContent:"center", marginTop: horizontal ? 0 : "8rem"}}>
+              <img ref={imgRef} style={{ transform: `rotate(${rotation}deg)`, borderStyle: "solid", borderColor: "black", borderWidth: ".1rem" }} src={home["picturePath"]} alt="pic" />
             </div>
           </div>
         </InfoWindow>}
