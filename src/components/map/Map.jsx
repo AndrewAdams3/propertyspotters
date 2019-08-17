@@ -17,33 +17,72 @@ const MyMap = compose(
   withHandlers({
     onMarkerClustererClick: () => (markerClusterer) => {
       const clickedMarkers = markerClusterer.getMarkers();
-      console.log(clickedMarkers);
+      if(markerClusterer.markerClusterer_.map.zoom >= 18){
+        return {max: true, markers: clickedMarkers}
+      } else return {max: false, markers: []}
     },
   }),
   withScriptjs,
   withGoogleMap,
-)(({data, onMarkerClustererClick}) =>
-  <GoogleMap
+)(({data, onMarkerClustererClick}) =>{
+  const [res, setRes] = useState([]);
+  const [clickData, setClickData] = useState([])
+  let markers = data.map((home, index) => {
+    if (home["latitude"] !== 0) {
+      return <MarkerWithInfoWindow position={new google.maps.LatLng(home["latitude"], home["longitude"])} home={home} key={home["_id"]} />
+    }
+    return null;
+  })
+  return(
+    <>
+    <GoogleMap
       defaultZoom={13}
-      defaultCenter={{lat: 36.3079945, lng: -119.3231157}}>
+      defaultCenter={{lat: 36.3079945, lng: -119.3231157}}
+      options={{maxZoom: 18}}>
       <MarkerClusterer
-        onClick={onMarkerClustererClick}
+        onClick={(e)=>setRes(res.max ? false : onMarkerClustererClick(e))}
         averageCenter
         enableRetinaIcons
         gridSize={60}
-        minimumClusterSize={5}
+        minimumClusterSize={3}
       >
         {
-          data.map((home, index) => {
-            if (home["latitude"] !== 0) {
-              return <MarkerWithInfoWindow position={new google.maps.LatLng(home["latitude"], home["longitude"])} home={home} key={home["_id"]} />
-            }
-            return null;
-          })
+          markers
         }
+          {res.max &&
+            <ClusterInfo homes={markers.filter((marker)=>{
+              let found = false
+              console.log("pos: ", marker.getPosition())
+              console.log("res", res.markers[0].position.lat, "mark", marker.props.position.lat)
+              for(let i = 0; i < res.markers.length; i++){
+                if (res.markers[i].position.lat === marker.props.position.lat && res.markers[i].position.lon === marker.props.position.lon){
+                  found = true;
+                  break;
+                }
+              }
+              return found;
+            })}/>
+          }
       </MarkerClusterer>
     </GoogleMap> 
-);
+    </>
+  )
+});
+
+const ClusterInfo = ({homes}) => {
+  console.log("homes: ", homes);
+  return(
+    <div className="clusterInfo">
+      {
+        homes.map((home)=>{
+          return(
+            <h3>{new Date(home.date).toLocaleDateString()}</h3>
+          )
+        })
+      }
+    </div>
+  )
+}
 
 const MarkerWithInfoWindow = ({position, home, id}) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,7 +91,7 @@ const MarkerWithInfoWindow = ({position, home, id}) => {
   const [horizontal, setHorizontal] = useState(false)
   const imgRef = useRef(null);
   const [date,] = useState(new Date(home["date"]));
-
+  
   useEffect(()=>{
     let bounds = imgRef.current ? ReactDOM
       .findDOMNode(imgRef.current)
@@ -68,7 +107,6 @@ const MarkerWithInfoWindow = ({position, home, id}) => {
   const onToggleOpen = () => { setIsOpen(!isOpen);}
   const onMouseover = () => { if (!isOpen) setIsHover(false);}
   const onMouseOut = () => { if (!isOpen) setIsHover(false)}
-
   return (
     <Marker
       key={id}

@@ -42,6 +42,12 @@
   height: 10rem;
 }
 
-.rotateContainer {
-  
+.clusterInfo {
+  position: absolute;
+  top: 12%;
+  right: 0;
+  z-index: 5;
+  height: 88%;
+  width: 17rem;
+  background-color: green;
 }
