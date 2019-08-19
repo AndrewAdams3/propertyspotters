@@ -127,7 +127,7 @@ const MarkerWithInfoWindow = ({position, home, id}) => {
             </div>
             <hr style={{ backgroundColor: "black" }} />
             <div className="imageContainer" style={{justifyContent:"center", marginTop: horizontal ? 0 : "8rem"}}>
-              <img ref={imgRef} style={{ transform: `rotate(${rotation}deg)`, borderStyle: "solid", borderColor: "black", borderWidth: ".1rem" }} src={home["picturePath"]} alt="pic" />
+              <img ref={imgRef} className="image" style={{ transform: `rotate(${rotation}deg)`, borderStyle: "solid", borderColor: "black", borderWidth: ".1rem" }} src={home["picturePath"]} alt="pic" />
             </div>
           </div>
         </InfoWindow>}
