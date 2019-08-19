@@ -13,7 +13,8 @@
 .windowContainer {
   font-size: 14px;
   margin: 5px;
-  max-width: 400px;
+  height: 400px;
+  width: 350px;
 }
 
 .rotate {
