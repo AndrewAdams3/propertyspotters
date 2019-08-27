@@ -127,6 +127,7 @@ export default function UserCard({Users, UsersOnClock, refresh}){
     await Axios.delete(`${process.env.REACT_APP_SERVER}/data/users/byId/${user._id}`);
   }
 
+
   return(
     
     <div className="container" style={{overflow: (viewShow || modalShow) ? "hidden" : ""}}>
@@ -146,6 +147,6 @@ export default function UserCard({Users, UsersOnClock, refresh}){
           <UserCard users={Users} title="All Users" refVal={meRef} />
         </div>        
       </div>
-    </div>
+      </div>
   )
 }

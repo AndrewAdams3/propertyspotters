@@ -23,6 +23,7 @@ const Header = ({fixed, color, opacity}) => {
                 <NavDropdown title="DriveBys" className="my-auto ml-auto" style={{ marginRight: "1.5rem"}} id="ddTitle">
                   <Link className="link" to="/table" style={{ color: "black" }}>Table View</Link>
                   <Link className="link" to="/map" style={{ color: "black" }}>Map View</Link>
+                  <Link className="link" to="/chart" style={{color: "black"}}>Chart View</Link>
                 </NavDropdown>
           }
           {

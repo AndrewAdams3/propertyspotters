@@ -8,6 +8,7 @@ import Users from '../views/users/users';
 import Login from '../views/login/login';
 import Signup from '../views/signup/signup';
 import TableView from '../views/Table/Table';
+import ChartView from '../views/chart/ChartView';
 import MapView from '../views/map/Map'; 
 import Logout from '../components/Logout';
 
@@ -107,6 +108,7 @@ export const MainRouter = (props) => {
         <ProtectedRoute exact path="/admin-home" component={Home} />
         <ProtectedRoute exact path="/users" component={Users}/>
         <ProtectedRoute exact path="/table" component={TableView}/>
+        <ProtectedRoute exact path="/chart" component={ChartView}/>
         <ProtectedRoute exact path="/map" component={MapView}/>
         <ProtectedRoute exact path="/logout" component={Logout}/>
       </Switch>
