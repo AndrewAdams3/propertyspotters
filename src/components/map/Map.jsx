@@ -124,10 +124,13 @@ const MarkerWithInfoWindow = ({position, home, id}) => {
               <p style={{ textAlign: "center" }}>{home["address"]}</p>
               <p style={{ textAlign: "center" }}>{"Found " + (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear()}</p>
             </div>
-            <hr style={{ backgroundColor: "black" }} />
-            <div className="imageContainer" style={{justifyContent:"flex-start", marginTop: horizontal ? 0 : "8rem"}}>
-              <img ref={imgRef} className="image" style={{ transform: `rotate(${rotation}deg)`, borderStyle: "solid", borderColor: "black", borderWidth: ".1rem" }} src={home["picturePath"]} alt="pic" />
+            <hr style={{ backgroundColor: "black", marginBottom: "2rem" }} />
+            <div style={{height: "200px", width: "90%"}}>
+              <div className="imageContainer" style={{transform: `rotate(${rotation}deg)`, justifyContent:"flex-start" }}>
+                <img ref={imgRef} style={{ borderStyle: "solid", borderColor: "black", borderWidth: ".1rem", height: "100%", width: "100%"}} src={home["picturePath"]} alt="pic" />
+              </div>
             </div>
+            <p className="mt-5">Image Link: <br/><a href={home["picturePath"]}>{home["address"]}</a></p>
           </div>
         </InfoWindow>}
     </Marker>
