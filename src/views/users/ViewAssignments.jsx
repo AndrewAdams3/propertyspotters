@@ -47,7 +47,7 @@ export default function AssignmentModal(props) {
                   ass.Addresses.map((add, i)=>{
                     addList.push(add);
                   });
-                  return <Dropdown title={new Date(ass.Date).toLocaleDateString()} list={addList} openState={openAll} complete={ass.completed} refresh={refresh} containerStyle={{width:"50%", marginRight: "auto", marginLeft: "auto"}}/>
+                  return <Dropdown title={new Date(ass.Date).toLocaleDateString()} list={addList} openState={openAll} complete={ass.completed} refresh={refresh} containerStyle={{width:"100%"}}/>
                 })}
               </Col>
             </Row>
