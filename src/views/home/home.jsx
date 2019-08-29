@@ -1,12 +1,13 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import HeaderNav from '../../components/header';
 import useScrollPosition from '../../components/hooks/useScrollPosition';
 
 import './home.css';
 
-export default function Home ({colors}, ...rest) {
+export default function Home ({colors}) {
 
   const scrollY = useScrollPosition();
+
   return ( 
     <div className="page">
       <HeaderNav fixed="top" color={scrollY > (window.innerHeight*.9) ? "black" : "light"} opacity={scrollY/window.innerHeight}/>
@@ -32,7 +33,6 @@ export default function Home ({colors}, ...rest) {
             <h1 className="text-left">Sign up now and start earning money fast!</h1>
           </span>
         </div>
-        
       </div>
     </div>
    )

@@ -9,7 +9,7 @@ import { useStateValue } from '../context/State';
 
 const Header = ({fixed, color, opacity}) => {
 
-  const [{userId},] = useStateValue();
+  const [{userId, Drivebys, User},] = useStateValue();
 
 
   return (
@@ -30,8 +30,16 @@ const Header = ({fixed, color, opacity}) => {
             userId && 
             <div className="my-auto ml-auto" style={{ marginRight: "1.5rem" }}><Link className="link" to="/users">Users</Link></div>
           }
-          <div className="w-100"/>
-          <div style={{ textAlign: "end", marginRight: "1.5rem" }}><Link className="link" to="/login" >Login</Link></div>
+          <div className="w-50"/>
+          {
+            userId && Drivebys &&
+            <>
+              <p style={{color: "white", width: "20rem", marginTop: ".5rem"}}>{"Total Drivebys: " + Drivebys.length}</p>
+              <p style={{color: "white", width: "20rem", marginTop: ".5rem"}}>{"Today's Drivebys: " + Drivebys.filter((db, i)=> new Date(db.dateFound).toLocaleDateString() === new Date().toLocaleDateString()).length}</p>
+            </>
+          }
+          <div className="w-50"/>
+          <div style={{ textAlign: "end", marginRight: "1.5rem" }}><Link className="link" to={"/login"} >{"Login"}</Link></div>
           <div style={{ textAlign: "end", marginRight: "1.5rem" }}><Link className="link" to={userId ? "/logout" : "/signup"}>{userId ? "Logout" : "Signup"}</Link></div>
         </Nav>
       </Navbar.Collapse>

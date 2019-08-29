@@ -101,7 +101,7 @@ export const MainRouter = (props) => {
   return (
     <Router>
       <Switch>
-        <MyRoute exact path="/" component={Home}/>
+        <ProtectedRoute exact path="/" component={Home}/>
         <MyRoute exact path="/home" component={Home}/>
         <MyRoute exact path="/login" component={Login}/>
         <MyRoute exact path="/signup" component={Signup} />
