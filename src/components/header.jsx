@@ -12,8 +12,10 @@ import { populateData } from '../helpers/data';
 const Header = ({fixed, color, opacity}) => {
 
   const [{userId, Drivebys, User}, dispatch] = useStateValue();
+  const [loading, setLoading] = useState(false);
 
   const refresh = async () => {
+    setLoading(true)
     const dts = await populateData();
     dispatch({
       type: 'users',
@@ -23,6 +25,7 @@ const Header = ({fixed, color, opacity}) => {
       type: 'dbs',
       value: dts.d
     })
+    setLoading(false);
   }
 
   return (
@@ -51,7 +54,7 @@ const Header = ({fixed, color, opacity}) => {
                 <p style={{color: "white", width: "20rem", marginTop: ".5rem"}}>{"Today's Drivebys: " + Drivebys.filter((db, i)=> new Date(db.date).toLocaleDateString() === new Date().toLocaleDateString()).length}</p>
               </>
             }
-              <Button onClick={refresh} style={{width:"20rem"}}>Refresh Data</Button>
+              <Button onClick={refresh} style={{width:"20rem"}}>{loading ? "Loading..." : "Refresh Data"}</Button>
           </div>
           <div style={{ textAlign: "end", marginRight: "1.5rem" }}><Link className="link" to={"/login"} >{"Login"}</Link></div>
           <div style={{ textAlign: "end", marginRight: "1.5rem" }}><Link className="link" to={userId ? "/logout" : "/signup"}>{userId ? "Logout" : "Signup"}</Link></div>
