@@ -4,7 +4,6 @@ import HeaderNav from '../../components/header';
 import { useStateValue } from '../../context/State';
 import UsersCard from './UsersCard';
 import { populateData } from '../../helpers/data';
-
 import './users.css';
 
 const Users = ({match}) => {

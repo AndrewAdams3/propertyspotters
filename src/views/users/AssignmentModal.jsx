@@ -17,12 +17,14 @@ export default function AssignmentModal(props){
   const [date, setDate] = useState();
   const [noDate, setNoDate] = useState(false);
   const [currentBatch, setCurrentBatch] = useState("");
+  const [notes, setNotes] = useState("");
 
   useEffect(() => {
     return () =>{
       setAddressList([]);
       setCurrentAdd("");
       setDate();
+      setNotes("")
     }
   },[user])
 
@@ -42,6 +44,7 @@ export default function AssignmentModal(props){
     let filtered = addList.filter((add)=>{
       return add != "";
     })
+    
     setAddressList([
       ...AddressList,
       ...filtered
@@ -58,7 +61,7 @@ export default function AssignmentModal(props){
       } else if(currentBatch.length){
         setEnterBatch(true);
       }else{
-        props.addAssignment(AddressList, date)
+        props.addAssignment(AddressList, date, notes)
       }
     } else{
       setNoDate(true);
@@ -95,13 +98,19 @@ export default function AssignmentModal(props){
                       <small style={{ color: "red", height: ".5rem" }}>{enterBatch ? "Please Add Addresses" : ""}</small>
                       <Button onClick={newBatchAdd} style={{marginTop: ".5rem", width: "10rem"}}>Add Addresses</Button>
                     </Form.Group>
-                    </Form.Row>
-                    <Form.Row>
-                      <Form.Group>
-                        {AddressList.map((add, index) => {
-                          return <h4>{`Address ${index+1}: ${add}`}</h4>
-                        })}
-                      </Form.Group>
+                  </Form.Row>
+                  <Form.Row>
+                    <Form.Group>
+                      {AddressList.map((add, index) => {
+                        return <h4>{`Address ${index+1}: ${add}`}</h4>
+                      })}
+                    </Form.Group>
+                  </Form.Row>
+                  <Form.Row>
+                    <Form.Group as={Col}>
+                      <Form.Label>Notes (optional)</Form.Label>
+                      <Form.Control as="textarea" placeholder="..." value={notes} onChange={(e) => setNotes(e.target.value)}/>
+                    </Form.Group>
                   </Form.Row>
                 </Form>
               </Col>
