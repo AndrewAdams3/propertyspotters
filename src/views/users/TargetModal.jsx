@@ -12,7 +12,7 @@ import Axios from 'axios';
 export default function TargetModal(props){
   const { user, onHide } = props;
   const [task, setTask] = useState("");
-  const [date, setDate] = useState();
+  const [date, setDate] = useState(new Date());
   const [noDate, setNoDate] = useState(false);
   const [oldTask, setOldTask] = useState({});
   
@@ -45,8 +45,8 @@ export default function TargetModal(props){
                 <Form onSubmit={(e)=>e.preventDefault()}>
                   <Form.Row>
                     <Form.Group as={Col} controlId="Date">
-                      <Form.Label>Date</Form.Label>
-                      <Form.Control type="date" placeholder="date" onChange={(e)=>setDate(e.target.value)}/>
+                      <Form.Label>Date (defaults to today's date)</Form.Label>
+                      <Form.Control type="date" placeholder="date" value={date} onChange={(e)=>setDate(e.target.value)}/>
                       <small style={{ color: "red" }}>{""}</small>
                     </Form.Group>
                     <Form.Group as={Col}>

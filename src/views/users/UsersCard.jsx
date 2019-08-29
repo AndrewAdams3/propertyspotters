@@ -130,6 +130,8 @@ export default function UserCard({Users, UsersOnClock, refresh}){
   }
 
   const addTarget = (target, date) => {
+    if(!date) date = new Date();
+    console.log("date", date);
     Axios.post(`${process.env.REACT_APP_SERVER}/data/assignments/addtarget/${activeUser._id}`, {
       target: target,
       date: date
