@@ -18,5 +18,5 @@ export const populateData = async () => {
       console.log(err);
     })
   
-    return ({u: u, d: d});
+  return ({u: u, d: d});
 }

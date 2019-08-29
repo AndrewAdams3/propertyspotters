@@ -47,3 +47,13 @@
 .backcontainer:hover {
   background-color: rgba(0,0,0,.1);
 }
+
+.dbstats {
+  width: 40%;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-right: 5rem;
+  margin-left: 5rem;
+  display: flex;
+}
