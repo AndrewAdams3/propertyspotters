@@ -86,7 +86,7 @@ const ClusterInfo = ({homes}) => {
 const MarkerWithInfoWindow = ({position, home, id}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isHover, setIsHover] = useState(false);
-  const [rotation, setRotation] = useState(90);
+  const [rotation, setRotation] = useState(0);
   const [horizontal, setHorizontal] = useState(false)
   const imgRef = useRef(null);
   const [date,] = useState(new Date(home["date"]));
