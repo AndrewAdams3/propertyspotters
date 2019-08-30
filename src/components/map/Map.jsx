@@ -18,7 +18,7 @@ const MyMap = compose(
     onMarkerClustererClick: () => (markerClusterer) => {
       const clickedMarkers = markerClusterer.getMarkers();
       if(markerClusterer.markerClusterer_.map.zoom >= 18){
-        return {max: true, markers: clickedMarkers}
+        return {max: true, markers: clickedMarkers.map((mark, i)=>JSON.parse(mark.title))}
       } else return {max: false, markers: []}
     },
   }),
@@ -49,18 +49,7 @@ const MyMap = compose(
           markers
         }
           {res.max &&
-            <ClusterInfo homes={markers.filter((marker)=>{
-              let found = false
-              console.log("pos: ", marker.getPosition())
-              console.log("res", res.markers[0].position.lat, "mark", marker.props.position.lat)
-              for(let i = 0; i < res.markers.length; i++){
-                if (res.markers[i].position.lat === marker.props.position.lat && res.markers[i].position.lon === marker.props.position.lon){
-                  found = true;
-                  break;
-                }
-              }
-              return found;
-            })}/>
+            <ClusterInfo homes={res.markers}/>
           }
       </MarkerClusterer>
     </GoogleMap> 
@@ -68,14 +57,19 @@ const MyMap = compose(
   )
 });
 
+
+
 const ClusterInfo = ({homes}) => {
-  console.log("homes: ", homes);
   return(
     <div className="clusterInfo">
       {
         homes.map((home)=>{
           return(
-            <h3>{new Date(home.date).toLocaleDateString()}</h3>
+            <>
+            <h4 style={{color: "white"}}>{home.address}</h4>
+            <h4 style={{marginBottom: "2rem", color: "white"}}>Found: {new Date(home.date).toLocaleDateString()}</h4>
+            <h5 style={{whiteSpace: "nowrap", height: "2rem"}} className="border-bottom"><a href={home.picturePath}>{home.picturePath}</a></h5>
+            </>
           )
         })
       }
@@ -112,7 +106,8 @@ const MarkerWithInfoWindow = ({position, home, id}) => {
       position={position}
       onClick={onToggleOpen}
       onMouseOver={onMouseover}
-      onMouseOut={onMouseOut}>
+      onMouseOut={onMouseOut}
+      title={JSON.stringify(home)}>
 
       {(isOpen || isHover) &&
         <InfoWindow onCloseClick={onToggleOpen}>
