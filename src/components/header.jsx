@@ -50,11 +50,11 @@ const Header = ({fixed, color, opacity}) => {
             {
               userId && Drivebys &&
               <>
-                <p style={{color: "white", width: "20rem", marginTop: ".5rem"}}>{"Total Drivebys: " + Drivebys.length}</p>
-                <p style={{color: "white", width: "20rem", marginTop: ".5rem"}}>{"Today's Drivebys: " + Drivebys.filter((db, i)=> new Date(db.date).toLocaleDateString() === new Date().toLocaleDateString()).length}</p>
+                <p style={{color: "white", width: "20rem", margin: "auto"}}>{"Total Drivebys: " + Drivebys.length}</p>
+                <p style={{color: "white", width: "20rem", margin: "auto"}}>{"Today's Drivebys: " + Drivebys.filter((db, i)=> new Date(db.date).toLocaleDateString() === new Date().toLocaleDateString()).length}</p>
               </>
             }
-              <Button onClick={refresh} style={{width:"20rem"}}>{loading ? "Loading..." : "Refresh Data"}</Button>
+              <Button variant="success" onClick={refresh} style={{width:"15rem"}}>{loading ? "Loading..." : "Refresh Data"}</Button>
           </div>
           <div style={{ textAlign: "end", marginRight: "1.5rem" }}><Link className="link" to={"/login"} >{"Login"}</Link></div>
           <div style={{ textAlign: "end", marginRight: "1.5rem" }}><Link className="link" to={userId ? "/logout" : "/signup"}>{userId ? "Logout" : "Signup"}</Link></div>
