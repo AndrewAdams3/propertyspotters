@@ -44,7 +44,7 @@ export default function DBView({data}){
                 isDate={true}
                 xLabel="Date"
                 yLabel="Number"
-                ticks={6}
+                ticks={points.length}
                 yMin="0"
                 interpolate="linear"
                 margins={{top: 0, right: 0, bottom: 0, left: 0}}
