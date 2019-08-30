@@ -51,3 +51,15 @@
   overflow-y: scroll;
   overflow-x:hidden;
 }
+
+.closer {
+  height: 2rem;
+  width: 2rem;
+  position: absolute;
+  top: 5rem;
+  right: 21rem;
+  background-color: gray;
+  text-align: center;
+  font-size: 20px;
+  cursor: pointer;
+}

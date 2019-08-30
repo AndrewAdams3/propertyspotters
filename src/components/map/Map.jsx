@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom'
 import { compose, withProps, withHandlers } from 'recompose'
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from 'react-google-maps'
 import { default as MarkerClusterer } from "react-google-maps/lib/components/addons/MarkerClusterer";
+import {Button} from 'react-bootstrap';
 
 import './Map.css';
 const MyMap = compose(
@@ -49,7 +50,7 @@ const MyMap = compose(
           markers
         }
           {res.max &&
-            <ClusterInfo homes={res.markers}/>
+            <ClusterInfo homes={res.markers} close={()=>{setRes([])}}/>
           }
       </MarkerClusterer>
     </GoogleMap> 
@@ -59,8 +60,10 @@ const MyMap = compose(
 
 
 
-const ClusterInfo = ({homes}) => {
+const ClusterInfo = ({homes, close}) => {
   return(
+    <>
+    <div className="closer" onClick={close}>X</div>
     <div className="clusterInfo">
       {
         homes.reverse().map((home)=>{
@@ -74,6 +77,7 @@ const ClusterInfo = ({homes}) => {
         })
       }
     </div>
+    </>
   )
 }
 
