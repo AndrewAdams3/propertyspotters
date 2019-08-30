@@ -63,7 +63,7 @@ const ClusterInfo = ({homes}) => {
   return(
     <div className="clusterInfo">
       {
-        homes.map((home)=>{
+        homes.reverse().map((home)=>{
           return(
             <>
             <h4 style={{color: "white"}}>{home.address}</h4>
