@@ -1,18 +1,28 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import {Button, Row, Col} from 'react-bootstrap';
-import { Link } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import './component.css';
 
 import { useStateValue } from '../context/State';
+import useInnerWidth from './hooks/useInnerWidth';
 import { populateData } from '../helpers/data';
 
 const Header = ({fixed, color, opacity}) => {
 
   const [{userId, Drivebys, User}, dispatch] = useStateValue();
   const [loading, setLoading] = useState(false);
+  const [small, setSmall] = useState(false);
+  const cRef = useRef();
+  const width = useInnerWidth();
+
+  useEffect(()=>{
+    console.log("width", width);
+    width < 900 ? setSmall(true) : setSmall(false);
+  }, [width])
+
 
   const refresh = async () => {
     setLoading(true)
@@ -31,33 +41,33 @@ const Header = ({fixed, color, opacity}) => {
   return (
     <Navbar expand="lg" bg={color==="black" ? "dark" : "transparent"} fixed={fixed} id="nav" style={{zIndex:10}}>
       <Navbar.Brand><Link className="link" to="/home">VaroAdmin</Link></Navbar.Brand>
-      <Navbar.Toggle aria-controls="basic-navbar-nav"/>
-      <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className="mr-auto w-100">
+      <Navbar.Toggle aria-controls="basic-navbar-nav" ref={cRef}/>
+      <Navbar.Collapse id="basic-navbar-nav" style={{marginTop: small ? "3rem" : 0, maxWidth: "100%", textAlign: "right"}}>
+        <Nav className="mr-auto w-100" style={{maxWidth: "100%", marginTop: small ? "2rem" : 0, alignItems: small ? "flex-end" : "center"}}>
           {
             userId &&
-                <NavDropdown title="DriveBys" className="my-auto" style={{ marginRight: "1.5rem"}} id="ddTitle">
-                  <Link className="link" to="/table" style={{ color: "black" }}>Table View</Link>
-                  <Link className="link" to="/map" style={{ color: "black" }}>Map View</Link>
-                  <Link className="link" to="/chart" style={{color: "black"}}>Chart View</Link>
+                <NavDropdown title="DriveBys" className="my-auto" style={{ maxWidth: "100%", textAlign: "right"}} id="ddTitle">
+                  <NavLink className="link" to="/table" style={{ color: "black", textAlign: "right" }}>Table View</NavLink>
+                  <NavLink className="link" to="/map" style={{ color: "black", textAlign: "right" }}>Map View</NavLink>
+                  <NavLink className="link" to="/chart" style={{color: "black", textAlign: "right"}}>Chart View</NavLink>
                 </NavDropdown>
           }
           {
             userId && 
             <div className="my-auto" style={{ marginRight: "1.5rem" }}><Link className="link" to="/users">Users</Link></div>
           }
-          <div className="dbstats">
+          <div className="dbstats" style={{marginRight: small ? 0 : "5rem"}}>
             {
               userId && Drivebys &&
               <>
                 <p style={{color: "white", width: "20rem", margin: "auto"}}>{"Total Drivebys: " + Drivebys.length}</p>
                 <p style={{color: "white", width: "20rem", margin: "auto"}}>{"Today's Drivebys: " + Drivebys.filter((db, i)=> new Date(db.date).toLocaleDateString() === new Date().toLocaleDateString()).length}</p>
-                <Button variant="success" onClick={refresh} style={{width:"15rem"}}>{loading ? "Loading..." : "Refresh Data"}</Button>
+                <Button variant="success" onClick={refresh} style={{width:"15rem", marginLeft: "1rem"}}>{loading ? "Loading..." : "Refresh Data"}</Button>
               </>
             }
           </div>
-          <div style={{ marginRight: "1.5rem", position: "absolute", right: "5rem", top: "1rem"}}><Link className="link" to={"/login"} >{"Login"}</Link></div>
-          <div style={{ marginRight: "1.5rem", position: "absolute", right: 0, top: "1rem" }}><Link className="link" to={userId ? "/logout" : "/signup"}>{userId ? "Logout" : "Signup"}</Link></div>
+          <div style={{ marginRight: "1.5rem", position: "absolute", right: small ? 0 : "5rem", top: small ? "6rem" : "1rem"}}><Link className="link" to={"/login"} >{"Login"}</Link></div>
+          <div style={{ marginRight: "1.5rem", position: "absolute", right: 0, top: small ? "4rem" : "1rem" }}><Link className="link" to={userId ? "/logout" : "/signup"}>{userId ? "Logout" : "Signup"}</Link></div>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
