@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
 
 import HeaderNav from '../../components/header';
 import './table.css';
@@ -94,15 +95,18 @@ const TableView = () => {
   return  dbs ? (
     <div>
       <HeaderNav fixed="top" color={"black"}/> <br/>
-      <TableT drivebys={dbs.map( (db, index) => {
-        if(db.props.n <= bIndex && db.props.n >= eIndex) return db;
-        else return null;
-      })} bIndex={bIndex} eIndex={eIndex} />
-      <div className="text-center pb-3">
-        <Button className="col-3 col-lg-4 tableRButton"  style={{maxWidth: "25vh"}} variant="primary" onClick={() => handleClick(20)}>{"<"}</Button>
-        <Button className="col-3 col-lg-4 tableLButton" style={{ maxWidth: "25vh" }} variant="primary" onClick={() => handleClick(-20)}>{">"}</Button>
-      </div>
+      <Container>
+        <TableT drivebys={dbs.map( (db, index) => {
+          if(db.props.n <= bIndex && db.props.n >= eIndex) return db;
+          else return null;
+        })} bIndex={bIndex} eIndex={eIndex} />
+        <div className="text-center pb-3">
+          <Button className="col-3 col-lg-4 tableRButton"  style={{maxWidth: "25vh"}} variant="primary" onClick={() => handleClick(20)}>{"<"}</Button>
+          <Button className="col-3 col-lg-4 tableLButton" style={{ maxWidth: "25vh" }} variant="primary" onClick={() => handleClick(-20)}>{">"}</Button>
+        </div>
+      </Container>
     </div>
+    
   ) : (
     <div>loading...</div>
   )

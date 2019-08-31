@@ -47,9 +47,9 @@ const Header = ({fixed, color, opacity}) => {
           {
             userId &&
                 <NavDropdown title="DriveBys" className="my-auto" style={{ maxWidth: "100%", textAlign: "right"}} id="ddTitle">
-                  <NavLink className="link" to="/table" style={{ color: "black", textAlign: "right" }}>Table View</NavLink>
-                  <NavLink className="link" to="/map" style={{ color: "black", textAlign: "right" }}>Map View</NavLink>
-                  <NavLink className="link" to="/chart" style={{color: "black", textAlign: "right"}}>Chart View</NavLink>
+                  <Link className="link" to="/table" style={{ color: "black", textAlign:  "center" }}>Table View</Link>
+                  <Link className="link" to="/map" style={{ color: "black", textAlign: "center" }}>Map View</Link>
+                  <Link className="link" to="/chart" style={{color: "black", textAlign: "center" }}>Chart View</Link>
                 </NavDropdown>
           }
           {
