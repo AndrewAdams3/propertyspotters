@@ -20,7 +20,7 @@ const Header = ({fixed, color, opacity}) => {
 
   useEffect(()=>{
     console.log("width", width);
-    width < 900 ? setSmall(true) : setSmall(false);
+    width < 1000 ? setSmall(true) : setSmall(false);
   }, [width])
 
 
@@ -56,7 +56,7 @@ const Header = ({fixed, color, opacity}) => {
             userId && 
             <div className="my-auto" style={{ marginRight: "1.5rem" }}><Link className="link" to="/users">Users</Link></div>
           }
-          <div className="dbstats" style={{marginRight: small ? 0 : "5rem"}}>
+          <div className="dbstats" style={{marginRight: small ? 0 : "5rem", paddingRight: '2rem'}}>
             {
               userId && Drivebys &&
               <>
