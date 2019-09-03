@@ -1,0 +1,92 @@
+dl {
+    display: flex;
+    background-color: white;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+    padding: 20px;
+  }
+  
+  dt {
+    align-self: flex-start;
+    width: 95%;
+    font-weight: 700;
+    display: block;
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: 700;
+    margin-bottom: 20px;
+    margin-left: 130px;
+  }
+  
+  .text {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    height: 40px;
+    width: 130px;
+    background-color: white;
+    position: absolute;
+    left: 0;
+    justify-content: flex-start;
+    text-align: left;
+    padding-left: .3rem;
+  }
+  .ptext {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    height: 40px;
+    width: 130px;
+    background-color: white;
+    position: absolute;
+    right: 0;
+    justify-content: flex-end;
+    text-align: right;
+    padding-right: .3rem;
+  }
+  
+  .percentage {
+    font-size: .8em;
+    line-height: 1;
+    text-transform: uppercase;
+    width: 90%;
+    height: 50px;
+    margin-left: 30px;
+    
+    &:after {
+      content: "";
+      display: block;
+      background-color: #3d9970;
+      width: 1px;
+      margin-bottom: 10px;
+      height: 100%;
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+      transition: background-color .3s ease;
+      cursor: pointer;
+    }
+    &:hover,
+    &:focus {
+      &:after {
+         background-color: #aaa; 
+      }
+    }
+  }
+  
+  @for $i from 1 through 100 {
+    .percentage-#{$i} {
+      &:after {
+        $value: ($i * 1%);
+        width: $value;
+      }
+    }
+  }
+  
+  html, body {
+    height: 500px;
+    font-family: "fira-sans-2",sans-serif;
+    color: #333;
+  }

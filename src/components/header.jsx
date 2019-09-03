@@ -19,7 +19,6 @@ const Header = ({fixed, color, opacity}) => {
   const width = useInnerWidth();
 
   useEffect(()=>{
-    console.log("width", width);
     width < 1000 ? setSmall(true) : setSmall(false);
   }, [width])
 

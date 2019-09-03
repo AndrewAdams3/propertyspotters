@@ -5,9 +5,8 @@ import ReactDOM from 'react-dom'
 import { compose, withProps, withHandlers } from 'recompose'
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from 'react-google-maps'
 import { default as MarkerClusterer } from "react-google-maps/lib/components/addons/MarkerClusterer";
-import {Button} from 'react-bootstrap';
-
 import './Map.css';
+
 const MyMap = compose(
   withProps({
     googleMapURL: "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_GOOGLE_API_KEY + "&libraries=geometry,drawing,places",
@@ -22,17 +21,24 @@ const MyMap = compose(
         return {max: true, markers: clickedMarkers.map((mark, i)=>JSON.parse(mark.title))}
       } else return {max: false, markers: []}
     },
+    onHover: () => (e) =>{
+      console.log(e.markers_[e.markers_.length-1])
+      return JSON.parse(e.markers_[e.markers_.length-1].title)
+    }
   }),
   withScriptjs,
   withGoogleMap,
-)(({data, onMarkerClustererClick}) =>{
+)(({data, onMarkerClustererClick, onHover}) =>{
   const [res, setRes] = useState([]);
+  const [latest, setLatest] = useState()
+
   let markers = data.map((home, index) => {
     if (home["latitude"] !== 0) {
       return <MarkerWithInfoWindow position={new google.maps.LatLng(home["latitude"], home["longitude"])} home={home} key={home["_id"]} />
     }
     return null;
   })
+
   return(
     <>
     <GoogleMap
@@ -45,13 +51,15 @@ const MyMap = compose(
         enableRetinaIcons
         gridSize={60}
         minimumClusterSize={3}
+        // onMouseOver={(e)=>{if(!latest) setLatest(onHover(e))}}
+        // onMouseOut={()=>setLatest(null)}        
       >
         {
           markers
         }
-          {res.max &&
-            <ClusterInfo homes={res.markers} close={()=>{setRes([])}}/>
-          }
+        {res.max &&
+          <ClusterInfo homes={res.markers} close={()=>{setRes([])}}/>
+        }
       </MarkerClusterer>
     </GoogleMap> 
     </>
