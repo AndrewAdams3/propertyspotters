@@ -3,7 +3,6 @@ import {Container, Row, Col, Card} from 'react-bootstrap'
 import HeaderNav from '../../components/header'
 import { useStateValue } from '../../context/State';
 
-import './chart.css';
 import './chart.scss';
 
 export default function ChartView() {
@@ -13,34 +12,64 @@ export default function ChartView() {
     const [Mfr, setMfr] = useState(0)
     const [Com, setCom] = useState(0)
     const [Lot, setLot] = useState(0)
+    const [Burned, setBurned] = useState(0)
+    const [Boarded, setBoarded] = useState(0)
+    const [Vacant, setVacant] = useState(0)
+    const [Not_any, setNot_any] = useState(0)
 
     useEffect(()=>{
         if(Drivebys){
-            var sfr=0, mfr=0, lot=0, com=0, none=0, l = Drivebys.length;
+            var sfr=0, mfr=0, lot=0, com=0, none=0, l = Drivebys.length, boarded=0, vacant=0, burned=0, not_any=0;
             Drivebys.forEach((db)=>{
                 if(db.type === "SFR" || db.type === "SFH") sfr++;
                 else if (db.type === "MFR") mfr++;
                 else if(db.type === "Lot") lot++;
                 else if (db.type === "COM") com++;
                 else none++;
+
+                if(db.boarded) boarded++;
+                else if (db.burned) burned++;
+                else if(db.vacant) vacant++;
+                else not_any++
             })
             let t = l-none
             setSfr(Math.round(sfr / t * 100))
             setMfr(Math.round(mfr / t * 100))
             setCom(Math.round(com / t * 100))
             setLot(Math.round(lot / t * 100))
-            console.log(Sfr, Mfr, Com, Lot)
+            setBoarded(boarded / l * 100)
+            setBurned(burned / l * 100)
+            setVacant(vacant / l * 100)
+            setNot_any(not_any / l * 100)
         }
     }, [Drivebys])
     return (
         <div>
             <HeaderNav fixed="top" color={"black"}/> <br/>
             <Container className="w-100 mx-auto" style={{justifyContent: "center", alignItems: "center", marginTop: "2rem"}}>
-                <Row className="w-100 mx-auto">
-                    <Col className="w-100 p-0 mx-auto mt-4" dangerouslySetInnerHTML={{__html: iframe}}/>
+                <Row className="w-100 mx-auto" style={{height: 400, marginTop: 60}}>
+                    <Col className="w-100 h-100 p-0">
+                        <Card className="w-100 h-100 bar-chart border p-2" style={{justifyContent: "center", alignItems: "center"}}>
+                            <Card.Title>Types of Drivebys</Card.Title>
+                            <ul className="bar-chart">
+                                <li>
+                                    <span title="Burned" style={{height: `${Burned}%`, justifyContent: "center"}}>{`${Math.round(Burned)}%`}</span>
+                                </li>
+                                <li>
+                                    <span title="Boarded" style={{height: `${Boarded}%`, justifyContent: "center"}}><p>{`${Math.round(Boarded)}%`}</p></span>
+                                </li>
+                                <li>
+                                    <span title="Vacant" style={{height: `${Vacant}%`, justifyContent: "center"}}>{`${Math.round(Vacant)}%`}</span>
+                                </li>
+                                <li>
+                                    <span title="None" style={{height: `${Not_any}%`, justifyContent: "center"}}>{`${Math.round(Not_any)}%`}</span>
+                                </li>
+                            </ul>
+                        </Card>
+                    </Col>
                 </Row>
-                <Row>
-                    <Col className="w-100" style={{height: 300, marginBottom: "1rem"}}>
+                <Row style={{height: 300}}>
+                    <Col className="w-100 h-100" style={{ marginBottom: "1rem"}}>
                         <Card style={{ width: "100%", height: "100%" }}>
                             <div style={{height: "100%", width: "100%", display: "flex"}}>             
                                 <dl>
@@ -50,15 +79,13 @@ export default function ChartView() {
                                     <dd class={`percentage percentage-${Com}`}><span class="text">COM</span><span className="ptext">{Com}%</span></dd>
                                     <dd class={`percentage percentage-${Lot}`}><span class="text">LOT</span><span className="ptext">{Lot}%</span></dd>
                                 </dl>
-                                {/* <div style={{flexDirection: "row"}}>
-                                    <h3>Boarded</h3>
-                                    <div style={{width: "30%", backgroundColor: "green"}}>true</div> 
-                                    <div style={{width: "30%", backgroundColor: "red"}}>false</div>
-                                </div> */}
                             </div>
                         </Card>
                     </Col>
                 </Row>
+                <Card>
+                    <Col className="w-100 p-0 mx-auto mt-4" dangerouslySetInnerHTML={{__html: iframe}}/>
+                </Card>
             </Container>
         </div>
     )
