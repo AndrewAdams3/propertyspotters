@@ -28,15 +28,16 @@ export default function ChartView() {
                 else none++;
 
                 if(db.boarded) boarded++;
-                else if (db.burned) burned++;
-                else if(db.vacant) vacant++;
-                else not_any++
+                if (db.burned) burned++;
+                if(db.vacant) vacant++;
+                if(!db.boarded && !db.burned && !db.vacant) not_any++
             })
             let t = l-none
             setSfr(Math.round(sfr / t * 100))
             setMfr(Math.round(mfr / t * 100))
             setCom(Math.round(com / t * 100))
             setLot(Math.round(lot / t * 100))
+
             setBoarded(boarded / l * 100)
             setBurned(burned / l * 100)
             setVacant(vacant / l * 100)
@@ -74,10 +75,10 @@ export default function ChartView() {
                             <div style={{height: "100%", width: "100%", display: "flex"}}>             
                                 <dl>
                                     <dt className="mx-auto">Distribution of Drivebys</dt>
-                                    <dd class={`percentage percentage-${Sfr}`}><span class="text">SFR</span><span className="ptext">{Sfr}%</span></dd>
-                                    <dd class={`percentage percentage-${Mfr}`}><span class="text">MFR</span><span className="ptext">{Mfr}%</span></dd>
-                                    <dd class={`percentage percentage-${Com}`}><span class="text">COM</span><span className="ptext">{Com}%</span></dd>
-                                    <dd class={`percentage percentage-${Lot}`}><span class="text">LOT</span><span className="ptext">{Lot}%</span></dd>
+                                    <dd className={`percentage percentage-${Sfr}`}><span className="text">SFR</span><span className="ptext">{Sfr}%</span></dd>
+                                    <dd className={`percentage percentage-${Mfr}`}><span className="text">MFR</span><span className="ptext">{Mfr}%</span></dd>
+                                    <dd className={`percentage percentage-${Com}`}><span className="text">COM</span><span className="ptext">{Com}%</span></dd>
+                                    <dd className={`percentage percentage-${Lot}`}><span className="text">LOT</span><span className="ptext">{Lot}%</span></dd>
                                 </dl>
                             </div>
                         </Card>
