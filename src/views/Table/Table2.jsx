@@ -94,9 +94,9 @@ const TableView = () => {
                 </tr>
             </thead>
             <tbody>
-                {drivebys.map((db, index) => {
-                    return db
-                })}
+            {drivebys.map((db, index) => {
+                return db
+            })}
             </tbody>
             </Table>
             </div>
@@ -107,7 +107,7 @@ const TableView = () => {
             <EditModal/>
             <HeaderNav fixed="top" color={"black"}/> <br/>
             <Container>
-                <TableT drivebys={dbs.map( (db, index) =>  db)}/>
+                <TableT drivebys={dbs}/>
             </Container>
         </ContextProvider>
   ) : (
