@@ -8,3 +8,34 @@
   right: 0;
   margin-right: 1.5rem;
 }
+
+.edit-icon{
+  width: 1.5rem;
+  height: auto;
+  position: absolute;
+  top: .4rem;
+  right: 0;
+  cursor: pointer;
+}
+
+.tspan{
+  margin-top:1rem;
+}
+td{
+  vertical-align: middle !important;
+  position:relative;
+}
+
+#edit {
+  width: 50% !important;
+  left: 0;
+  top: 0;
+  margin-top: 20%;
+  margin-bottom: auto;
+  margin-left: auto;
+  height: auto !important;
+}
+
+.form-group{
+  width: 100%;
+}

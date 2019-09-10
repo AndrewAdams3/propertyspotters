@@ -7,7 +7,7 @@ import Home from '../views/home/home';
 import Users from '../views/users/users';
 import Login from '../views/login/login';
 import Signup from '../views/signup/signup';
-import TableView from '../views/Table/Table';
+import TableView from '../views/Table/Table2';
 import ChartView from '../views/chart/ChartView';
 import MapView from '../views/map/Map'; 
 import Logout from '../components/Logout';
