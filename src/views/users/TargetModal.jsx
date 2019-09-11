@@ -20,7 +20,6 @@ export default function TargetModal(props){
     if(user)
       Axios.get(`${process.env.REACT_APP_SERVER}/data/assignments/target/byId/${user._id}`)
         .then(({data})=>{
-          console.log(data);
           setOldTask(data)
         })
     return () => {
@@ -46,7 +45,7 @@ export default function TargetModal(props){
                   <Form.Row>
                     <Form.Group as={Col} controlId="Date">
                       <Form.Label>Date (defaults to today's date)</Form.Label>
-                      <Form.Control type="date" placeholder="date" value={date} onChange={(e)=>setDate(e.target.value)}/>
+                      <Form.Control type="date" placeholder="date" value={date} onChange={(e)=>setDate(new Date(e.target.value))}/>
                       <small style={{ color: "red" }}>{""}</small>
                     </Form.Group>
                     <Form.Group as={Col}>
