@@ -57,3 +57,25 @@
   margin-left: 5rem;
   display: flex;
 }
+
+.edit-button {
+  width: 1.5rem;
+  height: auto;
+  position: absolute;
+  top: .7rem;
+  right: 0;
+  cursor: pointer;
+}
+
+.edit-container{
+  width: 60px;
+  height: 60px;
+  display: inline-block;
+  position: absolute;
+  right: 0;
+}
+
+.switch-button{
+  width: 50%;
+  display: inline-block;
+}

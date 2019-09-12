@@ -117,7 +117,6 @@ export default function UserCard({Users, UsersOnClock, refresh}){
     for(var i in addList){
       ass[i] = {address: addList[i].trim(), completed: false};
     }
-    console.log("date: ", date)
     var d = new Date(date);
     d.setDate(d.getDate()+1)
     Axios.post(process.env.REACT_APP_SERVER + "/data/assignments/addAssignment", {

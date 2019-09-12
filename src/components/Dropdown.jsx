@@ -1,24 +1,47 @@
 import React, {useState, useEffect} from 'react';
+import {Container, Col, Row} from 'react-bootstrap';
 
-export default function Dropdown({title, list, containerStyle, openState=false, complete, refresh}){
+import EditAssModal from './EditAssModal'
+
+export default function Dropdown({title, list, id, containerStyle, openState=false, complete, refresh}){
   
+  const [open, setOpen] = useState(openState);
+  const [show, setShow] = useState(false)
+  const [subAss, setSubAss] = useState({});
+  const edit = require('../config/images/edit.png');
+
   useEffect(()=>{
     setOpen(openState);
   }, [openState, refresh])
 
-  const [open, setOpen] = useState(openState);
-  
   return(
     <div className="p-1" style={containerStyle}>
-      <div onClick={() => { setOpen(!open) }} style={{height: "100%", width:"100%", cursor: "pointer"}}>
-        <h2 className="w-100" style={{ textAlign: "left", whiteSpace: "nowrap" }}>{title}<h3 style={{display: "inline", color: complete ? "green" : "red"}}>{complete ? " -complete!" : " -incomplete"}</h3></h2>
-      </div>
+      <EditAssModal show={show} title={title} onHide={()=>{setShow(false)}} ass={id} subAss={subAss}/>
+      <Row>
+        <Col onClick={() => { setOpen(!open) }} style={{height: "100%", width:"100%", cursor: "pointer"}}>
+          <h2 className="w-100" style={{ textAlign: "left", whiteSpace: "nowrap", position: "relative"}}>{title}
+            <span style={{display: "inline", color: complete ? "green" : "red", verticalAlign:"bottom"}}>
+              {complete ? " -complete!" : " -incomplete"}
+            </span>
+          </h2>
+        </Col>
+        <Col>
+          <div className="edit-container">
+            <img src={edit} alt="edit" className="edit-button" style={{display: "flex"}} onClick={(e)=>{ setShow(true)}}/>
+          </div>
+        </Col>
+      </Row>
       <div style={{height: "100%"}}>
         <div>
           {
             open && list.map((item, index)=>{
               return(
-                <h3 key={index} style={{textAlign: "center"}}>{item.address} <h4 style={{display:"inline", color: item.completed ? "green" : "red"}}>{item.completed ? " -complete!" : " -incomplete"}</h4></h3>
+                <h3 key={index} style={{textAlign: "center", position: "relative"}} key={item._id}>{item.address} 
+                  <h4 style={{display:"inline", color: item.completed ? "green" : "red"}}>
+                    {item.completed ? " -complete!" : " -incomplete"}
+                  </h4>
+                    <img src={edit} alt="edit" className="edit-button" style={{display: "flex"}} onClick={()=>{setShow(true); setSubAss(item._id)}}/>
+                </h3>
               )
             })
           }
