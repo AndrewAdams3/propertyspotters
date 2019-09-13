@@ -12,11 +12,11 @@ export default function EditAssModal(props){
   const { ass, title, subAss, onHide, comp } = props;
   const [Ass, setAss] = useState({});
   const [sass, setSubAss] = useState({})
-  const [complete, setComplete] = useState(comp);
+  const [complete, setComplete] = useState(comp ? true : false);
   const [toDelete, setDelete] = useState(false);
   const [newAss, setNewAss] = useState("")
   const [date, setDate] = useState()
-  
+
   useEffect(()=>{
     Axios.get(`${process.env.REACT_APP_SERVER}/data/assignments/one/byId/${ass}`)
     .then(({data})=>{
@@ -33,6 +33,7 @@ export default function EditAssModal(props){
           }
         }
     })
+    setComplete(comp)
     return ()=>{
       setDelete(false)
       setComplete(false)
@@ -73,7 +74,7 @@ export default function EditAssModal(props){
     onHide()
   }
 
-  return Ass ? (
+  return Ass && complete !== undefined ? (
     <>
       <Modal {...props} aria-labelledby="contained-modal-title-vcenter" dialogClassName="aModal" id="editModal">
         <Modal.Header closeButton>
@@ -95,8 +96,8 @@ export default function EditAssModal(props){
                   }
                     <Form.Group as={Col} xs={12}>
                       <Form.Label>Completed?</Form.Label> <br/>
-                      <Form.Check type="checkbox" label="yes" inline checked={complete} defaultValue={comp} onChange={()=>{setComplete(true)}}/>
-                      <Form.Check type="checkbox" label="no" inline checked={!complete} defaultValue={!comp} onChange={()=>{setComplete(false)}}/>
+                      <Form.Check type="checkbox" label="yes" inline checked={complete} defaultChecked={comp} onChange={()=>{setComplete(true)}}/>
+                      <Form.Check type="checkbox" label="no" inline checked={!complete} defaultChecked={!comp} onChange={()=>{setComplete(false)}}/>
                     </Form.Group>
                     <Form.Group as={Col} xs={12}>
                       <Form.Label>Delete?</Form.Label> <br/>
