@@ -16,6 +16,8 @@ export default function EditAssModal(props){
   const [toDelete, setDelete] = useState(false);
   const [newAss, setNewAss] = useState("")
   const [date, setDate] = useState()
+  const backbtn = require('../config/images/back.png');
+
 
   useEffect(()=>{
     Axios.get(`${process.env.REACT_APP_SERVER}/data/assignments/one/byId/${ass}`)
@@ -78,9 +80,10 @@ export default function EditAssModal(props){
     <>
       <Modal {...props} aria-labelledby="contained-modal-title-vcenter" dialogClassName="aModal" id="editModal">
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">
-            {subAss.length && sass.address ? title + " - " + sass.address : subAss.length ? title + " - " + "..." : title}
-          </Modal.Title>
+          <div className="backcontainer border rounded-circle" onClick={onHide}>
+              <img src={backbtn} alt="back" className="backbtn"/>
+          </div>
+            <h2 style={{textAlign:"center", width:"100%"}}>{subAss.length && sass.address ? title + "-" + sass.address : subAss.length ? title + "-" + "..." : title}</h2>
         </Modal.Header>
         <Modal.Body style={{ overflowY: 'auto', maxHeight: "80vh" }}>
           <Container>
