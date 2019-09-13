@@ -11,10 +11,11 @@ import Dropdown from '../../components/Dropdown';
 import './users.css';
 
 export default function AssignmentModal(props) {
-  const { user } = props;
+  const { user, show } = props;
   const [Assignments, setAssignments] = useState([]);
   const [openAll, setOpenAll] = useState(false);
   const [refresh ,setRefresh] = useState(false);
+  const [del, setDel] = useState(false);
 
   useEffect(() => {
     if(user)
@@ -22,11 +23,11 @@ export default function AssignmentModal(props) {
         .then(({data}) => {
           setAssignments(data);
         })
-  }, [user])
+  }, [user, del])
 
   return (user) ? (
     <div>
-      <Modal {...props} aria-labelledby="contained-modal-title-vcenter" dialogClassName="aModal">
+      <Modal {...props} show={show} aria-labelledby="contained-modal-title-vcenter" dialogClassName="aModal">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             {`${user.fName}'s Assignment List`}
@@ -47,7 +48,7 @@ export default function AssignmentModal(props) {
                   ass.Addresses.map((add, i)=>{
                     addList.push(add);
                   });
-                  return <Dropdown title={new Date(ass.Date).toLocaleDateString()} list={addList} openState={openAll} complete={ass.completed} refresh={refresh} containerStyle={{width:"100%"}}/>
+                  return <Dropdown title={new Date(ass.Date).toLocaleDateString()} list={addList} id={ass._id} openState={openAll} complete={ass.completed} refresh={refresh} containerStyle={{width:"100%"}} del={()=>setDel(!del)}/>
                 })}
               </Col>
             </Row>
