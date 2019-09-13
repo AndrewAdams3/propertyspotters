@@ -9,11 +9,12 @@ import Form from 'react-bootstrap/Form';
 import Axios from 'axios';
 
 export default function EditAssModal(props){
-  const { ass, title, subAss, onHide } = props;
+  const { ass, title, subAss, onHide, comp } = props;
   const [Ass, setAss] = useState({});
   const [sass, setSubAss] = useState({})
-  const [markCompleted, setMarkCompleted] = useState(false)
+  const [complete, setComplete] = useState(comp);
   const [toDelete, setDelete] = useState(false);
+  const [newAss, setNewAss] = useState("")
   const [date, setDate] = useState()
   
   useEffect(()=>{
@@ -21,23 +22,63 @@ export default function EditAssModal(props){
     .then(({data})=>{
         if(data){
             setAss(data);
+            if(subAss.length){
+              data.Addresses.map((add)=>{
+                  if(add._id === subAss){
+                      setSubAss(add);
+                  }
+              })
+          } else{
+            setSubAss({})
+          }
         }
     })
-    if(subAss.length){
-        Ass.Addresses.map((add)=>{
-            if(add._id === subAss){
-                setSubAss(add);
-            }
-        })
+    return ()=>{
+      setDelete(false)
+      setComplete(false)
     }
   },[ass, subAss])
+
+  const confirm = () =>{
+    if(toDelete){
+      if(subAss.length){
+        Axios.put(`${process.env.REACT_APP_SERVER}/data/assignments/deleteSubAssignment`, {
+          id: ass,
+          ass: subAss
+        }).then(({data})=>{
+          onHide()
+        })
+      } else {
+        console.log("deleting", ass)
+        Axios.delete(`${process.env.REACT_APP_SERVER}/data/assignments/deleteAssignment/${ass}`).then(({data})=>{
+          console.log("res", data);
+          onHide()
+        })
+      }
+    } else {
+        Axios.put(`${process.env.REACT_APP_SERVER}/data/assignments/update-assignment`, {
+          id: ass,
+          sub_id: subAss,
+          date: date,
+          completed: complete,
+          newAss: newAss
+        }).then(({data})=>{
+          console.log("res", data)
+          onHide()
+        })
+      }
+  }
+  
+  const close = () =>{
+    onHide()
+  }
 
   return Ass ? (
     <>
       <Modal {...props} aria-labelledby="contained-modal-title-vcenter" dialogClassName="aModal" id="editModal">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
-            {subAss.length ? title + " - " + sass.address : title}
+            {subAss.length && sass.address ? title + " - " + sass.address : subAss.length ? title + " - " + "..." : title}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ overflowY: 'auto', maxHeight: "80vh" }}>
@@ -53,9 +94,9 @@ export default function EditAssModal(props){
                     </Form.Group>
                   }
                     <Form.Group as={Col} xs={12}>
-                      <Form.Label>Mark as Completed?</Form.Label> <br/>
-                      <Form.Check type="checkbox" label="yes" inline checked={markCompleted} onChange={()=>setMarkCompleted(true)}/>
-                      <Form.Check type="checkbox" label="no" inline checked={!markCompleted} onChange={()=>setMarkCompleted(false)}/>
+                      <Form.Label>Completed?</Form.Label> <br/>
+                      <Form.Check type="checkbox" label="yes" inline checked={complete} defaultValue={comp} onChange={()=>{setComplete(true)}}/>
+                      <Form.Check type="checkbox" label="no" inline checked={!complete} defaultValue={!comp} onChange={()=>{setComplete(false)}}/>
                     </Form.Group>
                     <Form.Group as={Col} xs={12}>
                       <Form.Label>Delete?</Form.Label> <br/>
@@ -63,14 +104,22 @@ export default function EditAssModal(props){
                       <Form.Check type="checkbox" label="no" inline checked={!toDelete} onChange={()=>setDelete(false)}/>
                     </Form.Group>
                   </Form.Row>
+                  {subAss.length ?
+                    <Form.Row>
+                      <Form.Group as={Col} controlId="text">
+                          <Form.Label>Change the Assignment?</Form.Label>
+                          <Form.Control type="text" onChange={(e)=>setNewAss(e.target.value)}/>
+                      </Form.Group>
+                    </Form.Row> : <></>
+                  }
                 </Form>
               </Col>
             </Row>
           </Container>
         </Modal.Body>
         <Modal.Footer style={{justifyContent: "space-around"}}>
-          <Button variant="success" type="button">Confirm</Button>
-          <Button onClick={onHide}>Cancel</Button>
+          <Button variant="success" type="button" onClick={confirm}>Confirm</Button>
+          <Button onClick={close}>Cancel</Button>
         </Modal.Footer>
       </Modal>
     </>

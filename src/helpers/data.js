@@ -1,7 +1,6 @@
 import Axios from 'axios';
 
 export const populateData = async () => {
-
   let d = [], u = [];
   await Axios.get(process.env.REACT_APP_SERVER + "/data/users")
     .then(({ data }) => {
