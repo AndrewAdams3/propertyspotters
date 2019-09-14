@@ -12,7 +12,7 @@ const MyMap = compose(
     googleMapURL: "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_GOOGLE_API_KEY + "&libraries=geometry,drawing,places",
     loadingElement: <div style={{ height: `100%` }} />,
     containerElement: <div style={{ height: `100%`, width: `100%` }} />,
-    mapElement: <div style={{ height: `100%`, width: '100&' }} />,
+    mapElement: <div style={{ height: `85vh`, width: '100%' }} />
   }),
   withHandlers({
     onMarkerClustererClick: () => (markerClusterer) => {
@@ -22,15 +22,19 @@ const MyMap = compose(
       } else return {max: false, markers: []}
     },
     onHover: () => (e) =>{
-      console.log(e.markers_[e.markers_.length-1])
       return JSON.parse(e.markers_[e.markers_.length-1].title)
     }
   }),
   withScriptjs,
   withGoogleMap,
-)(({data, onMarkerClustererClick, onHover}) =>{
+)(({data, onMarkerClustererClick, onHover, center}) =>{
   const [res, setRes] = useState([]);
-  const [latest, setLatest] = useState()
+  const mapRef = useRef();
+  const [Center, setCenter] = useState(center);
+  
+  useEffect(()=>{
+    setCenter(center)
+  },[center])
 
   let markers = data.map((home, index) => {
     if (home["latitude"] !== 0) {
@@ -43,10 +47,13 @@ const MyMap = compose(
     <>
     <GoogleMap
       defaultZoom={13}
-      defaultCenter={{lat: 36.3079945, lng: -119.3231157}}
-      options={{maxZoom: 18}}>
+      center={Center}
+      options={{maxZoom: 18}}
+      ref={mapRef}
+      streetViewControl= {true}
+      zoomControl={true}>
       <MarkerClusterer
-        onClick={(e)=>setRes(res.max ? false : onMarkerClustererClick(e))}
+        onClick={(e)=>{setRes(res.max ? false : onMarkerClustererClick(e)); console.log(mapRef.current)}}
         averageCenter
         enableRetinaIcons
         gridSize={60}
@@ -106,7 +113,6 @@ const MarkerWithInfoWindow = ({position, home, id}) => {
         setHorizontal(false)
       } else setHorizontal(true);
     }
-    console.log("size", bounds);
   }, [rotation])
 
   const onToggleOpen = () => { setIsOpen(!isOpen);}

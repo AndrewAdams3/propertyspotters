@@ -52,6 +52,10 @@ const ListItem = ({db, n}) => {
                 <span className="tspan">{db.boarded ? "boarded" : "not boarded"}</span>
                 <img src={edit} alt="edit" className="edit-icon" style={{display: hover==="board" ? "flex" : "none"}} onClick={()=>handleClick("boarded", db.boarded)}/>
             </td>
+            <td>
+                {db.latitude}
+            </td>
+            <td>{db.longitude}</td>
         </tr>
         </>
     )
@@ -91,6 +95,8 @@ const TableView = () => {
                 <th>Vacant?</th>
                 <th>Burned?</th>
                 <th>Boarded?</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
                 </tr>
             </thead>
             <tbody>
