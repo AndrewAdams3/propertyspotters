@@ -27,13 +27,18 @@ const MyMap = compose(
   }),
   withScriptjs,
   withGoogleMap,
-)(({data, onMarkerClustererClick, onHover, center}) =>{
+)(({data, onMarkerClustererClick, onHover, center, resLength}) =>{
   const [res, setRes] = useState([]);
   const mapRef = useRef();
   const [Center, setCenter] = useState(center);
+  const [zoom, setZoom] = useState(13);
   
   useEffect(()=>{
     setCenter(center)
+    if(resLength > 20) setZoom(10)
+    else if(resLength > 10) setZoom(15)
+    else if(resLength > 5) setZoom(20)
+    else if(res.length  === 1) setZoom(22)
   },[center])
 
   let markers = data.map((home, index) => {
@@ -46,7 +51,7 @@ const MyMap = compose(
   return(
     <>
     <GoogleMap
-      defaultZoom={13}
+      zoom={zoom}
       center={Center}
       options={{maxZoom: 18}}
       ref={mapRef}
@@ -98,7 +103,6 @@ const ClusterInfo = ({homes, close}) => {
 
 const MarkerWithInfoWindow = ({position, home, id}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isHover, setIsHover] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [horizontal, setHorizontal] = useState(false)
   const imgRef = useRef(null);
@@ -116,18 +120,14 @@ const MarkerWithInfoWindow = ({position, home, id}) => {
   }, [rotation])
 
   const onToggleOpen = () => { setIsOpen(!isOpen);}
-  const onMouseover = () => { if (!isOpen) setIsHover(false);}
-  const onMouseOut = () => { if (!isOpen) setIsHover(false)}
   return (
     <Marker
       key={id}
       position={position}
       onClick={onToggleOpen}
-      onMouseOver={onMouseover}
-      onMouseOut={onMouseOut}
       title={JSON.stringify(home)}>
 
-      {(isOpen || isHover) &&
+      {(isOpen) &&
         <InfoWindow onCloseClick={onToggleOpen}>
           <div className="windowContainer" >
             <div className="rotateContainer">

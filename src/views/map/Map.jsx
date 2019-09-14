@@ -8,14 +8,16 @@ import { useStateValue } from '../../context/State';
 
 import './Map.css';
 import useInnerWidth from '../../components/hooks/useInnerWidth';
+import useInnerHeight from '../../components/hooks/useInnerHeight';
 
 const MapView = memo(() => {
 
   const [{Drivebys},] = useStateValue();
   const [dbs, setDbs] = useState([]);
   const [iaddressList, setIAddressList] = useState();
-  const [addressList, setAddressList] = useState();
+  const [addressList, setAddressList] = useState([]);
   const width = useInnerWidth();
+  const height = useInnerHeight();
   const [center, setCenter] = useState({lat: 36.3079945, lng: -119.3231157})
 
   useEffect(() => {
@@ -53,17 +55,17 @@ const MapView = memo(() => {
         <Row className="h-100 w-100">
           <Col xs={8}>
             <div style={{height: width, width: "100%"}}>
-              <MyMap data={dbs} center={center}/>
+              <MyMap data={dbs} center={center} resLength={addressList.length}/>
             </div>
           </Col>
-          <Col xs={4} style={{overflowY: "scroll", height: "85vh"}}>
+          <Col xs={4}>
             <form onSubmit={e=>e.preventDefault()}>
               <fieldset className="form-group">
                 <input type="text" className="form-control form-control-lg" placeholder="Search" onChange={filterList}/>
               </fieldset>
             </form>
             {addressList && 
-              <ul>
+              <ul style={{overflowY: "scroll", height: height*.7}}>
                 {addressList.map((item)=>{
                   return <li>{item.add}</li>
                 })}
@@ -72,14 +74,6 @@ const MapView = memo(() => {
           </Col>
         </Row>
       </Container>
-      {/* <div className="container main py-2">
-        <form onSubmit={e=>e.preventDefault()}>
-          <fieldset className="form-group">
-            <input type="text" className="form-control form-control-lg" placeholder="Search" onChange={filterList}/>
-          </fieldset>
-        </form>
-        <MyMap data={dbs} center={center}/>
-      </div> */}
     </div>
   ) :
   (
