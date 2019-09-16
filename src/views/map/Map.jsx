@@ -24,7 +24,7 @@ const MapView = memo(() => {
     setDbs(Drivebys);
     if(Drivebys){
       setIAddressList(Drivebys.reduce((pV, cV, cI)=>{
-        pV.push({add: cV.address, lat: cV.latitude, lon: cV.longitude});
+        pV.push({add: cV.address, lat: cV.latitude, lon: cV.longitude, id:cV._id});
         return pV;
       }, []))
     }
@@ -44,7 +44,6 @@ const MapView = memo(() => {
     lat /= updatedList.length
     lon /= updatedList.length
     setCenter({lat:lat, lng:lon})
-    console.log(center)
     setAddressList(updatedList)
   }
 
@@ -64,10 +63,16 @@ const MapView = memo(() => {
                 <input type="text" className="form-control form-control-lg" placeholder="Search" onChange={filterList}/>
               </fieldset>
             </form>
-            {addressList && 
+            {addressList.length ? 
               <ul style={{overflowY: "scroll", height: height*.7}}>
                 {addressList.map((item)=>{
-                  return <li>{item.add}</li>
+                  return <li key={item.id}>{item.add}</li>
+                })}
+              </ul>
+              : iaddressList &&
+              <ul style={{overflowY: "scroll", height: height*.7}}>
+                {iaddressList.map((item)=>{
+                  return <li key={item.id}>{item.add}</li>
                 })}
               </ul>
             }

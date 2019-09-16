@@ -37,8 +37,7 @@ const MyMap = compose(
     setCenter(center)
     if(resLength > 20) setZoom(10)
     else if(resLength > 10) setZoom(15)
-    else if(resLength > 5) setZoom(20)
-    else if(res.length  === 1) setZoom(22)
+    else if(resLength > 5) setZoom(18)
   },[center])
 
   let markers = data.map((home, index) => {
