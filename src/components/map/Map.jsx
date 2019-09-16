@@ -142,7 +142,7 @@ const MarkerWithInfoWindow = ({position, home, id}) => {
                 <img ref={imgRef} style={{ borderStyle: "solid", borderColor: "black", borderWidth: ".1rem", height: "100%", width: "100%"}} src={home["picturePath"]} alt="pic" />
               </div>
             </div>
-            <p className="mt-5">Image Link: <br/><a href={home["picturePath"]}>{home["address"]}</a></p>
+            <p className="mt-5">Image Link: <br/><a href={home["picturePath"]} target="_blank" rel="noopener noreferrer">{home["address"]}</a></p>
           </div>
         </InfoWindow>}
     </Marker>
