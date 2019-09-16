@@ -18,7 +18,6 @@ const MapView = memo(() => {
   const [addressList, setAddressList] = useState([]);
   const width = useInnerWidth();
   const height = useInnerHeight();
-  const [center, setCenter] = useState({lat: 36.3079945, lng: -119.3231157})
 
   useEffect(() => {
     setDbs(Drivebys);
@@ -36,14 +35,6 @@ const MapView = memo(() => {
       return add.toLowerCase().search(
         event.target.value.toLowerCase()) !== -1;
     });
-    let lat = 0, lon = 0;
-    for(var i in updatedList){
-      lat += updatedList[i].lat;
-      lon += updatedList[i].lon;
-    }
-    lat /= updatedList.length
-    lon /= updatedList.length
-    setCenter({lat:lat, lng:lon})
     setAddressList(updatedList)
   }
 
@@ -54,7 +45,7 @@ const MapView = memo(() => {
         <Row className="h-100 w-100">
           <Col xs={8}>
             <div style={{height: width, width: "100%"}}>
-              <MyMap data={dbs} center={center} resLength={addressList.length}/>
+              <MyMap data={dbs} filterList={addressList.length ? addressList : iaddressList}/>
             </div>
           </Col>
           <Col xs={4}>

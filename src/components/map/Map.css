@@ -40,10 +40,9 @@
 
 .clusterInfo {
   position: absolute;
-  top: 12%;
+  top: 0;
   right: 0;
   z-index: 5;
-  height: 88%;
   width: 20rem;
   padding-left: 1rem;
   padding-top: 1rem;
@@ -56,7 +55,7 @@
   height: 2rem;
   width: 2rem;
   position: absolute;
-  top: 5rem;
+  top: 0;
   right: 21rem;
   background-color: gray;
   text-align: center;

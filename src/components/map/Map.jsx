@@ -6,6 +6,7 @@ import { compose, withProps, withHandlers } from 'recompose'
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from 'react-google-maps'
 import { default as MarkerClusterer } from "react-google-maps/lib/components/addons/MarkerClusterer";
 import './Map.css';
+import useInnerHeight from '../hooks/useInnerHeight';
 
 const MyMap = compose(
   withProps({
@@ -27,18 +28,18 @@ const MyMap = compose(
   }),
   withScriptjs,
   withGoogleMap,
-)(({data, onMarkerClustererClick, onHover, center, resLength}) =>{
+)(({data, onMarkerClustererClick, onHover, filterList}) =>{
   const [res, setRes] = useState([]);
   const mapRef = useRef();
-  const [Center, setCenter] = useState(center);
   const [zoom, setZoom] = useState(13);
   
   useEffect(()=>{
-    setCenter(center)
-    if(resLength > 20) setZoom(10)
-    else if(resLength > 10) setZoom(15)
-    else if(resLength > 5) setZoom(18)
-  },[center])
+    const bounds = new google.maps.LatLngBounds();
+    filterList.map(item => {
+        bounds.extend({lat: item.lat, lng:item.lon});
+    });
+    mapRef.current.fitBounds(bounds);
+  },[filterList])
 
   let markers = data.map((home, index) => {
     if (home["latitude"] !== 0) {
@@ -51,7 +52,7 @@ const MyMap = compose(
     <>
     <GoogleMap
       zoom={zoom}
-      center={Center}
+      defaultCenter={new google.maps.LatLng(39, -119)}
       options={{maxZoom: 18}}
       ref={mapRef}
       streetViewControl= {true}
@@ -80,10 +81,11 @@ const MyMap = compose(
 
 
 const ClusterInfo = ({homes, close}) => {
+  const h = useInnerHeight();
   return(
     <>
     <div className="closer" onClick={close}>X</div>
-    <div className="clusterInfo">
+    <div className="clusterInfo" style={{height: h-100}}>
       {
         homes.reverse().map((home)=>{
           return(
