@@ -112,9 +112,9 @@ const TableView = () => {
         <ContextProvider>
             <EditModal/>
             <HeaderNav fixed="top" color={"black"}/> <br/>
-            <Container>
+            <Container  style={{overflowX: "scroll"}}>
                 <Row>
-                    <Col xs={12} style={{overflowX: "scroll"}}>
+                    <Col xs={12}>
                         <TableT drivebys={dbs}/>   
                     </Col>
                 </Row>
