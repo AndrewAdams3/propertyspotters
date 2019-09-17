@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from 'react';
 import Table from 'react-bootstrap/Table';
-import Container from 'react-bootstrap/Container';
+import {Container, Row, Col, Card} from 'react-bootstrap';
 
 import HeaderNav from '../../components/header';
 import './table.css';
@@ -83,7 +83,7 @@ const TableView = () => {
 
     const TableT = ({drivebys}) => {
         return(
-            <div className="h-100 mx-1" style={{ marginTop: "3.65rem"}}>
+            <div className="h-100 mx-1 w-100" style={{ marginTop: "3.65rem"}}>
             <Table striped bordered hover>
             <thead>
                 <tr>
@@ -113,7 +113,11 @@ const TableView = () => {
             <EditModal/>
             <HeaderNav fixed="top" color={"black"}/> <br/>
             <Container>
-                <TableT drivebys={dbs}/>
+                <Row>
+                    <Col xs={12} style={{overflowX: "scroll"}}>
+                        <TableT drivebys={dbs}/>   
+                    </Col>
+                </Row>
             </Container>
         </ContextProvider>
   ) : (
