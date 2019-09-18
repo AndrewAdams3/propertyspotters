@@ -38,13 +38,13 @@ export default function DBView({data}){
      return(
         <Container className="h-100 w-100" style={{overflowX: "scroll"}}>
             <LineChart 
-                width={`${dataPoints[0].points.length * 100}px`}
+                width={`${points.length * 100}px`}
                 height={400}
                 data={dataPoints}
                 isDate={true}
                 xLabel="Date"
                 yLabel="Number"
-                ticks={points.length}
+                ticks={points.length / 2}
                 yMin="0"
                 interpolate="linear"
                 margins={{top: 0, right: 0, bottom: 0, left: 0}}
