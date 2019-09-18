@@ -36,9 +36,9 @@ export default function DBView({data}){
     }]
     console.log("dp", dataPoints)
      return(
-        <Container className="h-100 w-100">
+        <Container className="h-100 w-100" style={{overflowX: "scroll"}}>
             <LineChart 
-                width={window.innerWidth / 1.5}
+                width={`${dataPoints[0].points.length * 100}px`}
                 height={400}
                 data={dataPoints}
                 isDate={true}

@@ -38,7 +38,7 @@ export default function UserProfile(props) {
       Axios.post(`${process.env.REACT_APP_SERVER}/data/drivebys/byUserId`, {
         id: user._id,
         sort: "-date",
-        limit: 30
+        limit: 500
       })
       .then(({ data }) => {
         setDBs(data.docs);
