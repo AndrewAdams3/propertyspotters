@@ -26,6 +26,7 @@ export default function UserProfile(props) {
   const [DataShow, setDataShow] = useState(false);
   const [DataTitle, setDataTitle] = useState("")
   const [DataBody, setDataBody] = useState();
+  const [update, setUpdate] = useState(false);
 
   const MSperH = (60 * 60 * 1000);
 
@@ -51,6 +52,15 @@ export default function UserProfile(props) {
     }
   }, [user])
 
+  const getTimes = async () => {
+    await Axios.get(`${process.env.REACT_APP_SERVER}/data/times/byId/${user._id}/${100}`)
+    .then(({ data }) => {
+      setTotalTime((data.reduce((total, curr) => { return total + curr.totalTime }, 0) / MSperH).toFixed(3));
+      setTimes(data);
+      setUpdate(!update);
+      console.log("req done");
+    })
+  }
   const Remove = () => {
     remove(user)
       .then(()=>{
@@ -88,7 +98,7 @@ export default function UserProfile(props) {
 
   const moreData = (title, DataView, data) => {
     setDataTitle(title);
-    setDataBody(<DataView data={data} user={user}/>);
+    setDataBody(<DataView data={data} user={user} refresh={getTimes}/>);
     setDataShow(true);
   }
 
@@ -97,7 +107,7 @@ export default function UserProfile(props) {
       <ConfirmModal show={confirm} close={() => setConfirm(false)} yes={doAction} no={() => setConfirm(false)}/>
       <DataPage 
         title={DataTitle}
-        body={DataBody}
+        Body={()=>DataBody}
         onHide={()=>setDataShow(false)}
         show={DataShow}
       />

@@ -72,3 +72,12 @@
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
+
+.edit-icon{
+  width: 1.5rem;
+  height: auto;
+  position: absolute;
+  top: .4rem;
+  right: 0;
+  cursor: pointer;
+}

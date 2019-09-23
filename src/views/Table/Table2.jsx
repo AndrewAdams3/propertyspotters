@@ -55,7 +55,9 @@ const ListItem = ({db, n}) => {
             <td>
                 {db.latitude}
             </td>
-            <td>{db.longitude}</td>
+            <td>
+                {db.longitude}
+            </td>
         </tr>
         </>
     )

@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 
-export default function({title, body, onHide, show}){
+export default function({title, Body, onHide, show, update}){
     const backbtn = require('../config/images/back.png');
     return(
         <Modal show={show} aria-labelledby="contained-modal-title-vcenter" dialogClassName="aModal" onHide={onHide} style={{height: "100%"}}>
@@ -12,7 +12,7 @@ export default function({title, body, onHide, show}){
                 <h1>{title}</h1>
             </Modal.Header>
             <Modal.Body style={{overflowY: 'auto', maxHeight: "80vh"}}>
-                {body}
+                <Body />
             </Modal.Body>
         </Modal>
     )
