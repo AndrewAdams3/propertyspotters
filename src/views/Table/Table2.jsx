@@ -21,7 +21,6 @@ const ListItem = ({db, n}) => {
         dispatch({type: "db", value: db})
         dispatch({type: "show", value: true})
     }
-
     return(
         <>
         <tr>
