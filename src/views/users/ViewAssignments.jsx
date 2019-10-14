@@ -45,7 +45,7 @@ export default function AssignmentModal(props) {
               <Col className="mx-auto">
                 {Assignments.map((ass) => {
                   let addList = []
-                  ass.Addresses.map((add, i)=>{
+                  ass.Addresses.forEach(add => {
                     addList.push(add);
                   });
                   return <Dropdown title={new Date(ass.Date).toLocaleDateString()} list={addList} id={ass._id} openState={openAll} complete={ass.completed} refresh={refresh} containerStyle={{width:"100%"}} del={()=>setDel(!del)}/>

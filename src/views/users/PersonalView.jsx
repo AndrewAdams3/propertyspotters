@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function PersonalView({user}){
-    const {email, verified, fName, lName, dateCreated, city, state} = user;
+    const {email, fName, lName, city, state} = user;
     return(
         <div>
             <h3>{"Email: " + email}</h3>

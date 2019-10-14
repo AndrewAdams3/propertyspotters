@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext} from 'react'
+import React, {useEffect, useState, useContext, useRef} from 'react'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
@@ -13,19 +13,21 @@ import { Context } from './modalContext'
 export default function EditModal(props){
 
   let { state, dispatch } = useContext(Context);
-  const [fresh, refresh] = useState(false)
-  var isBool = state.field.name.includes("vacant") || state.field.name.includes("burned") || state.field.name.includes("boarded")
+  const [isBool, setIsBool] = useState(state.field.bool ? true : false)
   const [change, setChange] = useState();
   const [hasChanged, setHasChanged] = useState(false);
 
   useEffect(()=>{
-    refresh(!fresh)
-    isBool = state.field.name.includes("vacant") || state.field.name.includes("burned") || state.field.name.includes("boarded")
+    console.log("state", state.field.name, state.field.bool)
     setChange(!state.db[state.field.name])
   }, [state])
+  useEffect(()=>{
+    setIsBool(state.field.bool)
+  },[state.field.bool])
   
   const handleTFSubmit = () => {
     let ndb = state.db
+    console.log("state fied", state.field.name)
     switch(state.field.name){
       case "vacant":
         ndb.vacant = change
@@ -40,15 +42,20 @@ export default function EditModal(props){
         console.log("no case")
         return;
     }
+    console.log("change", change);
     Axios.put(`${process.env.REACT_APP_SERVER}/data/drivebys/updateDB`, {
       id: state.db._id,
       field: state.field.name,
       update: change
     }).then(({data})=>{
       console.log("res", data)
-    }).catch((err)=>console.log("err", err))
-    dispatch({type: "show", value: false})
-    dispatch({type: "reset"})
+      dispatch({type: "show", value: false})
+      dispatch({type: "reset"})
+    }).catch((err)=>{
+      console.log("err", err)
+      dispatch({type: "show", value: false})
+      dispatch({type: "reset"})
+    })
   }
 
   const handleTSubmit = () => {
@@ -74,7 +81,7 @@ export default function EditModal(props){
 
   return state.show ? (
     <div>
-      <Modal show={state.show} aria-labelledby="contained-modal-title-vcenter" dialogClassName="aModal" id="popup" onHide={()=>dispatch({type: "show", value: false})}>
+      <Modal show={state.show} aria-labelledby="contained-modal-title-vcenter" dialogClassName="aModal" id="popup" onHide={()=>{dispatch({type: "show", value: false}); dispatch({type: "reset"})}}>
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             {`Change ${state.field.name}?`}

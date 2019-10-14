@@ -31,11 +31,11 @@ const MyMap = compose(
 )(({data, onMarkerClustererClick, onHover, filterList}) =>{
   const [res, setRes] = useState([]);
   const mapRef = useRef();
-  const [zoom, setZoom] = useState(13);
+  const [zoom,] = useState(13);
   
   useEffect(()=>{
     const bounds = new google.maps.LatLngBounds();
-    filterList.map(item => {
+    filterList.forEach(item => {
         bounds.extend({lat: item.lat, lng:item.lon});
     });
     mapRef.current.fitBounds(bounds);

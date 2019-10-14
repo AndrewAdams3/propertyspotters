@@ -29,14 +29,13 @@ const TimeSheetView = ({data, user, refresh}) => {
                     }
                 })
         } else didMount.current = true;
-    }, [SDate, EDate]);
+    }, [SDate, EDate, MSperH, user._id]);
 
     const TimeRow = ({time, index}) => {
         const [hover, setHover] = useState("none")
         const [toEdit, setEdit] = useState("none")
         const [date, setDate] = useState()
         const [newTime, setTime] = useState()
-        const [place, setPlace] = useState("");
         const [err, setErr] = useState("")
 
         const handlePress = async (e, field) => {

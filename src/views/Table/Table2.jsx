@@ -17,8 +17,8 @@ const ListItem = ({db, n}) => {
     const edit = require('../../config/images/edit.png');
     let dispatch = useContext(Context).dispatch;
 
-    const handleClick = (field, val) => {
-        dispatch({type: "field", value: {name: field, value: val}})
+    const handleClick = (field, val, bool) => {
+        dispatch({type: "field", value: {name: field, value: val, bool: bool}})
         dispatch({type: "db", value: db})
         dispatch({type: "show", value: true})
     }
@@ -42,15 +42,15 @@ const ListItem = ({db, n}) => {
             </td>
             <td onMouseEnter={()=>setHover("vac")} onMouseLeave={()=>setHover("none")}>
                 <span className="tspan">{db.vacant ? "vacant" : "not vacant"}</span>
-                <img src={edit} alt="edit" className="edit-icon" style={{display: hover==="vac" ? "flex" : "none"}} onClick={()=>handleClick("vacant", db.vacant)}/>
+                <img src={edit} alt="edit" className="edit-icon" style={{display: hover==="vac" ? "flex" : "none"}} onClick={()=>handleClick("vacant", db.vacant, true)}/>
             </td>
             <td onMouseEnter={()=>setHover("burn")} onMouseLeave={()=>setHover("none")}>
                 <span className="tspan">{db.burned ? "burned" : "not burned"}</span>
-                <img src={edit} alt="edit" className="edit-icon" style={{display: hover==="burn" ? "flex" : "none"}} onClick={()=>handleClick("burned", db.burned)}/>
+                <img src={edit} alt="edit" className="edit-icon" style={{display: hover==="burn" ? "flex" : "none"}} onClick={()=>handleClick("burned", db.burned, true)}/>
             </td>
             <td onMouseEnter={()=>setHover("board")} onMouseLeave={()=>setHover("none")}>
                 <span className="tspan">{db.boarded ? "boarded" : "not boarded"}</span>
-                <img src={edit} alt="edit" className="edit-icon" style={{display: hover==="board" ? "flex" : "none"}} onClick={()=>handleClick("boarded", db.boarded)}/>
+                <img src={edit} alt="edit" className="edit-icon" style={{display: hover==="board" ? "flex" : "none"}} onClick={()=>handleClick("boarded", db.boarded, true)}/>
             </td>
             <td>
                 {db.latitude}

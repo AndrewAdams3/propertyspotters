@@ -42,7 +42,7 @@ export default function AssignmentModal(props){
   const newBatchAdd = () => {
     let addList = currentBatch.split(/(\d{3,6}\D{3,})/);
     let filtered = addList.filter((add)=>{
-      return add != "";
+      return add !== "";
     })
     
     setAddressList([

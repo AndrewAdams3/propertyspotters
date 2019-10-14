@@ -1,5 +1,4 @@
 import React, {useState, useRef, useEffect} from 'react';
-import ReactDOM from 'react-dom'
 import Table from 'react-bootstrap/Table';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
@@ -11,7 +10,6 @@ import UserProfile from './userProfile';
 import Axios from 'axios';
 
 import {useStateValue} from '../../context/State';
-import useInnerWidth from '../../components/hooks/useInnerWidth';
 
 export default function UserCard({Users, UsersOnClock, refresh}){
 
@@ -21,25 +19,11 @@ export default function UserCard({Users, UsersOnClock, refresh}){
   const  [taskShow, setTaskShow] = useState(false);
   const [activeUser, setActiveUser] = useState();
   const meRef = useRef(null);
-  const meClock = useRef(null);
-  const [me, setMe] = useState(null);
-  const [me2, setMe2] = useState(null);
   const [{User},] = useStateValue();
-  const width = useInnerWidth();
 
 
   useEffect(()=>{
     window.scrollTo(0,0);
-    setMe( meRef.current ? 
-      ReactDOM
-      .findDOMNode(meRef.current)
-      .getBoundingClientRect() : null
-    )
-    setMe2(meClock.current ?
-      ReactDOM
-        .findDOMNode(meClock.current)
-        .getBoundingClientRect() : null
-    )
   }, [])
 
 

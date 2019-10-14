@@ -25,10 +25,11 @@ export default function EditAssModal(props){
         if(data){
             setAss(data);
             if(subAss.length){
-              data.Addresses.map((add)=>{
+              data.Addresses.forEach((add)=>{
                   if(add._id === subAss){
                       setSubAss(add);
                   }
+                  return;
               })
           } else{
             setSubAss({})
@@ -40,7 +41,7 @@ export default function EditAssModal(props){
       setDelete(false)
       setComplete(false)
     }
-  },[ass, subAss])
+  },[ass, subAss, comp])
 
   const confirm = () =>{
     if(toDelete){
@@ -83,7 +84,7 @@ export default function EditAssModal(props){
           <div className="backcontainer border rounded-circle" onClick={onHide}>
               <img src={backbtn} alt="back" className="backbtn"/>
           </div>
-            <h2 style={{textAlign:"center", width:"100%"}}>{subAss.length && sass.address ? title + "-" + sass.address : subAss.length ? title + "-" + "..." : title}</h2>
+            <h2 style={{textAlign:"center", width:"100%"}}>{subAss.length && sass.address ? `${title}-${sass.address}` : subAss.length ? `${title}-...` : title}</h2>
         </Modal.Header>
         <Modal.Body style={{ overflowY: 'auto', maxHeight: "80vh" }}>
           <Container>

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Container, Col, Row} from 'react-bootstrap';
+import {Col, Row} from 'react-bootstrap';
 
 import EditAssModal from './EditAssModal'
 
@@ -37,7 +37,7 @@ export default function Dropdown({title, list, id, containerStyle, openState=fal
           {
             open && list.map((item, index)=>{
               return(
-                <h3 key={index} style={{textAlign: "center", position: "relative"}} key={item._id}>{item.address} 
+                <h3 key={index} style={{textAlign: "center", position: "relative"}}>{item.address} 
                   <h4 style={{display:"inline", color: item.completed ? "green" : "red"}}>
                     {item.completed ? " -complete!" : " -incomplete"}
                   </h4>

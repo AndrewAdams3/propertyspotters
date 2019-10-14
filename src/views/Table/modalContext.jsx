@@ -5,7 +5,8 @@ let Context = React.createContext();
 let initialState = {
   field: {
       name: "",
-      value: ""
+      value: "",
+      bool: false,
   },
   show: false,
   db: {}

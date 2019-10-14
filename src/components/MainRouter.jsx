@@ -30,8 +30,6 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
   const [, lDDispatch] = useStateValue();
   const [{ userId }, uIdDispatch] = useStateValue();
   const [, userDispatch] = useStateValue();
-  const [, usersDispatch] = useStateValue();
-  const [, dbDispatch] = useStateValue();
 
   if(userId){
     localStorage.setItem('webSesh', JSON.stringify({
