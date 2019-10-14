@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import Axios from 'axios'
+import useStateValue from '../../context/State'
 
-export default function(socket) {
+export default function() {
+    const [{socket},] = useStateValue()
     const [dbs, setDBs] = useState([])
 
     useEffect(()=>{

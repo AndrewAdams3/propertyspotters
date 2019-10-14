@@ -64,8 +64,7 @@ const ListItem = ({db, n}) => {
 }
 const TableView = () => {
 
-    const [{ socket },] = useStateValue();
-    const Drivebys = useDbs(socket);
+    const Drivebys = useDbs();
 
     const TableT = ({drivebys}) => {
         return(

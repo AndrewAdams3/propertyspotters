@@ -4,7 +4,7 @@ import MyMap from '../../components/map/Map';
 import HeaderNav from '../../components/header';
 import {Container, Col, Row} from 'react-bootstrap';
 
-import { useStateValue } from '../../context/State';
+import useDBs from '../../components/hooks/useDbs'
 
 import './Map.css';
 import useInnerWidth from '../../components/hooks/useInnerWidth';
@@ -12,7 +12,7 @@ import useInnerHeight from '../../components/hooks/useInnerHeight';
 
 const MapView = memo(() => {
 
-  const [{Drivebys},] = useStateValue();
+  const Drivebys = useDbs();
   const [dbs, setDbs] = useState([]);
   const [iaddressList, setIAddressList] = useState();
   const [addressList, setAddressList] = useState([]);

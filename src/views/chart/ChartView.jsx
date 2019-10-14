@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react'
 import {Container, Row, Col, Card} from 'react-bootstrap'
 import HeaderNav from '../../components/header'
-import { useStateValue } from '../../context/State';
+import useDbs from '../../components/hooks/useDbs'
 
 import './chart.scss';
 
 export default function ChartView() {
     const iframe = '<iframe style="border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="100%" height="400" src="https://charts.mongodb.com/charts-varodrive-ptegd/embed/charts?id=94cb494e-75e5-4148-85a7-a4911d46ffec&tenant=59f93d45-c59b-42e4-92dc-f884e44733ef" />'
-    const [{Drivebys},] = useStateValue();
+    const Drivebys = useDbs();
     const [Sfr, setSfr] = useState(0)
     const [Mfr, setMfr] = useState(0)
     const [Com, setCom] = useState(0)
