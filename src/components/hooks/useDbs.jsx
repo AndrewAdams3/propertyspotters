@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Axios from 'axios'
-import useStateValue from '../../context/State'
+import {useStateValue} from '../../context/State'
 
 export default function() {
     const [{socket},] = useStateValue()

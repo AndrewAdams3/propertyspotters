@@ -15,7 +15,6 @@ import Logout from '../components/Logout';
 import colors from '../config/colors';
 
 import { useStateValue } from '../context/State';
-import { populateData } from '../helpers/data';
 
 const MyRoute = ({ component: Component, ...rest }) => {
   return (
@@ -67,15 +66,6 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
             uIdDispatch({
                 type: 'userId',
                 value: data._id
-              })
-              const dts = await populateData();
-            usersDispatch({
-                type: 'users',
-                value: dts.u
-              })
-            dbDispatch({
-                type: 'dbs',
-                value: dts.d
               })
             return (
               <Route
