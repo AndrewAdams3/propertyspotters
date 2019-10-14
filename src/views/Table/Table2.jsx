@@ -9,12 +9,13 @@ import { useStateValue } from '../../context/State';
 import EditModal from './EditModal';
 
 import { Context, ContextProvider } from './modalContext'
+import useDbs from '../../components/hooks/useDbs';
 
 const ListItem = ({db, n}) => {
     const [hover, setHover] = useState("none");
 
     const edit = require('../../config/images/edit.png');
-    let { state, dispatch } = useContext(Context);
+    let dispatch = useContext(Context).dispatch;
 
     const handleClick = (field, val) => {
         dispatch({type: "field", value: {name: field, value: val}})
@@ -63,24 +64,8 @@ const ListItem = ({db, n}) => {
 }
 const TableView = () => {
 
-    const [{ Drivebys },] = useStateValue();
-    const [dbs, setDrivebys] = useState([]); 
-    const [, sethasDbs] = useState(true);
-
-    useEffect( () => {
-        if(Drivebys){
-            sethasDbs(true);
-        } else{
-            sethasDbs(false);
-            return;
-        }
-        let dbs = Drivebys.map((db, n) => {
-            db.index = n;
-            return <ListItem db={db} n={n} key={db._id} />;
-        })
-        dbs = dbs.reverse();
-        setDrivebys(dbs);
-    }, [Drivebys])
+    const [{ socket },] = useStateValue();
+    const Drivebys = useDbs(socket);
 
     const TableT = ({drivebys}) => {
         return(
@@ -102,21 +87,22 @@ const TableView = () => {
             </thead>
             <tbody>
             {drivebys.map((db, index) => {
-                return db
-            })}
+                return <ListItem db={db} n={index} key={db._id} />
+            }).reverse()}
             </tbody>
             </Table>
             </div>
         )
     }
-    return  dbs ? (
+    return  Drivebys ? (
         <ContextProvider>
             <EditModal/>
-            <HeaderNav fixed="top" color={"black"}/> <br/>
+            <HeaderNav fixed="top" color={"black"} dbsN={Drivebys.length
+            }/> <br/>
             <Container  style={{overflowX: "scroll"}}>
                 <Row>
                     <Col xs={12}>
-                        <TableT drivebys={dbs}/>   
+                        <TableT drivebys={Drivebys}/>   
                     </Col>
                 </Row>
             </Container>

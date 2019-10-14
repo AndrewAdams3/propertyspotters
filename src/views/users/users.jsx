@@ -3,45 +3,29 @@ import HeaderNav from '../../components/header';
 
 import { useStateValue } from '../../context/State';
 import UsersCard from './UsersCard';
-import { populateData } from '../../helpers/data';
 import './users.css';
+import useUsers from '../../components/hooks/useUsers';
 
-const Users = ({match}) => {
+const Users = () => {
 
-  const [{ Users },] = useStateValue();
-  const [, usersDispatch] = useStateValue();
+  const [{ socket },] = useStateValue();
   const [hasData, setHasData] = useState(false);
 
-  const [users, setUsers] = useState([]);
-  const [usersOnClock, setUsersOnClock] = useState([]);
+  const Users = useUsers(socket);
   
-
   useEffect( () => {
     if((Users)){
-      setUsers(Users);
-      setUsersOnClock(Users.filter((user, i)=>{return user.isOnClock}))
       setHasData(true);
     } else{
       setHasData(false);
     }
   }, [Users])
 
-  const Refresh = async () => {
-    const dts = await populateData();
-    usersDispatch({
-      type: 'users',
-      value: dts.u
-    })
-    console.log("new users", dts.u)
-    setUsers(dts.u);
-    setUsersOnClock(dts.u.filter((user, i) => { return user.isOnClock }))
-  }
-
   return hasData ? (
     <div>
       <HeaderNav fixed="top" color="black"/>
       <div className="container mainView">
-        <UsersCard Users={users} UsersOnClock={usersOnClock} refresh={Refresh}/>
+        <UsersCard Users={Users}/>
       </div>
     </div>
   ) 

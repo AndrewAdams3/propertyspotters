@@ -7,13 +7,10 @@ import './login.css';
 import logo from '../../config/images/psLogo.png';
 
 import { useStateValue } from '../../context/State';
-import { populateData } from '../../helpers/data';
 
 const Login = (props) => {
 
   const [, logDispatch] = useStateValue();
-  const [, dbDispatch] = useStateValue();
-  const [, usersDispatch] = useStateValue();
   const [, idDispatch] = useStateValue();
   const [, UserDispatch] = useStateValue();
 
@@ -40,15 +37,6 @@ const Login = (props) => {
         idDispatch({
           type: 'userId',
           value: data.userId
-        })
-        const dts = await populateData();
-        usersDispatch({
-          type: 'users',
-          value: dts.u
-        })
-        dbDispatch({
-          type: 'dbs',
-          value: dts.d
         })
         UserDispatch({
           type: 'user',
