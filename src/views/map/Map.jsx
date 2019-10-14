@@ -12,7 +12,7 @@ import useInnerHeight from '../../components/hooks/useInnerHeight';
 
 const MapView = memo(() => {
 
-  const Drivebys = useDbs();
+  const Drivebys = useDBs();
   const [dbs, setDbs] = useState([]);
   const [iaddressList, setIAddressList] = useState();
   const [addressList, setAddressList] = useState([]);
