@@ -157,11 +157,6 @@ export default function UserCard({Users, UsersOnClock, refresh}){
       <TargetModal show={taskShow} user={activeUser} onHide={() => {setTaskShow(false); setActiveUser()}} addTarget={addTarget} />
       <ViewAssignments show={viewShow} user={activeUser} onHide={() => { setViewShow(false); setActiveUser() }} />
       <UserProfile show={profileShow} user={activeUser} onHide={() => { setProfileShow(false); setActiveUser() }} remove={Remove} refresh={refresh} />
-      <div className="row" style={{justifyContent: "center"}}>
-        <div className="col-12 col-lg-12">
-          <UserCard users={UsersOnClock} title={"On Clock"} refVal={meClock} />
-        </div>
-      </div>
       <div className="row" style={{ justifyContent: "center" }}>
         <div className="col-12 col-lg-12">
           <UserCard users={Users} title="All Users" refVal={meRef} />

@@ -2,40 +2,25 @@ import React, {useState, useRef, useEffect} from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import {Button, Row, Col} from 'react-bootstrap';
-import { NavLink, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import './component.css';
 
 import { useStateValue } from '../context/State';
 import useInnerWidth from './hooks/useInnerWidth';
-import { populateData } from '../helpers/data';
+import useDbs from './hooks/useDbs';
 
-const Header = ({fixed, color, opacity}) => {
+const Header = ({fixed, color}) => {
 
-  const [{userId, Drivebys, User}, dispatch] = useStateValue();
+  const [{userId, socket}, dispatch] = useStateValue();
   const [loading, setLoading] = useState(false);
   const [small, setSmall] = useState(false);
   const cRef = useRef();
   const width = useInnerWidth();
+  const Drivebys = useDbs(socket)
 
   useEffect(()=>{
     width < 1000 ? setSmall(true) : setSmall(false);
   }, [width])
-
-
-  const refresh = async () => {
-    setLoading(true)
-    const dts = await populateData();
-    dispatch({
-      type: 'users',
-      value: dts.u
-    })
-    dispatch({
-      type: 'dbs',
-      value: dts.d
-    })
-    setLoading(false);
-  }
 
   return (
     <Navbar expand="lg" bg={color==="black" ? "dark" : "transparent"} fixed={fixed} id="nav" style={{zIndex:10}}>
@@ -61,7 +46,7 @@ const Header = ({fixed, color, opacity}) => {
               <>
                 <p style={{color: "white", width: "20rem", margin: "auto"}}>{"Total Drivebys: " + Drivebys.length}</p>
                 <p style={{color: "white", width: "20rem", margin: "auto"}}>{"Today's Drivebys: " + Drivebys.filter((db, i)=> new Date(db.date).toLocaleDateString() === new Date().toLocaleDateString()).length}</p>
-                <Button variant="success" onClick={refresh} style={{width:"15rem", marginLeft: "1rem"}}>{loading ? "Loading..." : "Refresh Data"}</Button>
+                {/* <Button variant="success" onClick={refresh} style={{width:"15rem", marginLeft: "1rem"}}>{loading ? "Loading..." : "Refresh Data"}</Button> */}
               </>
             }
           </div>

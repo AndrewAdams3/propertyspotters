@@ -70,7 +70,6 @@ export default function UserProfile(props) {
   }
 
   const makeAdmin = (val) => {
-    let x
     user.admin = val;
     Axios.put(`${process.env.REACT_APP_SERVER}/data/users/makeAdmin/${user._id}/${val}`)
       .then(()=>{

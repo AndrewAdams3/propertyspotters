@@ -16,6 +16,7 @@ export default function EditModal(props){
   const [fresh, refresh] = useState(false)
   var isBool = state.field.name.includes("vacant") || state.field.name.includes("burned") || state.field.name.includes("boarded")
   const [change, setChange] = useState();
+  const [hasChanged, setHasChanged] = useState(false);
 
   useEffect(()=>{
     refresh(!fresh)
@@ -46,28 +47,29 @@ export default function EditModal(props){
     }).then(({data})=>{
       console.log("res", data)
     }).catch((err)=>console.log("err", err))
-
-    dispatch({type: "db", value: ndb})
     dispatch({type: "show", value: false})
     dispatch({type: "reset"})
   }
 
   const handleTSubmit = () => {
-    console.log("change", change)
-    let ndb = state.db
-    state.field.name === "address" ? ndb.address = change : ndb.type = change
+    if(hasChanged) {
+      console.log("change", change)
+      let ndb = state.db
+      state.field.name === "address" ? ndb.address = change : ndb.type = change
 
-    Axios.put(`${process.env.REACT_APP_SERVER}/data/drivebys/updateDB`, {
-      id: state.db._id,
-      field: state.field.name,
-      update: change
-    }).then(({data})=>{
-      console.log("res", data)
-    }).catch((err)=>console.log("err", err))
-    
-    dispatch({type: "db", value: ndb})
-    dispatch({type: "show", value: false})
-    dispatch({type: "reset"})
+      Axios.put(`${process.env.REACT_APP_SERVER}/data/drivebys/updateDB`, {
+        id: state.db._id,
+        field: state.field.name,
+        update: change
+      }).then(({data})=>{
+        console.log("res", data)
+      }).catch((err)=>console.log("err", err))
+      dispatch({type: "show", value: false})
+      dispatch({type: "reset"})
+    } else {
+      dispatch({type: "show", value: false})
+      dispatch({type: "reset"})
+    }
   }
 
   return state.show ? (
@@ -130,7 +132,7 @@ export default function EditModal(props){
                   { state.field.name==="address" &&
                     <Form.Row>
                       <Form.Group>
-                        <Form.Control type="text" defaultValue={state.field.value} onChange={(e)=>setChange(e.nativeEvent.target.value)}/>
+                        <Form.Control type="text" defaultValue={state.field.value} onChange={(e)=>{setChange(e.nativeEvent.target.value); setHasChanged(true)}}/>
                       </Form.Group>
                     </Form.Row>
                   }
