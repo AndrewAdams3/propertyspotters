@@ -16,7 +16,6 @@ import PersonalView from './PersonalView';
 
 export default function UserProfile(props) {
   const { user, refresh, remove, show } = props;
-  const [Assignments, setAssignments] = useState([]);
   const [DBs, setDBs] = useState([]);
   const [Times, setTimes] = useState([]);
   const [TotalTime, setTotalTime] = useState([]);
@@ -32,10 +31,6 @@ export default function UserProfile(props) {
 
   useEffect(() => {
     if (user){
-      Axios.get(`${process.env.REACT_APP_SERVER}/data/assignments/byId/${user._id}`)
-      .then(({ data }) => {
-        setAssignments(data);
-      })
       Axios.post(`${process.env.REACT_APP_SERVER}/data/drivebys/byUserId`, {
         id: user._id,
         sort: "-date",
@@ -50,7 +45,7 @@ export default function UserProfile(props) {
           setTimes(data);
         })
     }
-  }, [user])
+  }, [user, MSperH])
 
   const getTimes = async () => {
     await Axios.get(`${process.env.REACT_APP_SERVER}/data/times/byId/${user._id}/${100}`)

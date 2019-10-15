@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 export default function Logout (props){
   useEffect( () => {
-    console.log("clear loc");
-    props.history.push('/login');
     localStorage.clear()
     window.location.reload();
-    return(()=>{localStorage.clear()})
-  }, [])
+    props.history.push('/login');
+  })
 
   return null;
 }

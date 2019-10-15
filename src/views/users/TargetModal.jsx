@@ -13,7 +13,6 @@ export default function TargetModal(props){
   const { user, onHide } = props;
   const [task, setTask] = useState("");
   const [date, setDate] = useState(new Date());
-  const [noDate, setNoDate] = useState(false);
   const [oldTask, setOldTask] = useState({});
   
   useEffect(()=>{
@@ -34,7 +33,7 @@ export default function TargetModal(props){
       <Modal {...props} aria-labelledby="contained-modal-title-vcenter" dialogClassName="aModal">
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
-            {user.target ? `Change ${user.fName}\'s Target` : `Give ${user.fName} a Target`}
+            {user.target ? `Change ${user.fName}'s Target` : `Give ${user.fName} a Target`}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ overflowY: 'auto', maxHeight: "80vh" }}>

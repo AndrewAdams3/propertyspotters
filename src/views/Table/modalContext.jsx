@@ -28,10 +28,12 @@ let reducer = (state, action) => {
       return { ...state, show: action.value };
     case "reset":
       return initialState
+    default :
+      return;
   }
 };
 
-function ContextProvider(props) {
+export function ContextProvider(props) {
   let [state, dispatch] = React.useReducer(reducer, initialState);
   let value = { state, dispatch };
   return (
@@ -39,7 +41,6 @@ function ContextProvider(props) {
   );
 }
 
-let ContextConsumer = Context.Consumer;
-
-export { Context, ContextProvider, ContextConsumer };
+export var ContextConsumer = Context.Consumer;
+export default Context;
 

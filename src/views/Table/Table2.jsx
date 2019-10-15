@@ -1,14 +1,13 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useContext} from 'react';
 import Table from 'react-bootstrap/Table';
-import {Container, Row, Col, Card} from 'react-bootstrap';
+import {Container, Row, Col} from 'react-bootstrap';
 
 import HeaderNav from '../../components/header';
 import './table.css';
 
-import { useStateValue } from '../../context/State';
 import EditModal from './EditModal';
 
-import { Context, ContextProvider } from './modalContext'
+import Context, { ContextProvider } from './modalContext'
 import useDbs from '../../components/hooks/useDbs';
 
 const ListItem = ({db, n}) => {

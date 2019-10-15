@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 
 import React, { useState, useEffect, useRef } from 'react'
-import ReactDOM from 'react-dom'
 import { compose, withProps, withHandlers } from 'recompose'
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from 'react-google-maps'
 import { default as MarkerClusterer } from "react-google-maps/lib/components/addons/MarkerClusterer";
@@ -28,7 +27,7 @@ const MyMap = compose(
   }),
   withScriptjs,
   withGoogleMap,
-)(({data, onMarkerClustererClick, onHover, filterList}) =>{
+)(({data, onMarkerClustererClick, filterList}) =>{
   const [res, setRes] = useState([]);
   const mapRef = useRef();
   const [zoom,] = useState(13);
@@ -105,20 +104,8 @@ const ClusterInfo = ({homes, close}) => {
 const MarkerWithInfoWindow = ({position, home, id}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [rotation, setRotation] = useState(0);
-  const [horizontal, setHorizontal] = useState(false)
   const imgRef = useRef(null);
   const [date,] = useState(new Date(home["date"]));
-  
-  useEffect(()=>{
-    let bounds = imgRef.current ? ReactDOM
-      .findDOMNode(imgRef.current)
-      .getBoundingClientRect() : null
-    if(bounds){
-      if(bounds.bottom - bounds.top > bounds.right - bounds.left){
-        setHorizontal(false)
-      } else setHorizontal(true);
-    }
-  }, [rotation])
 
   const onToggleOpen = () => { setIsOpen(!isOpen);}
   return (
@@ -132,7 +119,7 @@ const MarkerWithInfoWindow = ({position, home, id}) => {
         <InfoWindow onCloseClick={onToggleOpen}>
           <div className="windowContainer" >
             <div className="rotateContainer">
-              <img className="rotate border border-dark rounded" src="../../rotate.png" onClick={()=>{setRotation(rotation + 90)}}/>
+              <img className="rotate border border-dark rounded" alt="test" src="../../rotate.png" onClick={()=>{setRotation(rotation + 90)}}/>
             </div>
             <div className="info">
               <p style={{ textAlign: "center" }}>{home["address"]}</p>

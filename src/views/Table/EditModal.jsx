@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext, useRef} from 'react'
+import React, {useEffect, useState, useContext} from 'react'
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
@@ -8,7 +8,7 @@ import Form from 'react-bootstrap/Form';
 import Axios from 'axios';
 
 import './table.css'
-import { Context } from './modalContext'
+import Context from './modalContext'
 
 export default function EditModal(props){
 
@@ -18,7 +18,6 @@ export default function EditModal(props){
   const [hasChanged, setHasChanged] = useState(false);
 
   useEffect(()=>{
-    console.log("state", state.field.name, state.field.bool)
     setChange(!state.db[state.field.name])
   }, [state])
   useEffect(()=>{

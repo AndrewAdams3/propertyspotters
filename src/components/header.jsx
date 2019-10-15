@@ -11,8 +11,7 @@ import useDbs from './hooks/useDbs';
 
 const Header = ({fixed, color}) => {
 
-  const [{userId, socket}, dispatch] = useStateValue();
-  const [loading, setLoading] = useState(false);
+  const [{userId, socket},] = useStateValue();
   const [small, setSmall] = useState(false);
   const cRef = useRef();
   const width = useInnerWidth();
