@@ -11,11 +11,11 @@ import useDbs from './hooks/useDbs';
 
 const Header = ({fixed, color}) => {
 
-  const [{userId, socket},] = useStateValue();
+  const [{userId},] = useStateValue();
   const [small, setSmall] = useState(false);
   const cRef = useRef();
   const width = useInnerWidth();
-  const Drivebys = useDbs(socket)
+  const Drivebys = useDbs()
 
   useEffect(()=>{
     width < 1000 ? setSmall(true) : setSmall(false);

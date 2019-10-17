@@ -7,19 +7,20 @@ import '../../../node_modules/react-linechart/dist/styles.css';
 export default function DBView({data}){
 
     const dates = [];
+    const days = Math.ceil((new Date().getTime() - new Date(data[data.length-1].date).getTime()) / (1000 * 60 * 60 * 24))
+    for(var i = days; i > 0; i--) {
+        var dt = new Date(data[data.length-1].date);
+        dt.setTime(dt.getTime() + (i * 24 * 60 * 60 * 1000));
+        dates.push({date: dt, num: 0});
+    }
     data.forEach(db => {
         const next = new Date(db.date).toLocaleDateString()
-        var found = false;
-        if(dates.length >= 1){
-            for(const date of dates){
-                if(date.date === next){
-                    date.num += 1;
-                    found = true;
-                    break;
-                }
+        for(const date of dates){
+            if(new Date(date.date).toLocaleDateString() === next){
+                date.num += 1;
+                break;
             }
-            if(!found) dates.push({date: next, num: 1});
-        } else dates.push({date: next, num: 1})
+        }
     });
     const points = dates.map((dt, i)=>{
         const d = new Date(dt.date);
@@ -34,7 +35,6 @@ export default function DBView({data}){
         color: "steelBlue",
         points: points,
     }]
-    console.log("dp", dataPoints)
      return(
         <Container className="h-100 w-100" style={{overflowX: "scroll"}}>
             <LineChart 
@@ -44,7 +44,7 @@ export default function DBView({data}){
                 isDate={true}
                 xLabel="Date"
                 yLabel="Number"
-                ticks={points.length / 2}
+                ticks={days}
                 yMin="0"
                 interpolate="linear"
                 margins={{top: 0, right: 0, bottom: 0, left: 0}}

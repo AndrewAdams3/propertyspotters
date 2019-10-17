@@ -54,16 +54,16 @@ export default function ChartView() {
                             <Card.Title>Types of Drivebys</Card.Title>
                             <ul className="bar-chart">
                                 <li>
-                                    <span title="Burned" style={{height: `${Burned}%`, justifyContent: "center"}}>{`${Math.round(Burned)}%`}</span>
+                                    <span value="Burned" title={`${Math.round(Burned * Drivebys.length / 100)}`} style={{height: `${Burned}%`, justifyContent: "center"}}>{`${Math.round(Burned)}%`}</span>
                                 </li>
                                 <li>
-                                    <span title="Boarded" style={{height: `${Boarded}%`, justifyContent: "center"}}><p>{`${Math.round(Boarded)}%`}</p></span>
+                                    <span value="Boarded" title={`${Math.round(Boarded * Drivebys.length / 100)}`} style={{height: `${Boarded}%`, justifyContent: "center"}}><p>{`${Math.round(Boarded)}%`}</p></span>
                                 </li>
                                 <li>
-                                    <span title="Vacant" style={{height: `${Vacant}%`, justifyContent: "center"}}>{`${Math.round(Vacant)}%`}</span>
+                                    <span value="Vacant" title={`${Math.round(Vacant * Drivebys.length / 100)}`} style={{height: `${Vacant}%`, justifyContent: "center"}}>{`${Math.round(Vacant)}%`}</span>
                                 </li>
                                 <li>
-                                    <span title="None" style={{height: `${Not_any}%`, justifyContent: "center"}}>{`${Math.round(Not_any)}%`}</span>
+                                    <span value="None" title={`${Math.round(Not_any * Drivebys.length / 100)}`} style={{height: `${Not_any}%`, justifyContent: "center"}}>{`${Math.round(Not_any)}%`}</span>
                                 </li>
                             </ul>
                         </Card>

@@ -102,7 +102,7 @@ export default function AssignmentModal(props){
                   <Form.Row>
                     <Form.Group>
                       {AddressList.map((add, index) => {
-                        return <h4>{`Address ${index+1}: ${add}`}</h4>
+                        return <h4 key={index}>{`Address ${index+1}: ${add}`}</h4>
                       })}
                     </Form.Group>
                   </Form.Row>
