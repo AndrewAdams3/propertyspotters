@@ -2,10 +2,47 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import { compose, withProps, withHandlers } from 'recompose'
-import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow } from 'react-google-maps'
+import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow,  } from 'react-google-maps'
 import { default as MarkerClusterer } from "react-google-maps/lib/components/addons/MarkerClusterer";
+import { DrawingManager } from "react-google-maps/lib/components/drawing/DrawingManager";
+import Axios from 'axios';
+
 import './Map.css';
 import useInnerHeight from '../hooks/useInnerHeight';
+
+function polygonArea(X, Y, numPoints) // all latitudes, all longitudes, number of coords
+{ 
+  var area = 0;         // Accumulates area in the loop
+  var j = numPoints-1;  // The last vertex is the 'previous' one to the first
+
+  for (let i=0; i<numPoints; i++)
+    { area = area +  (X[j]+X[i]) * (Y[j]-Y[i]); 
+      j = i;  //j is previous vertex to i
+    }
+  return area/2;
+}
+
+function customStringify (v) {
+  const cache = new Set();
+  return JSON.stringify(v, function (key, value) {
+    if (typeof value === 'object' && value !== null) {
+      if (cache.has(value)) {
+        // Circular reference found
+        try {
+          // If this value does not reference a parent it can be deduped
+         return JSON.parse(JSON.stringify(value));
+        }
+        catch (err) {
+          // discard key if value cannot be deduped
+         return;
+        }
+      }
+      // Store value in our set
+      cache.add(value);
+    }
+    return value;
+  });
+};
 
 const MyMap = compose(
   withProps({
@@ -23,12 +60,21 @@ const MyMap = compose(
     },
     onHover: () => (e) =>{
       return JSON.parse(e.markers_[e.markers_.length-1].title)
+    },
+    onClick: () => (props) => {
+      console.log("props", props);
     }
   }),
   withScriptjs,
   withGoogleMap,
-)(({data, onMarkerClustererClick, filterList}) =>{
+)(({data, onMarkerClustererClick, filterList, onClick}) =>{
   const [res, setRes] = useState([]);
+  const drawRef = useRef();
+  const [drawMode, setDrawMode] = useState("");
+  const [poly, setPoly] = useState()
+  const [tMarkers, setTMarkers] = useState([])
+  const editRef = useRef();
+  const listeners = useRef([]);
   const mapRef = useRef();
   const [zoom,] = useState(13);
   
@@ -40,6 +86,22 @@ const MyMap = compose(
     mapRef.current.fitBounds(bounds);
   },[filterList])
 
+  const clearPoly = () => {
+    if(poly){
+      google.maps.event.clearInstanceListeners(poly);
+      poly.setMap(null);
+      setPoly()
+    }
+  }
+
+  const assignPolygon = () => {
+    if(poly){
+      Axios.post(`${process.env.REACT_APP_SERVER}/location/poly`, {
+        bounds: poly.getPath().g.map((coord)=>{return {lat:coord.lat(), lon:coord.lng()}})
+      })
+    }
+  }
+
   let markers = data.map((home, index) => {
     if (home["latitude"] !== 0) {
       return <MarkerWithInfoWindow position={new google.maps.LatLng(home["latitude"], home["longitude"])} home={home} key={home["_id"]} />
@@ -47,6 +109,31 @@ const MyMap = compose(
     return null;
   })
 
+  useEffect(()=>{
+    if(poly){
+      listeners.current.push(google.maps.event.addListener(editRef.current.getPath(), 'insert_at', function () {
+        console.log("listener", editRef.current.getPath())
+        setPoly(editRef.current);
+      }));
+      listeners.current.push(google.maps.event.addListener(editRef.current.getPath(), 'remove_at', function () {
+        console.log("listener", editRef.current.getPath())
+        setPoly(editRef.current);
+      }));      
+      listeners.current.push(google.maps.event.addListener(editRef.current.getPath(), 'set_at', function () {
+        console.log("listener", editRef.current.getPath())
+        setPoly(editRef.current);
+      }));
+    } else if(listeners.current){
+      return listeners.current.forEach((listener)=>listener.remove())
+    }
+  }, [poly])
+
+  const completePoly = (newPoly) => {
+    if(poly) clearCircle();
+    editRef.current = newPoly;
+    setPoly(newPoly);
+    setDrawMode("");
+  }
   return(
     <>
     <GoogleMap
@@ -62,16 +149,51 @@ const MyMap = compose(
         enableRetinaIcons
         gridSize={60}
         minimumClusterSize={3}
-        // onMouseOver={(e)=>{if(!latest) setLatest(onHover(e))}}
-        // onMouseOut={()=>setLatest(null)}        
       >
-        {
-          markers
-        }
-        {res.max &&
-          <ClusterInfo homes={res.markers} close={()=>{setRes([])}}/>
-        }
+        <DrawingManager
+          ref={drawRef}
+          drawingMode={drawMode}
+          key={"drawer"}
+          defaultOptions={{
+            drawingControl: false,
+            drawingControlOptions: {
+              drawingModes: [],
+            },
+            polygonOptions: {
+              fillColor: `#ffff00`,
+              fillOpacity: .2,
+              strokeWeight: 2,
+              clickable: true,
+              zIndex: 1,
+              draggable: true,
+              editable: true
+            },
+          }}
+          onPolygonComplete={completePoly}/>  
+          {
+            markers
+          }
+          {res.max &&
+            <ClusterInfo homes={res.markers} close={()=>{setRes([])}}/>
+          }   
+
+          <div style={{position: "absolute", top: ".9rem", zIndex: 5, left: "50%", width: "20rem", marginLeft: "-50px", display: "flex", justifyContent: "space-around"}}>
+            <button className="col-3" onClick={()=>{setDrawMode((prev)=>prev === "polygon" ? "" : "polygon")}} style={{display: "inline-flex"}}>
+              <span>{drawMode === "polygon" ? "Point" :  "Draw"}</span>
+            </button>
+            <button className="col-3" onClick={clearPoly} style={{display: "inline-flex"}}>
+              <span>Clear</span>
+            </button>
+            <button className="col-3" onClick={assignPolygon} style={{display: "inline-flex", visibility: poly === undefined ? "hidden" : "inherit"}}>
+              <span>Assign?</span>
+            </button>
+          </div> 
+
       </MarkerClusterer>
+      {tMarkers.length && 
+        tMarkers.map((marker)=>marker)
+      }
+
     </GoogleMap> 
     </>
   )

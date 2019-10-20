@@ -8,14 +8,14 @@ export default function DBView({data}){
 
     const dates = [];
     const days = Math.ceil((new Date().getTime() - new Date(data[data.length-1].date).getTime()) / (1000 * 60 * 60 * 24))
-    for(var i = days; i > 0; i--) {
+    for(var i = days; i >= 0; i--) {
         var dt = new Date(data[data.length-1].date);
         dt.setTime(dt.getTime() + (i * 24 * 60 * 60 * 1000));
         dates.push({date: dt, num: 0});
     }
     data.forEach(db => {
         const next = new Date(db.date).toLocaleDateString()
-        for(const date of dates){
+        for(const date of dates){   
             if(new Date(date.date).toLocaleDateString() === next){
                 date.num += 1;
                 break;
