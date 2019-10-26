@@ -109,7 +109,7 @@ const MyMap = compose(
   // Snap a user-created polyline to roads and draw the snapped path
   const runSnapToRoad = async (path) => {
     setPathValues([])
-    let pv = []
+    let pv =[]
     for (var i = 0; i < path.getLength(); i++) {
       pv.push(path.getAt(i).toUrlValue());
     }
