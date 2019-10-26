@@ -5,44 +5,11 @@ import { compose, withProps, withHandlers } from 'recompose'
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow,  } from 'react-google-maps'
 import { default as MarkerClusterer } from "react-google-maps/lib/components/addons/MarkerClusterer";
 import { DrawingManager } from "react-google-maps/lib/components/drawing/DrawingManager";
-import Axios from 'axios';
 
 import './Map.css';
 import useInnerHeight from '../hooks/useInnerHeight';
-
-function polygonArea(X, Y, numPoints) // all latitudes, all longitudes, number of coords
-{ 
-  var area = 0;         // Accumulates area in the loop
-  var j = numPoints-1;  // The last vertex is the 'previous' one to the first
-
-  for (let i=0; i<numPoints; i++)
-    { area = area +  (X[j]+X[i]) * (Y[j]-Y[i]); 
-      j = i;  //j is previous vertex to i
-    }
-  return area/2;
-}
-
-function customStringify (v) {
-  const cache = new Set();
-  return JSON.stringify(v, function (key, value) {
-    if (typeof value === 'object' && value !== null) {
-      if (cache.has(value)) {
-        // Circular reference found
-        try {
-          // If this value does not reference a parent it can be deduped
-         return JSON.parse(JSON.stringify(value));
-        }
-        catch (err) {
-          // discard key if value cannot be deduped
-         return;
-        }
-      }
-      // Store value in our set
-      cache.add(value);
-    }
-    return value;
-  });
-};
+import CompleteAss from './CompleteAss';
+import Axios from 'axios';
 
 const MyMap = compose(
   withProps({
@@ -60,23 +27,25 @@ const MyMap = compose(
     },
     onHover: () => (e) =>{
       return JSON.parse(e.markers_[e.markers_.length-1].title)
-    },
-    onClick: () => (props) => {
-      console.log("props", props);
     }
   }),
   withScriptjs,
   withGoogleMap,
-)(({data, onMarkerClustererClick, filterList, onClick}) =>{
+)(({data, onMarkerClustererClick, filterList}) =>{
   const [res, setRes] = useState([]);
   const drawRef = useRef();
   const [drawMode, setDrawMode] = useState("");
   const [poly, setPoly] = useState()
-  const [tMarkers, setTMarkers] = useState([])
+  const [completeAss, setCompleteAss] = useState(false)
   const editRef = useRef();
   const listeners = useRef([]);
   const mapRef = useRef();
   const [zoom,] = useState(13);
+
+  const [pathValues, setPathValues] = useState([])
+  const [snappedCoordinates, setSnappedCoordinates] = useState([])
+  const [placeIdArray, setPlaceIdArray] = useState([])
+  const [snappedPolylines, setSnappedPolylines] = useState([])
   
   useEffect(()=>{
     const bounds = new google.maps.LatLngBounds();
@@ -96,9 +65,12 @@ const MyMap = compose(
 
   const assignPolygon = () => {
     if(poly){
-      Axios.post(`${process.env.REACT_APP_SERVER}/location/poly`, {
-        bounds: poly.getPath().g.map((coord)=>{return {lat:coord.lat(), lon:coord.lng()}})
-      })
+      var bounds = new google.maps.LatLngBounds();
+      const coords = poly.getPath().g.map((coord)=>{return {lat:coord.lat(), lng:coord.lng()}})
+      for (let i = 0; i < coords.length; i++) {
+        bounds.extend(coords[i]);
+      }
+      setCompleteAss(true)
     }
   }
 
@@ -112,15 +84,12 @@ const MyMap = compose(
   useEffect(()=>{
     if(poly){
       listeners.current.push(google.maps.event.addListener(editRef.current.getPath(), 'insert_at', function () {
-        console.log("listener", editRef.current.getPath())
         setPoly(editRef.current);
       }));
       listeners.current.push(google.maps.event.addListener(editRef.current.getPath(), 'remove_at', function () {
-        console.log("listener", editRef.current.getPath())
         setPoly(editRef.current);
       }));      
       listeners.current.push(google.maps.event.addListener(editRef.current.getPath(), 'set_at', function () {
-        console.log("listener", editRef.current.getPath())
         setPoly(editRef.current);
       }));
     } else if(listeners.current){
@@ -129,10 +98,56 @@ const MyMap = compose(
   }, [poly])
 
   const completePoly = (newPoly) => {
-    if(poly) clearCircle();
+    if(poly) clearPoly();
     editRef.current = newPoly;
     setPoly(newPoly);
     setDrawMode("");
+    var path = newPoly.getPath()
+    runSnapToRoad(path)
+  }
+
+  // Snap a user-created polyline to roads and draw the snapped path
+  const runSnapToRoad = async (path) => {
+    setPathValues([])
+    let pv = []
+    for (var i = 0; i < path.getLength(); i++) {
+      pv.push(path.getAt(i).toUrlValue());
+    }
+
+    setPathValues(pv)
+
+    let { data } = await Axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${pv.join('|')}&interpolate=${true}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`)
+    
+    processSnapToRoadResponse(data);
+    drawSnappedPolyline();
+    getAndDrawSpeedLimits();
+  }
+
+  function processSnapToRoadResponse(data) {
+    setSnappedCoordinates([])
+    setPlaceIdArray([])
+    var sp = []
+    var pa = []
+    for (var i = 0; i < data.snappedPoints.length; i++) {
+      var latlng = new google.maps.LatLng(
+          data.snappedPoints[i].location.latitude,
+          data.snappedPoints[i].location.longitude);
+      sp.push(latlng);
+      pa.push(data.snappedPoints[i].placeId);
+    }
+    setSnappedCoordinates(sp)
+    setPlaceIdArray(pa)
+  }
+
+  function drawSnappedPolyline() {
+    var snappedPolyline = new google.maps.Polyline({
+      path: snappedCoordinates,
+      strokeColor: 'black',
+      strokeWeight: 3
+    });
+  
+    snappedPolyline.setMap(mapRef.current);
+    setSnappedPolylines((prev)=> [...prev, ...snappedPolyline]);
   }
   return(
     <>
@@ -144,7 +159,7 @@ const MyMap = compose(
       streetViewControl= {true}
       zoomControl={true}>
       <MarkerClusterer
-        onClick={(e)=>{setRes(res.max ? false : onMarkerClustererClick(e)); console.log(mapRef.current)}}
+        onClick={(e)=>{setRes(res.max ? false : onMarkerClustererClick(e))}}
         averageCenter
         enableRetinaIcons
         gridSize={60}
@@ -190,10 +205,10 @@ const MyMap = compose(
           </div> 
 
       </MarkerClusterer>
-      {tMarkers.length && 
-        tMarkers.map((marker)=>marker)
+      {
+        completeAss && poly &&
+        <CompleteAss close={()=>{setCompleteAss(false)}} clear={()=>clearPoly()} coords={poly.getPath().g.map((coord)=>{return {lat:coord.lat(), lng:coord.lng()}})}/>
       }
-
     </GoogleMap> 
     </>
   )

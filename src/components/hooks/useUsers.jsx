@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import Axios from 'axios'
 
-export default function(socket) {
+import {useStateValue} from '../../context/State'
+
+export default function() {
+    const [{socket},] = useStateValue()
     const [users, setUsers] = useState([])
 
     useEffect(()=>{
-        console.log("socket made for dbs")
         Axios.get(process.env.REACT_APP_SERVER + "/data/users")
         .then(({ data }) => {
             setUsers(data);

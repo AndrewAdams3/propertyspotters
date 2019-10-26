@@ -11,7 +11,7 @@ const Users = () => {
   const [{ socket },] = useStateValue();
   const [hasData, setHasData] = useState(false);
 
-  const Users = useUsers(socket);
+  const Users = useUsers();
   
   useEffect( () => {
     if((Users)){

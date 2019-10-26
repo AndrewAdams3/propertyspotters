@@ -62,3 +62,47 @@
   font-size: 20px;
   cursor: pointer;
 }
+
+.chooseDriver {
+  border-radius: 20px;
+  width: 400px;
+  height: 20.5rem;
+  padding: 10px;
+  background-color: white;
+  position: absolute;
+  z-index: 100;
+  top: 3.5rem;
+  right: 1.5rem;
+  margin-left: -200px;
+  box-shadow: 1px 1px 4px 0px black;
+}
+
+.driverList {
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  list-style-type:none;
+  padding: 10px;
+  height: 90%;
+}
+.driverItem {
+  width: 100%;
+  height: 30px;
+  flex-direction: row;
+  display: flex;
+  margin: 5px 5px 0 0;
+  justify-content: space-between;
+  border-radius: 5px;
+  padding:5px;
+  align-items: center;
+}
+.driverItem:hover {
+  background-color: green;
+}
+
+.date-button {
+  width: 35%;
+  margin: auto;
+  display: flex;
+  margin-top: 1rem;
+  justify-content: center;
+}

@@ -57,6 +57,9 @@ const ListItem = ({db, n}) => {
             <td>
                 {db.longitude}
             </td>
+            <td>
+                {db.finder}
+            </td>
         </tr>
         </>
     )
@@ -81,6 +84,7 @@ const TableView = () => {
                 <th>Boarded?</th>
                 <th>Latitude</th>
                 <th>Longitude</th>
+                <th>Driver</th>
                 </tr>
             </thead>
             <tbody>
