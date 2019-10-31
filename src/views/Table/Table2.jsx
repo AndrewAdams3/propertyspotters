@@ -9,8 +9,9 @@ import EditModal from './EditModal';
 
 import Context, { ContextProvider } from './modalContext'
 import useDbs from '../../components/hooks/useDbs';
+import useUsers from '../../components/hooks/useUsers';
 
-const ListItem = ({db, n}) => {
+const ListItem = ({db, n, user}) => {
     const [hover, setHover] = useState("none");
 
     const edit = require('../../config/images/edit.png');
@@ -58,7 +59,7 @@ const ListItem = ({db, n}) => {
                 {db.longitude}
             </td>
             <td>
-                {db.finder}
+                {`${user.fName[0]}${user.lName[0]}`.toUpperCase()}
             </td>
         </tr>
         </>
@@ -67,6 +68,7 @@ const ListItem = ({db, n}) => {
 const TableView = () => {
 
     const Drivebys = useDbs();
+    const Users = useUsers();
 
     const TableT = ({drivebys}) => {
         return(
@@ -89,7 +91,7 @@ const TableView = () => {
             </thead>
             <tbody>
             {drivebys.map((db, index) => {
-                return <ListItem db={db} n={index} key={db._id} />
+                return <ListItem db={db} n={index} key={db._id} user={Users.find((user)=>user._id === db.finder)}/>
             }).reverse()}
             </tbody>
             </Table>
