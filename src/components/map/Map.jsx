@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import { compose, withProps, withHandlers } from 'recompose'
-import { withScriptjs, withGoogleMap, GoogleMap, Marker, InfoWindow,  } from 'react-google-maps'
+import { withScriptjs, withGoogleMap, GoogleMap, Polyline } from 'react-google-maps'
 import { default as MarkerClusterer } from "react-google-maps/lib/components/addons/MarkerClusterer";
 import { DrawingManager } from "react-google-maps/lib/components/drawing/DrawingManager";
 
@@ -11,7 +11,7 @@ import useInnerHeight from '../hooks/useInnerHeight';
 import CompleteAss from './CompleteAss';
 import Axios from 'axios';
 
-const MyMap = compose(
+const MyMap = (compose(
   withProps({
     googleMapURL: "https://maps.googleapis.com/maps/api/js?key=" + process.env.REACT_APP_GOOGLE_API_KEY + "&libraries=geometry,drawing,places",
     loadingElement: <div style={{ height: `100%` }} />,
@@ -31,7 +31,7 @@ const MyMap = compose(
   }),
   withScriptjs,
   withGoogleMap,
-)(({data, onMarkerClustererClick, filterList}) =>{
+)(({markers, tracks, onMarkerClustererClick}) =>{
   const [res, setRes] = useState([]);
   const drawRef = useRef();
   const [drawMode, setDrawMode] = useState("");
@@ -39,21 +39,37 @@ const MyMap = compose(
   const [completeAss, setCompleteAss] = useState(false)
   const editRef = useRef();
   const listeners = useRef([]);
-  const mapRef = useRef();
+  const mapRef = useRef(null);
   const [zoom,] = useState(13);
 
-  const [pathValues, setPathValues] = useState([])
-  const [snappedCoordinates, setSnappedCoordinates] = useState([])
-  const [placeIdArray, setPlaceIdArray] = useState([])
   const [snappedPolylines, setSnappedPolylines] = useState([])
-  
+
   useEffect(()=>{
     const bounds = new google.maps.LatLngBounds();
-    filterList.forEach(item => {
-        bounds.extend({lat: item.lat, lng:item.lon});
-    });
-    mapRef.current.fitBounds(bounds);
-  },[filterList])
+
+    if(markers.length){
+      markers.forEach(item => {
+        bounds.extend(item.props.position);
+      });
+      mapRef.current.fitBounds(bounds);
+    }
+
+  }, [markers])
+
+  useEffect(()=>{
+    const getLines = async () => {
+      tracks.forEach(async (track)=>{
+        const line = await runSnapToRoad(track)
+        setSnappedPolylines((prev)=>[...prev, {line: line, date: track.date, user: track.userId}])
+      })
+    }
+    if(tracks.length > 0){
+      setSnappedPolylines([])
+      getLines()
+    } else {
+      setSnappedPolylines([])
+    }
+  },[tracks])
 
   const clearPoly = () => {
     if(poly){
@@ -73,13 +89,6 @@ const MyMap = compose(
       setCompleteAss(true)
     }
   }
-
-  let markers = data.map((home, index) => {
-    if (home["latitude"] !== 0) {
-      return <MarkerWithInfoWindow position={new google.maps.LatLng(home["latitude"], home["longitude"])} home={home} key={home["_id"]} />
-    }
-    return null;
-  })
 
   useEffect(()=>{
     if(poly){
@@ -107,48 +116,43 @@ const MyMap = compose(
   }
 
   // Snap a user-created polyline to roads and draw the snapped path
-  const runSnapToRoad = async (path) => {
-    setPathValues([])
-    let pv =[]
-    for (var i = 0; i < path.getLength(); i++) {
-      pv.push(path.getAt(i).toUrlValue());
+  const runSnapToRoad = async ({path}) => {
+    var chunks = [], i = 0
+    while (i < path.length) {
+      chunks.push(path.slice(i, i += 100));
     }
+    var pathChunk = []
+    chunks.forEach((chunk)=>{
+      pathChunk.push(chunk.map((point)=>
+        `${point.latitude},${point.longitude}`
+      ))
+    })
 
-    setPathValues(pv)
-
-    let { data } = await Axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${pv.join('|')}&interpolate=${true}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`)
-    
-    processSnapToRoadResponse(data);
-    drawSnappedPolyline();
-    getAndDrawSpeedLimits();
+    const getPaths = async () => {
+      let res = pathChunk.map(async (path)=>{
+        let {data} = await Axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${path.join('|')}&interpolate=${true}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`)
+        return data;
+      })
+      return await Promise.all(res)
+    }
+    let paths = await getPaths()
+    return processSnapToRoadResponse(paths);
   }
 
-  function processSnapToRoadResponse(data) {
-    setSnappedCoordinates([])
-    setPlaceIdArray([])
+  const processSnapToRoadResponse = (res) => {
     var sp = []
-    var pa = []
-    for (var i = 0; i < data.snappedPoints.length; i++) {
-      var latlng = new google.maps.LatLng(
-          data.snappedPoints[i].location.latitude,
-          data.snappedPoints[i].location.longitude);
-      sp.push(latlng);
-      pa.push(data.snappedPoints[i].placeId);
+    for(var j = 0; j < res.length; j++){
+      for (var i = 0; i < res[j].snappedPoints.length; i++) {
+        var latlng = new google.maps.LatLng(
+          res[j].snappedPoints[i].location.latitude,
+          res[j].snappedPoints[i].location.longitude
+        );
+        sp.push(latlng);
+      }
     }
-    setSnappedCoordinates(sp)
-    setPlaceIdArray(pa)
+    return sp
   }
 
-  function drawSnappedPolyline() {
-    var snappedPolyline = new google.maps.Polyline({
-      path: snappedCoordinates,
-      strokeColor: 'black',
-      strokeWeight: 3
-    });
-  
-    snappedPolyline.setMap(mapRef.current);
-    setSnappedPolylines((prev)=> [...prev, ...snappedPolyline]);
-  }
   return(
     <>
     <GoogleMap
@@ -157,7 +161,8 @@ const MyMap = compose(
       options={{maxZoom: 18}}
       ref={mapRef}
       streetViewControl= {true}
-      zoomControl={true}>
+      zoomControl={true}
+      >
       <MarkerClusterer
         onClick={(e)=>{setRes(res.max ? false : onMarkerClustererClick(e))}}
         averageCenter
@@ -184,13 +189,28 @@ const MyMap = compose(
               editable: true
             },
           }}
-          onPolygonComplete={completePoly}/>  
+          //onPolygonComplete={completePoly}
+          />  
           {
             markers
           }
           {res.max &&
             <ClusterInfo homes={res.markers} close={()=>{setRes([])}}/>
           }   
+          { !!snappedPolylines.length && 
+            snappedPolylines.map((track, i)=>{
+               return (
+                <Polyline 
+                  key={`coords-${i}`} 
+                  path={track.line} 
+                  onClick={()=>{console.log(track.user)}}
+                  options={{
+                    strokeColor: "red",
+                    strokeWeight: 2
+                  }}/>               
+              )           
+            })
+          }
 
           <div style={{position: "absolute", top: ".9rem", zIndex: 5, left: "50%", width: "20rem", marginLeft: "-50px", display: "flex", justifyContent: "space-around"}}>
             <button className="col-3" onClick={()=>{setDrawMode((prev)=>prev === "polygon" ? "" : "polygon")}} style={{display: "inline-flex"}}>
@@ -212,8 +232,17 @@ const MyMap = compose(
     </GoogleMap> 
     </>
   )
-});
+}));
 
+// , (prev, next)=> {
+//   var equal = true
+//   Object.keys(prev).map((key)=>{
+//     if(key !== "_markers"){
+//       if(prev[key] != next[key]) equal = false
+//     }
+//   })
+//   return prev.refresh === next.refresh
+// }
 
 
 const ClusterInfo = ({homes, close}) => {
@@ -235,43 +264,6 @@ const ClusterInfo = ({homes, close}) => {
       }
     </div>
     </>
-  )
-}
-
-const MarkerWithInfoWindow = ({position, home, id}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [rotation, setRotation] = useState(0);
-  const imgRef = useRef(null);
-  const [date,] = useState(new Date(home["date"]));
-
-  const onToggleOpen = () => { setIsOpen(!isOpen);}
-  return (
-    <Marker
-      key={id}
-      position={position}
-      onClick={onToggleOpen}
-      title={JSON.stringify(home)}>
-
-      {(isOpen) &&
-        <InfoWindow onCloseClick={onToggleOpen}>
-          <div className="windowContainer" >
-            <div className="rotateContainer">
-              <img className="rotate border border-dark rounded" alt="test" src="../../rotate.png" onClick={()=>{setRotation(rotation + 90)}}/>
-            </div>
-            <div className="info">
-              <p style={{ textAlign: "center" }}>{home["address"]}</p>
-              <p style={{ textAlign: "center" }}>{"Found " + (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear()}</p>
-            </div>
-            <hr style={{ backgroundColor: "black", marginBottom: "2rem" }} />
-            <div style={{height: "200px", width: "90%"}}>
-              <div className="imageContainer" style={{transform: `rotate(${rotation}deg)`, justifyContent:"flex-start" }}>
-                <img ref={imgRef} style={{ borderStyle: "solid", borderColor: "black", borderWidth: ".1rem", height: "100%", width: "100%"}} src={home["picturePath"]} alt="pic" />
-              </div>
-            </div>
-            <p className="mt-5">Image Link: <br/><a href={home["picturePath"]} target="_blank" rel="noopener noreferrer">{home["address"]}</a></p>
-          </div>
-        </InfoWindow>}
-    </Marker>
   )
 }
 
