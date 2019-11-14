@@ -3,11 +3,10 @@ import Axios from 'axios'
 import {useStateValue} from '../../context/State'
 
 export default function() {
-    const [{socket},] = useStateValue()
+    const [{ socket },] = useStateValue()
     const [dbs, setDBs] = useState([])
 
     useEffect(()=>{
-        console.log("socket made for dbs")
         Axios.get(process.env.REACT_APP_SERVER + "/data/drivebys/all")
         .then(({ data }) => {
             setDBs(data.docs)

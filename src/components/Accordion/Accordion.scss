@@ -1,0 +1,18 @@
+.Accordion {
+    display: grid;
+    border: black;
+    border-style: solid;
+    border-width: .1rem;
+    border-radius: .3rem;
+    padding: .2rem;
+}
+
+.head {
+    max-height: 20%;
+}
+
+.body {
+    max-height: 80%;
+    overflow-y: scroll;
+    max-height: 15rem;
+}
