@@ -203,7 +203,6 @@ const MapView = memo(() => {
                 <>
                   <form onSubmit={e=>e.preventDefault()} style={{flexDirection: "row", display: "flex"}}>
                     <input type="text" style={{width: "70%", margin: "5px"}} className="form-control form-control-lg" placeholder="Search" onChange={filterList}/>
-                    <button type="submit" style={{width: "30%", margin: "5px"}} onClick={()=>refresh(!fresh)}>Go</button>
                   </form>
                   <AddList />
                 </>
