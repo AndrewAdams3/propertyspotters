@@ -2,15 +2,21 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import { compose, withProps, withHandlers } from 'recompose'
-import { withScriptjs, withGoogleMap, GoogleMap, Polyline, InfoWindow } from 'react-google-maps'
+import { withScriptjs, withGoogleMap, GoogleMap, Polyline } from 'react-google-maps'
 import { default as MarkerClusterer } from "react-google-maps/lib/components/addons/MarkerClusterer";
 import { DrawingManager } from "react-google-maps/lib/components/drawing/DrawingManager";
 
 import './Map.css';
 import useInnerHeight from '../hooks/useInnerHeight';
 import CompleteAss from './CompleteAss';
-import Axios from 'axios';
 import useUsers from '../hooks/useUsers';
+
+function getRandomColor(){
+  const colors = [
+    "#0000db", "#ff2492", "#ff24ff", "#9224ff", "#2424ff", "#24ffff", "#24ff92", "#ffff24", "#ff9224", "#ff2424", "teal"
+  ]
+  return colors[Math.floor(Math.random() * colors.length)]
+}
 
 const MyMap = (compose(
   withProps({
@@ -40,14 +46,12 @@ const MyMap = (compose(
   const [completeAss, setCompleteAss] = useState(false)
   const [polyHover, setPolyHover] = useState();
   const [clickedTrack, setClickedTrack] = useState(false)
-  const lineRefs = useRef();
   const editRef = useRef();
   const listeners = useRef([]);
   const mapRef = useRef(null);
   const [zoom,] = useState(13);
   const Users = useUsers();
 
-  const [snappedPolylines, setSnappedPolylines] = useState([])
 
   useEffect(()=>{
     const bounds = new google.maps.LatLngBounds();
@@ -59,23 +63,10 @@ const MyMap = (compose(
       mapRef.current.fitBounds(bounds);
     }
 
-  }, [markers])
+  }, [markers.length])
 
   useEffect(()=>{
-    const getLines = async () => {
-      lineRefs.current = []
-      tracks.forEach(async (track)=>{
-        lineRefs.current.push(React.createRef())
-        const line = await runSnapToRoad(track)
-        setSnappedPolylines((prev)=>[...prev, {line: line, date: track.date, user: track.userId}])
-      })
-    }
-    if(tracks.length > 0){
-      setSnappedPolylines([])
-      getLines()
-    } else {
-      setSnappedPolylines([])
-    }
+    console.log("tacks", tracks)
   },[tracks])
 
   const clearPoly = () => {
@@ -122,47 +113,27 @@ const MyMap = (compose(
     runSnapToRoad(path)
   }
 
-  // Snap a user-created polyline to roads and draw the snapped path
-  const runSnapToRoad = async ({path}) => {
-    var chunks = [], i = 0
-    while (i < path.length) {
-      chunks.push(path.slice(i, i += 100));
-    }
-    var pathChunk = []
-    chunks.forEach((chunk)=>{
-      pathChunk.push(chunk.map((point)=>
-        `${point.latitude},${point.longitude}`
-      ))
-    })
+  const TrackLine = React.memo(({track, i}) => {
+    return(
+      <Polyline 
+      path={track.line} 
+      //onMouseOver={(e)=>{setPolyHover({track, user: Users.find((user)=>user._id===track.user), x: e.ya.x, y: e.ya.y - 50})}}
+      onClick={(e)=>{
+        if(!clickedTrack){
+          setPolyHover({track, user: Users.find((user)=>user._id===track.user), x: e.ya.x, y: e.ya.y - 50})
+          setClickedTrack(true)
+        } else if (clickedTrack){
+          setPolyHover(null)
+          setClickedTrack(false)
+        }
+      }}
+      options={{
+        strokeColor: getRandomColor(),
+        strokeWeight: 2
+      }}/>
+    )
+  }, () => true)
 
-    const getPaths = async () => {
-      let res = pathChunk.map(async (path)=>{
-        let {data} = await Axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${path.join('|')}&interpolate=${true}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`)
-        return data;
-      })
-      return await Promise.all(res)
-    }
-    let paths = await getPaths()
-    return processSnapToRoadResponse(paths);
-  }
-
-  const processSnapToRoadResponse = (res) => {
-    var sp = []
-    for(var j = 0; j < res.length; j++){
-      for (var i = 0; i < res[j].snappedPoints.length; i++) {
-        var latlng = new google.maps.LatLng(
-          res[j].snappedPoints[i].location.latitude,
-          res[j].snappedPoints[i].location.longitude
-        );
-        sp.push(latlng);
-      }
-    }
-    return sp
-  }
-
-  useEffect(()=>{
-    console.log("p", polyHover)
-  },[polyHover])
   return(
     <>
     <GoogleMap
@@ -207,31 +178,14 @@ const MyMap = (compose(
           {res.max &&
             <ClusterInfo homes={res.markers} close={()=>{setRes([])}}/>
           }   
-          { !!snappedPolylines.length && 
-            snappedPolylines.map((track, i)=>{
+          { !!tracks.length && 
+            tracks.map((track, i)=>{
                return (
-                <Polyline 
-                  path={track.line} 
-                  ref={lineRefs.current[i]}
-                  onMouseOver={(e)=>{setPolyHover({track, user: Users.find((user)=>user._id===track.user), x: e.ya.x, y: e.ya.y - 50})}}
-                  onMouseOut={()=>!clickedTrack && setPolyHover()}
-                  onClick={(e)=>{
-                    if(!clickedTrack && polyHover){
-                      setClickedTrack(true)
-                      setPolyHover({track, user: Users.find((user)=>user._id===track.user), x: e.ya.x, y: e.ya.y - 50})
-                    } else if (clickedTrack && polyHover){
-                      setPolyHover()
-                      setClickedTrack(false)
-                    }
-                  }}
-                  options={{
-                    strokeColor: "red",
-                    strokeWeight: 2
-                  }}/>         
+                  <TrackLine track={track} i={i} key={track.key}/>
               )           
             })
           }
-          { polyHover &&
+          { !!polyHover &&
             <div className="track-window" style={{top: polyHover.y, left: polyHover.x}}>
               <h3 style={{textTransform: "capitalize"}}>{polyHover.user.fName} {polyHover.user.lName}</h3>
               <h3>{new Date(polyHover.track.date).toLocaleDateString()}</h3>
@@ -267,9 +221,8 @@ const MyMap = (compose(
 //       if(prev[key] != next[key]) equal = false
 //     }
 //   })
-//   return prev.refresh === next.refresh
+//   return equal
 // }
-
 
 const ClusterInfo = ({homes, close}) => {
   const h = useInnerHeight();

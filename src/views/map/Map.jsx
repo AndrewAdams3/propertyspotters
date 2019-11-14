@@ -3,6 +3,7 @@ import React, {useState, useReducer, useEffect, memo} from 'react';
 import MyMap from '../../components/map/Map';
 import HeaderNav from '../../components/header';
 import {Container, Col, Row} from 'react-bootstrap';
+import Axios from 'axios';
 
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
@@ -15,7 +16,6 @@ import useUsers from '../../components/hooks/useUsers'
 import PickDriver from '../../components/PickDriver'
 
 import './Map.css';
-import useInnerWidth from '../../components/hooks/useInnerWidth';
 import Accordion from '../../components/Accordion/Accordion';
 import {MarkerWithInfoWindow} from '../../components/map/MarkerWithInfoWindow'
 
@@ -28,6 +28,44 @@ const initialState = {
   text_filtered_dbs: new Map(),
   time_filtered_tracks: new Map(),
   user_filtered_tracks: new Map()
+}
+
+// Snap a user-created polyline to roads and draw the snapped path
+const runSnapToRoad = async ({path}) => {
+  var chunks = [], i = 0
+  while (i < path.length) {
+    chunks.push(path.slice(i, i += 100));
+  }
+  var pathChunk = []
+  chunks.forEach((chunk)=>{
+    pathChunk.push(chunk.map((point)=>
+      `${point.latitude},${point.longitude}`
+    ))
+  })
+
+  const getPaths = async () => {
+    let res = pathChunk.map(async (path)=>{
+      let {data} = await Axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${path.join('|')}&interpolate=${true}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`)
+      return data;
+    })
+    return await Promise.all(res)
+  }
+  let paths = await getPaths()
+  return processSnapToRoadResponse(paths);
+}
+
+const processSnapToRoadResponse = (res) => {
+  var sp = []
+  for(var j = 0; j < res.length; j++){
+    for (var i = 0; i < res[j].snappedPoints.length; i++) {
+      var latlng = new window.google.maps.LatLng(
+        res[j].snappedPoints[i].location.latitude,
+        res[j].snappedPoints[i].location.longitude
+      );
+      sp.push(latlng);
+    }
+  }
+  return sp
 }
 
 const reducer = (state, {type, value}) => {
@@ -71,21 +109,46 @@ const MapView = memo(() => {
   const Drivebys = useDbs();
   const Tracks = useTracks();
   const Users = useUsers();
-  const [fresh, refresh] = useState(false)
   const [state, dispatch] = useReducer(reducer, initialState)
   const [showDbs, setShowDbs] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [hasGoogle, setHasGoogle] = useState(false);
 
   const [markers, setMarkers] = useState([])
   const [tracks, setTracks] = useState([])
-  const width = useInnerWidth();
 
+  const [snappedPolylines, setSnappedPolylines] = useState([])
+
+  useEffect(()=>{
+    const script = document.createElement("script");
+    script.src=`https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_GOOGLE_API_KEY}`
+    window.document.body.appendChild(script);
+    script.addEventListener('load', () => {
+      setHasGoogle(true);
+    })
+  },[])
+  
   useEffect(()=>{
     if(Tracks.length > 0){
       let initial_track_map = createMap(Tracks, "_id");
       dispatch({type: "track_init", value: initial_track_map});
     }
   },[Tracks])
+
+  useEffect(()=>{
+    const getLines = async () => {
+      tracks.forEach(async (track)=>{
+        const line = await runSnapToRoad(track)
+        setSnappedPolylines((prev)=>[...prev, {line: line, date: track.date, user: track.userId, key: track._id}])
+      })
+    }
+    if(tracks.length > 0){
+      setSnappedPolylines([])
+      getLines()
+    } else {
+      setSnappedPolylines([])
+    }
+  },[tracks.length])
 
   useEffect(()=>{
     if(Drivebys.length > 0){
@@ -184,7 +247,7 @@ const MapView = memo(() => {
               <div style={{visibility: loading ? "initial" : "hidden", position: "absolute", zIndex: 100, top: 0, left: 0, height: "100%", width: "100%", backgroundColor: "rgba(200,200,200,.9)", display: "flex", justifyContent: "center", alignItems: "center"}}>
                 <h3>Loading</h3>
               </div>
-              <MyMap markers={showDbs ? markers : []} tracks={tracks}/>
+              {React.useMemo(()=> hasGoogle && <MyMap markers={showDbs ? markers : []} tracks={snappedPolylines}/>, [markers.length, tracks.length])}
             </div>
           </Col>
           <Col xs={4} className="border" style={{overflowY: "scroll", maxHeight: "100%"}}>

@@ -29,4 +29,4 @@ export const MarkerWithInfoWindow = React.memo(({ position, home, id }) => {
         </div>
       </InfoWindow>}
   </Marker>);
-});
+}, (prev, next) => prev.home._id == next.home._id);
