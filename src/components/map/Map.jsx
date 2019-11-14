@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import { compose, withProps, withHandlers } from 'recompose'
-import { withScriptjs, withGoogleMap, GoogleMap, Polyline } from 'react-google-maps'
+import { withScriptjs, withGoogleMap, GoogleMap, Polyline, InfoWindow } from 'react-google-maps'
 import { default as MarkerClusterer } from "react-google-maps/lib/components/addons/MarkerClusterer";
 import { DrawingManager } from "react-google-maps/lib/components/drawing/DrawingManager";
 
@@ -10,6 +10,7 @@ import './Map.css';
 import useInnerHeight from '../hooks/useInnerHeight';
 import CompleteAss from './CompleteAss';
 import Axios from 'axios';
+import useUsers from '../hooks/useUsers';
 
 const MyMap = (compose(
   withProps({
@@ -37,10 +38,14 @@ const MyMap = (compose(
   const [drawMode, setDrawMode] = useState("");
   const [poly, setPoly] = useState()
   const [completeAss, setCompleteAss] = useState(false)
+  const [polyHover, setPolyHover] = useState();
+  const [clickedTrack, setClickedTrack] = useState(false)
+  const lineRefs = useRef();
   const editRef = useRef();
   const listeners = useRef([]);
   const mapRef = useRef(null);
   const [zoom,] = useState(13);
+  const Users = useUsers();
 
   const [snappedPolylines, setSnappedPolylines] = useState([])
 
@@ -58,7 +63,9 @@ const MyMap = (compose(
 
   useEffect(()=>{
     const getLines = async () => {
+      lineRefs.current = []
       tracks.forEach(async (track)=>{
+        lineRefs.current.push(React.createRef())
         const line = await runSnapToRoad(track)
         setSnappedPolylines((prev)=>[...prev, {line: line, date: track.date, user: track.userId}])
       })
@@ -153,6 +160,9 @@ const MyMap = (compose(
     return sp
   }
 
+  useEffect(()=>{
+    console.log("p", polyHover)
+  },[polyHover])
   return(
     <>
     <GoogleMap
@@ -201,15 +211,31 @@ const MyMap = (compose(
             snappedPolylines.map((track, i)=>{
                return (
                 <Polyline 
-                  key={`coords-${i}`} 
                   path={track.line} 
-                  onClick={()=>{console.log(track.user)}}
+                  ref={lineRefs.current[i]}
+                  onMouseOver={(e)=>{setPolyHover({track, user: Users.find((user)=>user._id===track.user), x: e.ya.x, y: e.ya.y - 50})}}
+                  onMouseOut={()=>!clickedTrack && setPolyHover()}
+                  onClick={(e)=>{
+                    if(!clickedTrack && polyHover){
+                      setClickedTrack(true)
+                      setPolyHover({track, user: Users.find((user)=>user._id===track.user), x: e.ya.x, y: e.ya.y - 50})
+                    } else if (clickedTrack && polyHover){
+                      setPolyHover()
+                      setClickedTrack(false)
+                    }
+                  }}
                   options={{
                     strokeColor: "red",
                     strokeWeight: 2
-                  }}/>               
+                  }}/>         
               )           
             })
+          }
+          { polyHover &&
+            <div className="track-window" style={{top: polyHover.y, left: polyHover.x}}>
+              <h3 style={{textTransform: "capitalize"}}>{polyHover.user.fName} {polyHover.user.lName}</h3>
+              <h3>{new Date(polyHover.track.date).toLocaleDateString()}</h3>
+            </div>
           }
 
           <div style={{position: "absolute", top: ".9rem", zIndex: 5, left: "50%", width: "20rem", marginLeft: "-50px", display: "flex", justifyContent: "space-around"}}>

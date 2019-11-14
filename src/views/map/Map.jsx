@@ -73,6 +73,8 @@ const MapView = memo(() => {
   const Users = useUsers();
   const [fresh, refresh] = useState(false)
   const [state, dispatch] = useReducer(reducer, initialState)
+  const [showDbs, setShowDbs] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [markers, setMarkers] = useState([])
   const [tracks, setTracks] = useState([])
@@ -93,6 +95,7 @@ const MapView = memo(() => {
   },[Drivebys])
 
   const filterTracks = React.useCallback((e) => {
+    setLoading(true)
     let start = e[0], end = e[1]
     let filter_tracks = Tracks.filter((track)=>{
       let td = new Date(track.date)
@@ -113,6 +116,7 @@ const MapView = memo(() => {
       if(state.text_filtered_dbs.has(home._id) && state.user_filtered_dbs.has(home._id))
         return <MarkerWithInfoWindow position={{lat: home.latitude, lng: home.longitude}} home={home} key={home._id} />
       }).filter((item)=>!!item))
+      setLoading(false)
   },[state.user_filtered_dbs, state.text_filtered_dbs])
 
   useEffect(()=>{
@@ -120,9 +124,11 @@ const MapView = memo(() => {
       if(state.user_filtered_tracks.has(track._id) && state.time_filtered_tracks.has(track._id))
         return track;
     }).filter((item)=>!!item))
+    setLoading(false)
   },[state.user_filtered_tracks, state.time_filtered_tracks])
 
   const selectDrivers = async (drivers) => {
+    setLoading(true)
     const set_filters = async () => {
       var filtered_dbs = Drivebys.filter((db)=>(
         drivers.get(db.finder).selected
@@ -140,6 +146,7 @@ const MapView = memo(() => {
   }
 
   const filterList = (event) => {
+    setLoading(true)
     event.preventDefault();
     var filtered_dbs = Drivebys.filter((db)=>(
       db.address.toLowerCase().search(
@@ -172,12 +179,19 @@ const MapView = memo(() => {
       <HeaderNav fixed="top" color="black" />
       <Container className="w-100" style={{marginTop: "5rem", overflow:"hidden", height: "85vh"}}>
         <Row className="h-100 w-100">
-          <Col xs={8}>
-            <div style={{height: width, width: "100%"}}>
-              <MyMap markers={markers} tracks={tracks}/>
+          <Col xs={8} className="h-100">
+            <div style={{height: "100%", width: "100%"}}>
+              <div style={{visibility: loading ? "initial" : "hidden", position: "absolute", zIndex: 100, top: 0, left: 0, height: "100%", width: "100%", backgroundColor: "rgba(200,200,200,.9)", display: "flex", justifyContent: "center", alignItems: "center"}}>
+                <h3>Loading</h3>
+              </div>
+              <MyMap markers={showDbs ? markers : []} tracks={tracks}/>
             </div>
           </Col>
           <Col xs={4} className="border" style={{overflowY: "scroll", maxHeight: "100%"}}>
+            <div style={{flexDirection: "row", display: "flex", justifyContent: "space-around", margin: "1rem"}}>
+              <h3 style={{fontSize: 18}}>Show Drivebys?</h3>
+                <input type="checkbox" checked={showDbs} onChange={()=>setShowDbs(!showDbs)}/>
+              </div>
             <Accordion 
               head={<div><h3 style={{fontSize:18, textAlign: "center"}}>Select Drivers to Display</h3></div>}
               body={<PickDriver select={selectDrivers} initial={Users}/>}
