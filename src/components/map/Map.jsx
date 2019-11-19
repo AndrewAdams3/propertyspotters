@@ -113,9 +113,10 @@ const MyMap = (compose(
     runSnapToRoad(path)
   }
 
-  const TrackLine = React.memo(({track, i}) => {
+  const TrackLine = (({track, i}) => {
     return(
       <Polyline 
+      
       path={track.line} 
       //onMouseOver={(e)=>{setPolyHover({track, user: Users.find((user)=>user._id===track.user), x: e.ya.x, y: e.ya.y - 50})}}
       onClick={(e)=>{
@@ -132,7 +133,7 @@ const MyMap = (compose(
         strokeWeight: 2
       }}/>
     )
-  }, () => true)
+  })
 
   return(
     <>

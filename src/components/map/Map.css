@@ -98,3 +98,7 @@
   border-radius: 10px;
   padding: 5px;
 }
+
+.gm-style-iw-t {
+  pointer-events: none !important;
+}

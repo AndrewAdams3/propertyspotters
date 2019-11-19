@@ -1,32 +1,44 @@
-import React, { useState, useRef } from 'react';
-import { Marker, InfoWindow } from 'react-google-maps';
+import React, { useState, useRef } from 'react'
+import {Marker, InfoWindow} from '@googlemap-react/core'
 
-export const MarkerWithInfoWindow = React.memo(({ position, home, id }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [rotation, setRotation] = useState(0);
-  const imgRef = useRef(null);
-  const [date,] = useState(new Date(home["date"]));
-  const onToggleOpen = () => { setIsOpen(!isOpen); };
-  return (<Marker key={id} position={position} onClick={onToggleOpen} title={JSON.stringify(home)}>
+export default ({position, home}) => {
+  const [infoDisplay, setInfoDisplay] = useState(false)
 
-    {(isOpen) &&
-      <InfoWindow onCloseClick={onToggleOpen}>
-        <div className="windowContainer">
-          <div className="rotateContainer">
-            <img className="rotate border border-dark rounded" alt="test" src="../../rotate.png" onClick={() => { setRotation(rotation + 90); }} />
-          </div>
-          <div className="info">
-            <p style={{ textAlign: "center" }}>{home["address"]}</p>
-            <p style={{ textAlign: "center" }}>{"Found " + (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear()}</p>
-          </div>
-          <hr style={{ backgroundColor: "black", marginBottom: "2rem" }} />
-          <div style={{ height: "200px", width: "90%" }}>
-            <div className="imageContainer" style={{ transform: `rotate(${rotation}deg)`, justifyContent: "flex-start" }}>
-              <img ref={imgRef} style={{ borderStyle: "solid", borderColor: "black", borderWidth: ".1rem", height: "100%", width: "100%" }} src={home["picturePath"]} alt="pic" />
-            </div>
-          </div>
-          <p className="mt-5">Image Link: <br /><a href={home["picturePath"]} target="_blank" rel="noopener noreferrer">{home["address"]}</a></p>
-        </div>
-      </InfoWindow>}
-  </Marker>);
-}, (prev, next) => prev.home._id == next.home._id);
+  const decoratedContent = (home) => infoDisplay ? `
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: space-around; max-height: 15rem; max-width: 15rem">
+      <strong style="font-size: calc(12px + 0.8vh); text-align: center; padding: 0 0 5px 0;">
+        <h3 style="text-align: center; font-size: 1em">${home.address}</h3>
+      </strong>
+      <p>Found: ${new Date(home.date).toLocaleDateString()}</p>
+      <img src=${home.picturePath} alt="image link" width="100px" />
+      <a href="${home.picturePath}" target="_blank" rel="noopener noreferrer" style="text-align: center">Link to Image</a>
+    </div>
+  ` : ""
+
+  // Set handlers
+  const handleClick = () => {
+    setInfoDisplay(!infoDisplay)
+  }
+
+  return (
+    <>
+      <Marker
+        id={home._id}
+        opts={{
+          position: position,
+        }}
+        onClick={handleClick}
+      />
+      <InfoWindow
+        anchorId={home._id}
+        opts={{
+          content: decoratedContent(home),
+        }}
+        visible={infoDisplay}
+        onCloseClick={() => {
+          setInfoDisplay(false)
+        }}
+      />
+    </>
+  )
+}

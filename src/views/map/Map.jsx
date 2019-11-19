@@ -1,6 +1,7 @@
-import React, {useState, useReducer, useEffect, memo} from 'react';
+import React, {useState, useReducer, useEffect, memo, useRef} from 'react';
 
-import MyMap from '../../components/map/Map';
+import MyMap from '../../components/map/MyMap';
+import {GoogleMapProvider} from '@googlemap-react/core'
 import HeaderNav from '../../components/header';
 import {Container, Col, Row} from 'react-bootstrap';
 import Axios from 'axios';
@@ -17,7 +18,7 @@ import PickDriver from '../../components/PickDriver'
 
 import './Map.css';
 import Accordion from '../../components/Accordion/Accordion';
-import {MarkerWithInfoWindow} from '../../components/map/MarkerWithInfoWindow'
+import MarkerWithInfoWindow from '../../components/map/MarkerWithInfoWindow'
 
 const createSliderWithTooltip = Slider.createSliderWithTooltip;
 const Range = createSliderWithTooltip(Slider.Range);
@@ -28,6 +29,13 @@ const initialState = {
   text_filtered_dbs: new Map(),
   time_filtered_tracks: new Map(),
   user_filtered_tracks: new Map()
+}
+
+function getRandomColor(){
+  const colors = [
+    "#0000db", "#ff2492", "#ff24ff", "#9224ff", "#2424ff", "#24ffff", "#24ff92", "#ffff24", "#ff9224", "#ff2424", "teal"
+  ]
+  return colors[Math.floor(Math.random() * colors.length)]
 }
 
 // Snap a user-created polyline to roads and draw the snapped path
@@ -58,10 +66,10 @@ const processSnapToRoadResponse = (res) => {
   var sp = []
   for(var j = 0; j < res.length; j++){
     for (var i = 0; i < res[j].snappedPoints.length; i++) {
-      var latlng = new window.google.maps.LatLng(
-        res[j].snappedPoints[i].location.latitude,
-        res[j].snappedPoints[i].location.longitude
-      );
+      var latlng = {
+        lat: res[j].snappedPoints[i].location.latitude,
+        lng: res[j].snappedPoints[i].location.longitude
+      };
       sp.push(latlng);
     }
   }
@@ -77,8 +85,8 @@ const reducer = (state, {type, value}) => {
         text_filtered_dbs: value,
         time_filtered_dbs: value
       };
-    case 'user_db_filter':
-      return { ...state, user_filtered_dbs: value};
+    case 'user_filter':
+      return { ...state, user_filtered_dbs: value.db, user_filtered_tracks: value.tracks};
     case 'text_db_filter':
       return { ...state, text_filtered_dbs: value};
     case 'track_init':
@@ -87,8 +95,6 @@ const reducer = (state, {type, value}) => {
         time_filtered_tracks: value,
         user_filtered_tracks: value
       };
-    case 'user_track_filter':
-      return { ...state, user_filtered_tracks: value};
     case 'time_filter_tracks':
       return { ...state, time_filtered_tracks: value};
     default:
@@ -111,11 +117,12 @@ const MapView = memo(() => {
   const Users = useUsers();
   const [state, dispatch] = useReducer(reducer, initialState)
   const [showDbs, setShowDbs] = useState(true);
-  const [loading, setLoading] = useState(false);
   const [hasGoogle, setHasGoogle] = useState(false);
+  const loaders = useRef(0);
 
   const [markers, setMarkers] = useState([])
   const [tracks, setTracks] = useState([])
+  const [polyLines, setPolylines] = useState([])
 
   const [snappedPolylines, setSnappedPolylines] = useState([])
 
@@ -136,18 +143,31 @@ const MapView = memo(() => {
   },[Tracks])
 
   useEffect(()=>{
+    loaders.current++
     const getLines = async () => {
-      tracks.forEach(async (track)=>{
-        const line = await runSnapToRoad(track)
-        setSnappedPolylines((prev)=>[...prev, {line: line, date: track.date, user: track.userId, key: track._id}])
-      })
+      var lines = []
+      const getLine = async () => {
+        tracks.forEach(async (track)=>{
+          loaders.current++
+          const line = await runSnapToRoad(track)
+          lines.push({line, track, date: track.date, user: track.userId, key: track._id, color: getRandomColor()})
+          //setSnappedPolylines((prev)=>[...prev, {line: line, date: track.date, user: track.userId, key: track._id}])
+          loaders.current--
+        })
+      }
+      await getLine()
+      const interval = setInterval(()=>{
+        if(loaders.current > 0) console.log("loading")
+        else clearInterval(interval);
+      }, 100)
+      setSnappedPolylines(lines)
     }
     if(tracks.length > 0){
-      setSnappedPolylines([])
       getLines()
     } else {
       setSnappedPolylines([])
     }
+    loaders.current--;
   },[tracks.length])
 
   useEffect(()=>{
@@ -158,7 +178,7 @@ const MapView = memo(() => {
   },[Drivebys])
 
   const filterTracks = React.useCallback((e) => {
-    setLoading(true)
+    loaders.current++
     let start = e[0], end = e[1]
     let filter_tracks = Tracks.filter((track)=>{
       let td = new Date(track.date)
@@ -166,6 +186,7 @@ const MapView = memo(() => {
     })
     let track_map = createMap(filter_tracks, "_id")
     dispatch({type: "time_filter_tracks", value: track_map});
+    loaders.current--;
   })
 
   useEffect(() => {
@@ -175,41 +196,43 @@ const MapView = memo(() => {
   }, [Drivebys])
 
   useEffect(()=>{
+    loaders.current++
     setMarkers(Drivebys.map((home) => {
       if(state.text_filtered_dbs.has(home._id) && state.user_filtered_dbs.has(home._id))
         return <MarkerWithInfoWindow position={{lat: home.latitude, lng: home.longitude}} home={home} key={home._id} />
       }).filter((item)=>!!item))
-      setLoading(false)
-  },[state.user_filtered_dbs, state.text_filtered_dbs])
+      loaders.current--
+    },[state.user_filtered_dbs, state.text_filtered_dbs])
 
   useEffect(()=>{
+    loaders.current++
     setTracks(Tracks.map((track)=>{
       if(state.user_filtered_tracks.has(track._id) && state.time_filtered_tracks.has(track._id))
         return track;
     }).filter((item)=>!!item))
-    setLoading(false)
+    loaders.current--
   },[state.user_filtered_tracks, state.time_filtered_tracks])
 
-  const selectDrivers = async (drivers) => {
-    setLoading(true)
-    const set_filters = async () => {
+  const selectDrivers = ((drivers) => {
+    loaders.current++
+    const set_filters = () => {
       var filtered_dbs = Drivebys.filter((db)=>(
         drivers.get(db.finder).selected
       ))
       let db_map = createMap(filtered_dbs, "_id");
-      dispatch({type: "user_db_filter", value: db_map});
   
       var filtered_tracks = Tracks.filter((track)=>(
         drivers.get(track.userId).selected
       ))
       let track_map = createMap(filtered_tracks, "_id");
-      dispatch({type: "user_track_filter", value: track_map});
+      dispatch({type: "user_filter", value: {db: db_map, tracks: track_map}});
     }
-    await set_filters();
-  }
+    set_filters();
+    loaders.current--
+  })
 
   const filterList = (event) => {
-    setLoading(true)
+    loaders.current++
     event.preventDefault();
     var filtered_dbs = Drivebys.filter((db)=>(
       db.address.toLowerCase().search(
@@ -218,7 +241,12 @@ const MapView = memo(() => {
     ))
     let db_map = createMap(filtered_dbs, "_id");
     dispatch({type: "text_db_filter", value: db_map});
+    loaders.current--
   }
+
+  useEffect(()=>{
+    if(loaders.current < 0) loaders.current = 0
+  },[loaders.current])
 
   const AddList = React.memo(() => {
     return (
@@ -244,10 +272,9 @@ const MapView = memo(() => {
         <Row className="h-100 w-100">
           <Col xs={8} className="h-100">
             <div style={{height: "100%", width: "100%"}}>
-              <div style={{visibility: loading ? "initial" : "hidden", position: "absolute", zIndex: 100, top: 0, left: 0, height: "100%", width: "100%", backgroundColor: "rgba(200,200,200,.9)", display: "flex", justifyContent: "center", alignItems: "center"}}>
-                <h3>Loading</h3>
-              </div>
-              {React.useMemo(()=> hasGoogle && <MyMap markers={showDbs ? markers : []} tracks={snappedPolylines}/>, [markers.length, tracks.length])}
+              <GoogleMapProvider key="google-provider">
+                {React.useMemo(()=> hasGoogle && <MyMap markers={showDbs ? markers : []} tracks={snappedPolylines}/>, [markers.length, snappedPolylines.length, showDbs])}
+              </GoogleMapProvider>
             </div>
           </Col>
           <Col xs={4} className="border" style={{overflowY: "scroll", maxHeight: "100%"}}>
