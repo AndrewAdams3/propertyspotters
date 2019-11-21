@@ -75,7 +75,7 @@ const MyMap = ({markers, tracks}) => {
     return(
         <>
         <MapBox
-          //apiKey={process.env.REACT_APP_GOOGLE_API_KEY}
+          apiKey={process.env.REACT_APP_GOOGLE_API_KEY}
           opts={{
             center: {lat: 36.737797, lng: -119.787125},
             zoom: 6,
