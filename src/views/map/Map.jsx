@@ -83,7 +83,7 @@ const MapView = memo(() => {
 
   const [markers, setMarkers] = useState([])
   const [tracks, setTracks] = useState([])
-  const [polyLines, setPolylines] = useState([])
+  const [showTracks, setShowTracks] = useState(true)
 
   const [snappedPolylines, setSnappedPolylines] = useState([])
 
@@ -104,9 +104,7 @@ const MapView = memo(() => {
   },[Tracks])
 
   useEffect(()=>{
-    if(tracks.length){
-      setSnappedPolylines(tracks.map((track)=>track.snappedLine ? {id: track._id, line: track.snappedLine, color: getRandomColor()} : null).filter((track)=>!!track))
-    }
+    setSnappedPolylines(tracks.map((track)=>track.snappedLine ? {id: track._id, line: track.snappedLine, color: getRandomColor()} : null).filter((track)=>!!track))
   },[tracks.length])
 
   useEffect(()=>{
@@ -120,6 +118,8 @@ const MapView = memo(() => {
     let start = e[0], end = e[1]
     let filter_tracks = Tracks.filter((track)=>{
       let td = new Date(track.date)
+      console.log("max: ", new Date(new Date().toLocaleDateString()).getTime() + (1000*60*60*24))
+      console.log("test date", td);
       return td.getTime() >= new Date(start).getTime() && td.getTime() <= new Date(end).getTime()
     })
     let track_map = createMap(filter_tracks, "_id")
@@ -198,14 +198,18 @@ const MapView = memo(() => {
           <Col xs={8} className="h-100">
             <div style={{height: "100%", width: "100%"}}>
               <GoogleMapProvider key="google-provider">
-                {React.useMemo(()=> hasGoogle && <MyMap markers={showDbs ? markers : []} tracks={snappedPolylines}/>, [markers.length, snappedPolylines.length, showDbs])}
+                {React.useMemo(()=> hasGoogle && <MyMap markers={showDbs ? markers : []} tracks={showTracks ? snappedPolylines : []}/>, [markers.length, snappedPolylines.length, showDbs, showTracks])}
               </GoogleMapProvider>
             </div>
           </Col>
           <Col xs={4} className="border" style={{overflowY: "scroll", maxHeight: "100%"}}>
             <div style={{flexDirection: "row", display: "flex", justifyContent: "space-around", margin: "1rem"}}>
-              <h3 style={{fontSize: 18}}>Show Drivebys?</h3>
+                <h3 style={{fontSize: 18}}>Show Drivebys?</h3>
                 <input type="checkbox" checked={showDbs} onChange={()=>setShowDbs(!showDbs)}/>
+              </div>
+              <div style={{flexDirection: "row", display: "flex", justifyContent: "space-around", margin: "1rem"}}>
+                <h3 style={{fontSize: 18}}>Show Tracks?</h3>
+                <input type="checkbox" checked={showTracks} onChange={()=>setShowTracks(!showTracks)}/>
               </div>
             <Accordion 
               head={<div><h3 style={{fontSize:18, textAlign: "center"}}>Select Drivers to Display</h3></div>}
@@ -229,10 +233,10 @@ const MapView = memo(() => {
               body={
                 <div style={{width: "80%", height: "3rem", alignItems: "center", display: "flex", margin: "auto", flexDirection: "column"}}>
                   <Range
-                    min={new Date("October 1, 2019").getTime()} 
-                    max={new Date(new Date().toLocaleDateString()).getTime() + (1000*60*60*24)} 
-                    defaultValue={[new Date(`${new Date().getMonth()+1}-${new Date().getDate()-1}-${new Date().getFullYear()}`).getTime(), new Date(new Date().toLocaleDateString()).getTime()]} 
-                    step={1000*60*60*24} 
+                    min={new Date(new Date().toLocaleDateString()).getTime() - (1000*60*60*24 * 50) + 1} 
+                    max={new Date(new Date().toLocaleDateString()).getTime() + 1} 
+                    defaultValue={[new Date(new Date().toLocaleDateString()).getTime() - (1000*60*60*24 * 50) + 1, new Date(new Date().toLocaleDateString()).getTime()]} 
+                    step={(1000*60*60*24)} 
                     tipFormatter={value => `${new Date(value).toLocaleDateString()}`} 
                     pushable 
                     allowCross={false}
