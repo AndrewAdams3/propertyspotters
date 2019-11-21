@@ -38,44 +38,6 @@ function getRandomColor(){
   return colors[Math.floor(Math.random() * colors.length)]
 }
 
-// Snap a user-created polyline to roads and draw the snapped path
-const runSnapToRoad = async ({path}) => {
-  var chunks = [], i = 0
-  while (i < path.length) {
-    chunks.push(path.slice(i, i += 100));
-  }
-  var pathChunk = []
-  chunks.forEach((chunk)=>{
-    pathChunk.push(chunk.map((point)=>
-      `${point.latitude},${point.longitude}`
-    ))
-  })
-
-  const getPaths = async () => {
-    let res = pathChunk.map(async (path)=>{
-      let {data} = await Axios.get(`https://roads.googleapis.com/v1/snapToRoads?path=${path.join('|')}&interpolate=${true}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`)
-      return data;
-    })
-    return await Promise.all(res)
-  }
-  let paths = await getPaths()
-  return processSnapToRoadResponse(paths);
-}
-
-const processSnapToRoadResponse = (res) => {
-  var sp = []
-  for(var j = 0; j < res.length; j++){
-    for (var i = 0; i < res[j].snappedPoints.length; i++) {
-      var latlng = {
-        lat: res[j].snappedPoints[i].location.latitude,
-        lng: res[j].snappedPoints[i].location.longitude
-      };
-      sp.push(latlng);
-    }
-  }
-  return sp
-}
-
 const reducer = (state, {type, value}) => {
   switch(type){
     case 'db_init':
@@ -118,7 +80,6 @@ const MapView = memo(() => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const [showDbs, setShowDbs] = useState(true);
   const [hasGoogle, setHasGoogle] = useState(false);
-  const loaders = useRef(0);
 
   const [markers, setMarkers] = useState([])
   const [tracks, setTracks] = useState([])
@@ -143,31 +104,9 @@ const MapView = memo(() => {
   },[Tracks])
 
   useEffect(()=>{
-    loaders.current++
-    const getLines = async () => {
-      var lines = []
-      const getLine = async () => {
-        tracks.forEach(async (track)=>{
-          loaders.current++
-          const line = await runSnapToRoad(track)
-          lines.push({line, track, date: track.date, user: track.userId, key: track._id, color: getRandomColor()})
-          //setSnappedPolylines((prev)=>[...prev, {line: line, date: track.date, user: track.userId, key: track._id}])
-          loaders.current--
-        })
-      }
-      await getLine()
-      const interval = setInterval(()=>{
-        if(loaders.current > 0) console.log("loading")
-        else clearInterval(interval);
-      }, 100)
-      setSnappedPolylines(lines)
+    if(tracks.length){
+      setSnappedPolylines(tracks.map((track)=>track.snappedLine ? {id: track._id, line: track.snappedLine, color: getRandomColor()} : null).filter((track)=>!!track))
     }
-    if(tracks.length > 0){
-      getLines()
-    } else {
-      setSnappedPolylines([])
-    }
-    loaders.current--;
   },[tracks.length])
 
   useEffect(()=>{
@@ -178,7 +117,6 @@ const MapView = memo(() => {
   },[Drivebys])
 
   const filterTracks = React.useCallback((e) => {
-    loaders.current++
     let start = e[0], end = e[1]
     let filter_tracks = Tracks.filter((track)=>{
       let td = new Date(track.date)
@@ -186,7 +124,6 @@ const MapView = memo(() => {
     })
     let track_map = createMap(filter_tracks, "_id")
     dispatch({type: "time_filter_tracks", value: track_map});
-    loaders.current--;
   })
 
   useEffect(() => {
@@ -196,25 +133,20 @@ const MapView = memo(() => {
   }, [Drivebys])
 
   useEffect(()=>{
-    loaders.current++
     setMarkers(Drivebys.map((home) => {
       if(state.text_filtered_dbs.has(home._id) && state.user_filtered_dbs.has(home._id))
         return <MarkerWithInfoWindow position={{lat: home.latitude, lng: home.longitude}} home={home} key={home._id} />
       }).filter((item)=>!!item))
-      loaders.current--
     },[state.user_filtered_dbs, state.text_filtered_dbs])
 
   useEffect(()=>{
-    loaders.current++
     setTracks(Tracks.map((track)=>{
       if(state.user_filtered_tracks.has(track._id) && state.time_filtered_tracks.has(track._id))
         return track;
     }).filter((item)=>!!item))
-    loaders.current--
   },[state.user_filtered_tracks, state.time_filtered_tracks])
 
   const selectDrivers = ((drivers) => {
-    loaders.current++
     const set_filters = () => {
       var filtered_dbs = Drivebys.filter((db)=>(
         drivers.get(db.finder).selected
@@ -228,11 +160,9 @@ const MapView = memo(() => {
       dispatch({type: "user_filter", value: {db: db_map, tracks: track_map}});
     }
     set_filters();
-    loaders.current--
   })
 
   const filterList = (event) => {
-    loaders.current++
     event.preventDefault();
     var filtered_dbs = Drivebys.filter((db)=>(
       db.address.toLowerCase().search(
@@ -241,12 +171,7 @@ const MapView = memo(() => {
     ))
     let db_map = createMap(filtered_dbs, "_id");
     dispatch({type: "text_db_filter", value: db_map});
-    loaders.current--
   }
-
-  useEffect(()=>{
-    if(loaders.current < 0) loaders.current = 0
-  },[loaders.current])
 
   const AddList = React.memo(() => {
     return (

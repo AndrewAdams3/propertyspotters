@@ -94,7 +94,7 @@ const MyMap = ({markers, tracks}) => {
         { tracks.length &&
           tracks.map((track, i)=>(
             <Polyline 
-              id={track.key}
+              id={track.id}
               key={i}
               opts={{
                 strokeColor: track.color,
