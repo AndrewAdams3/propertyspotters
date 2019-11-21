@@ -104,7 +104,7 @@ const MapView = memo(() => {
   },[Tracks])
 
   useEffect(()=>{
-    setSnappedPolylines(tracks.map((track)=>track.snappedLine ? {id: track._id, line: track.snappedLine, color: getRandomColor()} : null).filter((track)=>!!track))
+    setSnappedPolylines(tracks.map((track)=>track.snappedLine ? {date: track.date, id: track._id, user: track.userId, line: track.snappedLine, path: track.path, color: getRandomColor()} : null).filter((track)=>!!track))
   },[tracks.length])
 
   useEffect(()=>{

@@ -39,11 +39,11 @@ const MyMap = ({markers, tracks}) => {
       if(click){ 
         var point = 0
         var min = 9999
-        click.track.track.path.map(({latitude, longitude}, i)=>{
+        click.track.path.map(({latitude, longitude}, i)=>{
           let d = DistanceBetweenCoords(latitude, longitude, click.e.latLng.lat(), click.e.latLng.lng())
           if(d < min){
             min = d
-            point = click.track.track.path[i]
+            point = click.track.path[i]
           }
         })
         setInfoWindow({point, track: click.track})
@@ -75,7 +75,7 @@ const MyMap = ({markers, tracks}) => {
     return(
         <>
         <MapBox
-          apiKey={process.env.REACT_APP_GOOGLE_API_KEY}
+          //apiKey={process.env.REACT_APP_GOOGLE_API_KEY}
           opts={{
             center: {lat: 36.737797, lng: -119.787125},
             zoom: 6,
