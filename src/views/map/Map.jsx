@@ -4,7 +4,6 @@ import MyMap from '../../components/map/MyMap';
 import {GoogleMapProvider} from '@googlemap-react/core'
 import HeaderNav from '../../components/header';
 import {Container, Col, Row} from 'react-bootstrap';
-import Axios from 'axios';
 
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
@@ -213,7 +212,7 @@ const MapView = memo(() => {
               </div>
             <Accordion 
               head={<div><h3 style={{fontSize:18, textAlign: "center"}}>Select Drivers to Display</h3></div>}
-              body={<PickDriver select={selectDrivers} initial={Users}/>}
+              body={React.useMemo(()=><PickDriver select={selectDrivers} initial={Users}/>, [Users, selectDrivers])}
               style={{margin: "4rem", marginTop: "1rem", marginBottom: 0}}
             />
             <Accordion
