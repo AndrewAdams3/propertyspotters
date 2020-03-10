@@ -5,7 +5,6 @@ import useUsers from '../hooks/useUsers'
 
 
 export default function CompleteAss({close, clear, coords}){
-    const Users = useUsers()
     const [driver, setDriver] = useState("")
     const [date, setDate] = useState()
     const [editDriver, setEditDriver] = useState(true)
