@@ -23,7 +23,6 @@ const Login = (props) => {
 
   const checkCredentials = (email, pass) => {
     console.log("test", process.env.REACT_APP_SERVER + "/data/users/login")
-    Axios.defaults.baseURL="http://";
     Axios.post(process.env.REACT_APP_SERVER + "/data/users/login", {
       email: email,
       password: pass
