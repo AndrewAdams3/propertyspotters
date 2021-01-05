@@ -6,7 +6,7 @@
     "@google/markerclusterer": "^2.0.3",
     "@google/markerclustererplus": "^3.0.5",
     "@googlemap-react/core": "^0.1.6",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "bootstrap": "^4.3.1",
     "dotenv": "^8.0.0",
     "node-sass": "^4.12.0",
